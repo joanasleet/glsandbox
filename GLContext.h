@@ -7,6 +7,8 @@
 
 #include <string.h>
 
+#define BUFFER_OFFSET(offset) ((void *) (offset))
+
 class GLContext {
 public:
     GLFWwindow* main;
@@ -18,7 +20,7 @@ public:
 
     void loadShader(const char* source, GLenum type);
     void applyShaders();
-    
+
     void setRes(int x, int y);
     void printSpec();
 
@@ -56,6 +58,7 @@ GLContext::GLContext(int resX, int resY, const char* title) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+    printf("GLEW initialized.\n");
 }
 
 GLContext::~GLContext() {
@@ -71,7 +74,8 @@ void GLContext::loadShader(const char* srcFile, GLenum type) {
 
     GLint resultFlag = GL_FALSE;
     int logSize;
-    char* logMsg;
+    //char* logMsg;
+    char logMsg[200];
 
     fprintf(stdout, "##################\n");
     fprintf(stdout, "# Loading shader # (%s)\n", srcFile);
@@ -92,13 +96,13 @@ void GLContext::loadShader(const char* srcFile, GLenum type) {
     fprintf(stdout, "Checking...");
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &resultFlag);
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logSize);
-    logMsg = (char*) malloc(sizeof (char) * logSize);
+    //logMsg = (char*) malloc(sizeof (char) * logSize);
     glGetShaderInfoLog(shaderId, logSize, NULL, logMsg);
-    fprintf(stdout, "\tOK\n");
+    fprintf(stdout, "\tOK (Flag: %d)\n", resultFlag);
     if (strlen(logMsg) > 0) {
         fprintf(stdout, "Info:{%s}\n", logMsg);
     }
-    free(logMsg);
+    //free(logMsg);
 
 
     /* link main program */
@@ -119,15 +123,15 @@ void GLContext::loadShader(const char* srcFile, GLenum type) {
     fprintf(stdout, "Checking...");
     glGetProgramiv(mainProgramId, GL_LINK_STATUS, &resultFlag);
     glGetProgramiv(mainProgramId, GL_INFO_LOG_LENGTH, &logSize);
-    logMsg = (char*) malloc(sizeof (char) * logSize);
+    //logMsg = (char*) malloc(sizeof (char) * logSize);
     glGetProgramInfoLog(mainProgramId, logSize, NULL, logMsg);
-    fprintf(stdout, "\tOK\n");
+    fprintf(stdout, "\tOK (Flag: %d)\n", resultFlag);
     if (strlen(logMsg) > 0) {
         fprintf(stdout, "Info:{%s}\n", logMsg);
     }
     fprintf(stdout, "\n");
+    //free(logMsg);
 
-    free(logMsg);
     glDeleteShader(shaderId);
 }
 
@@ -157,12 +161,13 @@ char* GLContext::bufferFile(const char* path) {
     }
 
     if (size) {
-        fileContent = (char*) malloc(sizeof (char) * size);
+        fileContent = (char*) malloc(sizeof (char) * (size + 1));
         int i = 0;
         int c;
         while ((c = getc(file)) != EOF) {
             fileContent[i++] = c;
         }
+        fileContent[i] = '\0';
     } else {
         fclose(file);
         fprintf(stderr, "File <%s> is empty. Aborting.\n", path);
