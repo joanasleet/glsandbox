@@ -16,7 +16,6 @@ class GLContext {
 public:
     GLFWwindow* main;
     GLuint mainProgramId;
-    GLuint programIds[];
 
     GLContext(int resX = 800, int resY = 600, const char* title = "OpenGL");
     ~GLContext();
@@ -38,6 +37,7 @@ private:
 
 GLContext::GLContext(int resX, int resY, const char* title) {
     setRes(resX, resY);
+    mainProgramId = 0;
 
     if (!glfwInit()) {
         fprintf(stderr, "ERROR starting GLFW.\n");
