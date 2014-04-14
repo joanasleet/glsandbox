@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
         {-0.85, 0.90}
     };
 
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    //glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
     glGenBuffers(1, buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);

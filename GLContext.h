@@ -57,7 +57,7 @@ GLContext::GLContext(int resX, int resY, const char* title) {
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        fprintf(stderr, "ERROR starting GLEW.\n");
+        printf("ERROR starting GLEW.\n");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
@@ -80,59 +80,60 @@ void GLContext::loadShader(const char* srcFile, GLenum type) {
     //char* logMsg;
     char logMsg[200];
 
-    fprintf(stdout, "##################\n");
-    fprintf(stdout, "# Loading shader # (%s)\n", srcFile);
-    fprintf(stdout, "##################\n");
+    printf("##################\n");
+    printf("# Loading shader # (%s)\n", srcFile);
+    printf("##################\n");
 
-    fprintf(stdout, "____________________ Shader source _____________________\n");
-    fprintf(stdout, "%s\n", shaderSrc);
-    fprintf(stdout, "————————————————————————————————————————————————————————\n");
+    printf("____________________ Shader source _____________________\n");
+    printf("%s\n", shaderSrc);
+    printf("————————————————————————————————————————————————————————\n");
 
     /* compile shader */
-    fprintf(stdout, "Compiling...");
+    printf("Compiling...");
     glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);
     glCompileShader(shaderId);
-    fprintf(stdout, "\tOK\n");
+    printf("\tOK\n");
     free(shaderSrc);
 
     /* check shader */
-    fprintf(stdout, "Checking...");
+    printf("Checking...");
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &resultFlag);
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logSize);
     //logMsg = (char*) malloc(sizeof (char) * logSize);
     glGetShaderInfoLog(shaderId, logSize, NULL, logMsg);
-    fprintf(stdout, "\tOK (Flag: %d)\n", resultFlag);
     if (strlen(logMsg) > 0) {
-        fprintf(stdout, "Info:{%s}\n", logMsg);
+        printf("\tError\n%s\n", logMsg);
+    } else {
+        printf("\tOK\n", resultFlag);
     }
     //free(logMsg);
 
-
     /* link main program */
-    fprintf(stdout, "\n########################\n");
-    fprintf(stdout, "# Loading main program # ");
+    printf("\n########################\n");
+    printf("# Loading main program # ");
     if (mainProgramId == 0) {
         mainProgramId = glCreateProgram();
     }
-    fprintf(stdout, "(ID: %d)", mainProgramId);
-    fprintf(stdout, "\n########################\n");
+    printf("(ID: %d)", mainProgramId);
+    printf("\n########################\n");
 
-    fprintf(stdout, "Linking...");
+    printf("Linking...");
     glAttachShader(mainProgramId, shaderId);
     glLinkProgram(mainProgramId);
-    fprintf(stdout, "\tOK\n");
+    printf("\tOK\n");
 
     /* check main program */
-    fprintf(stdout, "Checking...");
+    printf("Checking...");
     glGetProgramiv(mainProgramId, GL_LINK_STATUS, &resultFlag);
     glGetProgramiv(mainProgramId, GL_INFO_LOG_LENGTH, &logSize);
     //logMsg = (char*) malloc(sizeof (char) * logSize);
     glGetProgramInfoLog(mainProgramId, logSize, NULL, logMsg);
-    fprintf(stdout, "\tOK (Flag: %d)\n", resultFlag);
     if (strlen(logMsg) > 0) {
-        fprintf(stdout, "Info:{%s}\n", logMsg);
+        printf("\tError\n%s\n", logMsg);
+    } else {
+        printf("\tOK\n", resultFlag);
     }
-    fprintf(stdout, "\n");
+    printf("\n");
     //free(logMsg);
 
     glDeleteShader(shaderId);
