@@ -35,6 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/GLContext.o \
+	${OBJECTDIR}/GLHelper.o \
+	${OBJECTDIR}/GLProgram.o \
 	${OBJECTDIR}/main.o
 
 
@@ -61,6 +64,21 @@ LDLIBSOPTIONS=`pkg-config --libs glew` `pkg-config --libs glfw3`
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/GLContext.o: GLContext.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLContext.o GLContext.cpp
+
+${OBJECTDIR}/GLHelper.o: GLHelper.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLHelper.o GLHelper.cpp
+
+${OBJECTDIR}/GLProgram.o: GLProgram.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLProgram.o GLProgram.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}

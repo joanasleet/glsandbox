@@ -1,6 +1,42 @@
 #version 440
-layout(location = 0) in vec4 vPos;
+
+layout(location = 0) in vec4 coord;
+
+out vec4 color;
 
 void main() {
-    gl_Position = vPos;
+    gl_Position = coord+vec4(0.5, 0.0, 0.0, 0.0);
+
+    float count = -1.0;
+    float escape = 50.0;
+    
+    float zx = 0.0;
+    float zy = 0.0;
+
+    float cx = coord.x;
+    float cy = coord.y;
+
+    float zix = 0.0;
+    float ziy = 0.0;
+
+    while ( (++count < escape) && (zx*zx + zy*zy < 4.0) ) {
+
+        zix = (zx*zx - zy*zy) + cx;
+        ziy = (2*zx*zy) + cy;
+
+        if(zx==zix && zy==ziy) {
+            count = escape;
+            break;
+        }
+
+        zx = zix;
+        zy = ziy;
+
+    }
+
+    count /= escape;
+    count = 1-count;
+    count = count-log( 0.5*log(zx*zx + zy*zy) / log(2.0) );
+          
+    color = vec4(count, count, count, 1.0);
 }

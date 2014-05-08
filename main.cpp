@@ -1,45 +1,44 @@
 #include "GLContext.h"
+#include "GLProgram.h"
+#include "GLHelper.h"
+
+#include <iostream>
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    
+
     GLContext* glc = new GLContext();
+    glPointSize(1.0);
 
-    GLuint vao[1];
-    GLuint buffer[1];
+    int size = 1200;
+    GLsizei bs = sizeof (GLfloat) * size * size * 2;
+    GLfloat* area = createArea(-2, 1, -1, 1, size);
 
-    glGenVertexArrays(1, vao);
-    glBindVertexArray(vao[0]);
+    GLuint vao = genId(VertexArray);
+    glBindVertexArray(vao);
 
-    GLfloat vertices[6][2] = {
-        {-0.90, -0.90},
-        { 0.85, -0.90},
-        {-0.90, 0.85},
-        { 0.90, -0.85},
-        { 0.90, 0.90},
-        {-0.85, 0.90}
-    };
+    GLuint buf = genId(Buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glBufferData(GL_ARRAY_BUFFER, bs, area, GL_STATIC_DRAW);
 
-    //glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-
-    glGenBuffers(1, buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof (vertices), vertices, GL_STATIC_DRAW);
-
-    glc->loadShader("vertex", GL_VERTEX_SHADER);
-    glc->loadShader("fragment", GL_FRAGMENT_SHADER);
-    glc->applyShaders();
+    GLProgram* shaderProg = new GLProgram();
+    shaderProg->loadShader("vertex", GL_VERTEX_SHADER);
+    shaderProg->loadShader("fragment", GL_FRAGMENT_SHADER);
+    shaderProg->use();
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
+    //printArea(area, size);
     while (!glfwWindowShouldClose(glc->main)) {
 
         /* --- rendering --- */
         glClear(GL_COLOR_BUFFER_BIT);
-        glBindVertexArray(vao[0]);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // glBindVertexArray(vao);
+        glDrawArrays(GL_POINTS, 0, size * size);
+
         glFlush();
         /* ---------------- */
 
@@ -47,6 +46,9 @@ int main(int argc, char** argv) {
         glfwPollEvents();
     }
 
+
+    free(area);
+    shaderProg->~GLProgram();
     glc->~GLContext();
     return EXIT_SUCCESS;
 }

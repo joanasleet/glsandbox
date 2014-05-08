@@ -5,6 +5,8 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>GLContext.h</itemPath>
+      <itemPath>GLHelper.h</itemPath>
+      <itemPath>GLProgram.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -15,6 +17,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>GLContext.cpp</itemPath>
+      <itemPath>GLHelper.cpp</itemPath>
+      <itemPath>GLProgram.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -48,7 +53,17 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="GLContext.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="GLContext.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GLHelper.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GLHelper.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GLProgram.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GLProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="fragment" ex="false" tool="3" flavor2="0">
       </item>
@@ -77,7 +92,17 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="GLContext.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="GLContext.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GLHelper.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GLHelper.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GLProgram.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GLProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="fragment" ex="false" tool="3" flavor2="0">
       </item>
