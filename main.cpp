@@ -7,7 +7,7 @@
 #define COLORS 100
 
 #define RESX 1024
-#define RESY 1024
+#define RESY 768
 
 using namespace std;
 
