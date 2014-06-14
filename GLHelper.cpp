@@ -1,5 +1,7 @@
 #include "GLHelper.h"
 
+#include <math.h>
+
 GLuint genId(enum GEN_TYPE type) {
 
     GLuint* ids = genIds(type, 1);
@@ -29,22 +31,22 @@ GLuint* genIds(enum GEN_TYPE type, int count) {
  * creates area A = [minX, maxX] x [minY, maxY] with evenly spacing.
  * step length for n points in [a, b] is (b-a)/(n-1).
  **/
-GLfloat* createArea(float minX, float maxX, float minY, float maxY, int n) {
+GLdouble* createArea(double minX, double maxX, double minY, double maxY, int resx, int resy) {
 
-    GLfloat* area = (GLfloat*) malloc(sizeof (GLfloat) * (2 * n) * n);
+    GLdouble* area = (GLdouble*) malloc(sizeof (GLdouble) * 2 * resx * resy);
 
-    GLfloat xit = minX;
-    GLfloat yit = maxY;
+    GLdouble xit = minX;
+    GLdouble yit = maxY;
 
-    GLfloat xstep = (maxX - minX) / (float) (n - 1);
-    GLfloat ystep = (maxY - minY) / (float) (n - 1);
+    GLdouble xstep = (maxX - minX) / (double) (resx - 1);
+    GLdouble ystep = (maxY - minY) / (double) (resy - 1);
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < resy; i++) {
 
-        for (int j = 0; j < 2 * n; j += 2) {
+        for (int j = 0; j < 2 * resx; j += 2) {
 
-            area[i * (2 * n) + j] = (xit += xstep);
-            area[i * (2 * n) + j + 1] = yit;
+            area[i * (2 * resy) + j] = (xit += xstep);
+            area[i * (2 * resy) + j + 1] = yit;
         }
 
         yit -= ystep;
@@ -54,7 +56,7 @@ GLfloat* createArea(float minX, float maxX, float minY, float maxY, int n) {
     return area;
 }
 
-void printArea(GLfloat* area, int size) {
+void printArea(GLdouble* area, int size) {
 
     for (int i = 0; i < size; i++) {
 
@@ -75,9 +77,14 @@ GLfloat* colorMap(float startR, float startG, float startB, float endR, float en
     GLfloat stepB = (endB - startB) / (length - 1);
 
     for (int i = 0; i < 3 * length; i += 3) {
-        map[i] = (startR += stepR);
-        map[i + 1] = (startG += stepG);
-        map[i + 2] = (startB += stepB);
+        map[i] = fabs(startR);
+        startR += stepR;
+
+        map[i + 1] = fabs(startG);
+        startG += stepG;
+
+        map[i + 2] = fabs(startB);
+        startB += stepB;
     }
 
     return map;

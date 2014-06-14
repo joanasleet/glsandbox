@@ -2,41 +2,56 @@
 
 layout(location = 0) in vec4 coord;
 
+uniform float colors[300];
+uniform int escape;
+
 out vec4 color;
 
 void main() {
     gl_Position = coord+vec4(0.5, 0.0, 0.0, 0.0);
-
-    float count = -1.0;
-    float escape = 50.0;
     
-    float zx = 0.0;
-    float zy = 0.0;
+    int it = 0;
+        
+    double zx = 0.0;
+    double zy = 0.0;
 
-    float cx = coord.x;
-    float cy = coord.y;
+    double cx = coord.x;
+    double cy = coord.y;
 
-    float zix = 0.0;
-    float ziy = 0.0;
+    double zix = 0.0;
+    double ziy = 0.0;
 
-    while ( (++count < escape) && (zx*zx + zy*zy < 4.0) ) {
+    while ( (it++ < escape) && (zx*zx + zy*zy < 4.0) ) {
 
         zix = (zx*zx - zy*zy) + cx;
         ziy = (2*zx*zy) + cy;
 
         if(zx==zix && zy==ziy) {
-            count = escape;
+            it = escape;
             break;
         }
 
         zx = zix;
         zy = ziy;
-
     }
 
-    count /= escape;
-    count = 1-count;
-    count = count-log( 0.5*log(zx*zx + zy*zy) / log(2.0) );
-          
-    color = vec4(count, count, count, 1.0);
+    /* direct index colormap*/
+    it *= 3;
+    color = vec4(colors[it], colors[it+1], colors[it+2], 1.0);
+     
+
+    /* float colormapped 
+    if(it < escape) {
+        float a = log(float(zx*zx + zy*zy));
+        float b = 0.1*a / log(2);
+        float finalColor = float(it)-log(b);
+
+        it = 3*int(finalColor);
+        color = vec4(colors[it], colors[it+1], colors[it+2], 1.0);
+    } else {
+        it = --escape;
+        it *= 3;
+        color = vec4(colorMap[it], colorMap[it+1], colorMap[it+2], 1.0);
+    }
+    */
 }

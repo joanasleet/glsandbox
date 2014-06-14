@@ -13,8 +13,8 @@ enum GEN_TYPE {
 GLuint genId(enum GEN_TYPE type);
 GLuint* genIds(enum GEN_TYPE type, int count);
 
-GLfloat* createArea(float minX, float maxX, float minY, float maxY, int n);
-void printArea(GLfloat* area, int size);
+GLdouble* createArea(double minX, double maxX, double minY, double maxY, int resx, int resy);
+void printArea(GLdouble* area, int size);
 
 GLfloat* colorMap(float startR, float startG, float startB, float endR, float endG, float endB, int length);
 

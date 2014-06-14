@@ -74,6 +74,10 @@ void GLProgram::loadShader(const char* srcFile, GLenum type) {
     glDeleteShader(shaderId);
 }
 
+GLuint GLProgram::getVar(const char* varName) {
+    return glGetUniformLocation(id, varName);
+}
+
 void GLProgram::use() {
     glUseProgram(id);
 }

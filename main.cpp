@@ -4,16 +4,20 @@
 
 #include <iostream>
 
+#define COLORS 100
+
+#define RESX 1024
+#define RESY 1024
+
 using namespace std;
 
 int main(int argc, char** argv) {
 
     GLContext* glc = new GLContext();
-    glPointSize(1.0);
+    glPointSize(2);
 
-    int size = 1200;
-    GLsizei bs = sizeof (GLfloat) * size * size * 2;
-    GLfloat* area = createArea(-2, 1, -1, 1, size);
+    GLsizei bs = sizeof (GLdouble) * RESX * RESY * 2;
+    GLdouble* area = createArea(-2, 1, -1, 1, RESX, RESY);
 
     GLuint vao = genId(VertexArray);
     glBindVertexArray(vao);
@@ -27,17 +31,23 @@ int main(int argc, char** argv) {
     shaderProg->loadShader("fragment", GL_FRAGMENT_SHADER);
     shaderProg->use();
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    GLfloat* cmap = colorMap(0.5, 0.5, 0.9, 1.0, 1.0, 1.0, COLORS);
+    GLuint cmapVar = shaderProg->getVar("colors");
+    glUniform1fv(cmapVar, 3 * COLORS, (const GLfloat*) cmap); // bug ?
+
+    GLuint escapeVar = shaderProg->getVar("escape");
+    glUniform1i(escapeVar, (const GLint) COLORS);
+
+    glVertexAttribPointer(0, 2, GL_DOUBLE, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    //printArea(area, size);
-    while (!glfwWindowShouldClose(glc->main)) {
+    while (!glfwWindowShouldClose(glc->main) && !glfwGetKey(glc->main, GLFW_KEY_ESCAPE)) {
 
         /* --- rendering --- */
         glClear(GL_COLOR_BUFFER_BIT);
 
         // glBindVertexArray(vao);
-        glDrawArrays(GL_POINTS, 0, size * size);
+        glDrawArrays(GL_POINTS, 0, RESX * RESY);
 
         glFlush();
         /* ---------------- */
@@ -45,7 +55,6 @@ int main(int argc, char** argv) {
         glfwSwapBuffers(glc->main);
         glfwPollEvents();
     }
-
 
     free(area);
     shaderProg->~GLProgram();
