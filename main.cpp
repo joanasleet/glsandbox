@@ -30,9 +30,9 @@ int main(int argc, char** argv) {
 
     GLObject* vao = new GLObject(GL_VERTEX_ARRAY);
 
-    /* cube data */
     GLObject* vertexBuffer = new GLObject(GL_ARRAY_BUFFER);
-    static GLfloat data[] = {
+
+    static GLfloat coords[] = {
 
         // front vertices
         -1.0f, 1.0f, 1.0f, 1.0f, // 0
@@ -44,9 +44,24 @@ int main(int argc, char** argv) {
         -1.0f, 1.0f, -1.0f, 1.0f, // 4
         -1.0f, -1.0f, -1.0f, 1.0f, // 5
         1.0f, -1.0f, -1.0f, 1.0f, // 6
-        1.0f, 1.0f, -1.0f, 1.0f, // 7
+        1.0f, 1.0f, -1.0f, 1.0f // 7
     };
-    vertexBuffer->buffer(sizeof (data), data, GL_STATIC_DRAW);
+
+    static GLfloat colors[] = {
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f
+    };
+
+    vertexBuffer->buffer(sizeof (coords) + sizeof (colors), coords, GL_STATIC_DRAW);
+    vertexBuffer->subBuffer(0, sizeof (coords), coords);
+    vertexBuffer->subBuffer(sizeof (coords), sizeof (colors), colors);
 
     GLObject* indexBuffer = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
     GLuint indices[] = {
@@ -67,9 +82,6 @@ int main(int argc, char** argv) {
     };
     indexBuffer->buffer(sizeof (indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(0);
-
     /* shader program setup */
     mainProg->loadShader("vertex", GL_VERTEX_SHADER);
     mainProg->loadShader("fragment", GL_FRAGMENT_SHADER);
@@ -78,8 +90,14 @@ int main(int argc, char** argv) {
     /* MVP setup */
     setupMVP();
 
+    // set vertex buffer layout
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (coords)));
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
     /* render loop */
-    //glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(glc->main) && !glfwGetKey(glc->main, GLFW_KEY_ESCAPE)) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -95,6 +113,7 @@ int main(int argc, char** argv) {
 
     mainProg->~GLProgram();
     glc->~GLContext();
+
     return EXIT_SUCCESS;
 }
 
@@ -111,5 +130,6 @@ void setupMVP() {
 }
 
 void setGLStates() {
+    glEnable(GL_DEPTH_TEST);
     glClearColor(0.25, 0.02, 0.02, 1.0);
 }

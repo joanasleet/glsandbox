@@ -1,9 +1,9 @@
 #version 440
 
-in vec4 data;
+in vec4 vs_color;
 
 out vec4 color;
 
 void main() {
-    color = vec4(clamp(data.xyz, 0.5, 0.7), 1.0);
+    color = vs_color;
 }

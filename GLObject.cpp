@@ -20,6 +20,7 @@ GLObject::GLObject(GLenum bindTarget, bool doBind) {
         case GL_TEXTURE_1D:
         case GL_TEXTURE_2D:
         case GL_TEXTURE_3D:
+        case GL_TEXTURE_CUBE_MAP:
             glGenTextures(1, &id);
             if (doBind) glBindTexture(target, id);
             break;
@@ -38,5 +39,10 @@ GLObject::GLObject(GLenum bindTarget, bool doBind) {
 
 void GLObject::buffer(GLsizei size, GLvoid* data, GLenum usage) {
     glBufferData(target, size, data, usage);
+    catchError();
+}
+
+void GLObject::subBuffer(GLintptr offset, GLsizeiptr size, const GLvoid* data) {
+    glBufferSubData(target, offset, size, data);
     catchError();
 }

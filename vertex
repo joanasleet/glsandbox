@@ -1,8 +1,9 @@
 #version 440
 
-layout(location = 0) in vec4 data;
+layout(location = 0) in vec4 coords;
+layout(location = 1) in vec4 color;
 
-out vec4 coord;
+out vec4 vs_color;
 
 uniform mat4 M;
 uniform mat4 V;
@@ -10,7 +11,9 @@ uniform mat4 P;
 
 void main() {
     
-    gl_Position = P * M * V * data;
+    gl_Position = P * M * V * coords;
 
-    coord = data;
+    //vs_color = vec4(0.5f, 0.5f, 0.7f, 1.0f);
+
+    vs_color = color;
 }

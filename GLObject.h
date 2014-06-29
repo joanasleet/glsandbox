@@ -12,6 +12,7 @@ public:
     ~GLObject();
 
     void buffer(GLsizei size, GLvoid* data, GLenum usage);
+    void subBuffer(GLintptr offset, GLsizeiptr size, const GLvoid* data);
 
 private:
     

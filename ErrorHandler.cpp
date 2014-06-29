@@ -49,10 +49,16 @@ void catchError() {
 void printError(const char * msg) {
 
     char* time = getTime();
-    fprintf(stderr, "[%s] ERROR: %s\n", time, msg);
+    fprintf(stderr, "\n[%s] ERROR: %s\n", time, msg);
 }
 
 char* getTime() {
-    time_t now = time(0);
-    return ctime(&now);
+
+    size_t buffLen = 20;
+    char* timeStr = (char*) malloc(sizeof(char)*buffLen);
+    
+    time_t rawtime = time(0);
+    strftime(timeStr, buffLen, "%d.%m.%y %H:%M:%S", localtime(&rawtime));
+
+    return timeStr;
 }
