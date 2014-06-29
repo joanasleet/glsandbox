@@ -1,64 +1,139 @@
 #include "GLContext.h"
 #include "GLProgram.h"
 #include "GLHelper.h"
+#include "GLObject.h"
 
 #include <iostream>
 
-#define COLORS 100
+#define GLM_FORCE_RADIANS
 
-#define RESX 1024
-#define RESY 768
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
 
+void setGLStates();
+void setupMVP();
+
+/************* SANDBOX ********************/
+
+/* opengl context */
+GLContext* glc = new GLContext();
+
+/* main shader program */
+GLProgram* mainProg = new GLProgram();
+
 int main(int argc, char** argv) {
 
-    GLContext* glc = new GLContext();
-    glPointSize(2);
+    setGLStates();
 
-    GLsizei bs = sizeof (GLdouble) * RESX * RESY * 2;
-    GLdouble* area = createArea(-2, 1, -1, 1, RESX, RESY);
+    /* -------- TRIANGLE -------- */
+    GLObject* vao = new GLObject(VERTEX_ARRAY_TARGET);
 
-    GLuint vao = genId(VertexArray);
-    glBindVertexArray(vao);
+    /* cube data */
+    GLObject* vertexBuffer = new GLObject(GL_ARRAY_BUFFER);
+    static GLfloat data[] = {
 
-    GLuint buf = genId(Buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buf);
-    glBufferData(GL_ARRAY_BUFFER, bs, area, GL_STATIC_DRAW);
+        // front vertices
+        -1.0f, 1.0f, 1.0f, 1.0f, // 0
+        -1.0f, -1.0f, 1.0f, 1.0f, // 1
+        1.0f, -1.0f, 1.0f, 1.0f, // 2
+        1.0f, 1.0f, 1.0f, 1.0f, // 3
 
-    GLProgram* shaderProg = new GLProgram();
-    shaderProg->loadShader("vertex", GL_VERTEX_SHADER);
-    shaderProg->loadShader("fragment", GL_FRAGMENT_SHADER);
-    shaderProg->use();
+        // back vertices
+        -1.0f, 1.0f, -1.0f, 1.0f, // 4
+        -1.0f, -1.0f, -1.0f, 1.0f, // 5
+        1.0f, -1.0f, -1.0f, 1.0f, // 6
+        1.0f, 1.0f, -1.0f, 1.0f, // 7
+    };
+    vertexBuffer->buffer(sizeof (data), data, GL_STATIC_DRAW);
 
-    GLfloat* cmap = colorMap(0.5, 0.5, 0.9, 1.0, 1.0, 1.0, COLORS);
-    GLuint cmapVar = shaderProg->getVar("colors");
-    glUniform1fv(cmapVar, 3 * COLORS, (const GLfloat*) cmap); // bug ?
+    GLObject* indexBuffer = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
+    GLuint indices[] = {
+        // front
+        0, 1, 2, 3,
+        // back
+        4, 5, 6, 7,
 
-    GLuint escapeVar = shaderProg->getVar("escape");
-    glUniform1i(escapeVar, (const GLint) COLORS);
+        // top
+        0, 3, 7, 4,
+        // bot
+        1, 5, 6, 2,
 
-    glVertexAttribPointer(0, 2, GL_DOUBLE, GL_FALSE, 0, BUFFER_OFFSET(0));
+        // left
+        0, 4, 5, 1,
+        // right
+        3, 7, 6, 2
+    };
+    indexBuffer->buffer(sizeof (indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
+    /* shader program setup */
+    mainProg->loadShader("vertex", GL_VERTEX_SHADER);
+    mainProg->loadShader("fragment", GL_FRAGMENT_SHADER);
+    mainProg->use();
+
+    /* MVP setup */
+    setupMVP();
+
+    /* render loop */
+    //glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(glc->main) && !glfwGetKey(glc->main, GLFW_KEY_ESCAPE)) {
 
-        /* --- rendering --- */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // glBindVertexArray(vao);
-        glDrawArrays(GL_POINTS, 0, RESX * RESY);
+        glBindVertexArray(vao->id);
+        //glDrawArrays(GL_QUADS, 0, 24);
+        glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, 0);
 
         glFlush();
-        /* ---------------- */
-
         glfwSwapBuffers(glc->main);
         glfwPollEvents();
     }
 
-    free(area);
-    shaderProg->~GLProgram();
+    mainProg->~GLProgram();
     glc->~GLContext();
     return EXIT_SUCCESS;
 }
 
+void setupMVP() {
+
+    glm::mat4 view = glm::rotate<float>(glm::mat4(), 45.0, glm::vec3(1, 1, 0));
+    glUniformMatrix4fv(mainProg->getVar("V"), 1, GL_FALSE, glm::value_ptr(view));
+
+    glm::mat4 model = glm::translate<float>(glm::mat4(), glm::vec3(0.0, 0.0, -5.0));
+    glUniformMatrix4fv(mainProg->getVar("M"), 1, GL_FALSE, glm::value_ptr(model));
+
+    glm::mat4 perspective = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    glUniformMatrix4fv(mainProg->getVar("P"), 1, GL_FALSE, glm::value_ptr(perspective));
+}
+
+void setGLStates() {
+    glClearColor(0.25, 0.02, 0.02, 1.0);
+}
+
+/*
+ 
+    static const GLubyte texData[] = {
+        0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+        0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
+        0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+        0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
+        0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+        0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
+        0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+        0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF
+    };
+
+ 
+    GLObject* tex1 = new GLObject(GL_TEXTURE_2D);
+    glTexStorage2D(tex1->target, 4, GL_R8, 8, 8);
+    glTexSubImage2D(tex1->target, 0, 0, 0, 8, 8, GL_RED, GL_UNSIGNED_BYTE, texData);
+
+ 
+    GLObject* sampler = new GLObject(GL_SAMPLER_2D);
+ 
+ */

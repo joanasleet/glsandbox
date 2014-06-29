@@ -35,8 +35,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/ErrorHandler.o \
 	${OBJECTDIR}/GLContext.o \
 	${OBJECTDIR}/GLHelper.o \
+	${OBJECTDIR}/GLObject.o \
 	${OBJECTDIR}/GLProgram.o \
 	${OBJECTDIR}/main.o
 
@@ -65,6 +67,11 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/ErrorHandler.o: ErrorHandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ErrorHandler.o ErrorHandler.cpp
+
 ${OBJECTDIR}/GLContext.o: GLContext.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -74,6 +81,11 @@ ${OBJECTDIR}/GLHelper.o: GLHelper.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLHelper.o GLHelper.cpp
+
+${OBJECTDIR}/GLObject.o: GLObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLObject.o GLObject.cpp
 
 ${OBJECTDIR}/GLProgram.o: GLProgram.cpp 
 	${MKDIR} -p ${OBJECTDIR}

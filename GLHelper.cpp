@@ -2,29 +2,67 @@
 
 #include <math.h>
 
-GLuint genId(enum GEN_TYPE type) {
+GLfloat* cube(float length, float midX, float midY, float midZ) {
+    GLfloat* cubeData = (GLfloat*) malloc(sizeof (GLfloat) * 8 * 4);
 
-    GLuint* ids = genIds(type, 1);
-    GLuint id = ids[0];
-    free(ids);
+    float hlen = length / 2.0f;
 
-    return id;
+    // front
+    // UpL
+    cubeData[0] = midX - hlen; // x
+    cubeData[1] = midY + hlen; // y
+    cubeData[2] = midZ + hlen; // z
+    cubeData[3] = 1.0f; // w 
+
+    // UpR
+    cubeData[4] = midX + hlen; // x
+    cubeData[5] = midY + hlen; // y
+    cubeData[6] = midZ + hlen; // z
+    cubeData[7] = 1.0f; // w 
+
+    // BotR
+    cubeData[8] = midX + hlen; // x
+    cubeData[9] = midY - hlen; // y
+    cubeData[10] = midZ + hlen; // z
+    cubeData[11] = 1.0f; // w 
+
+    // BotL
+    cubeData[12] = midX - hlen; // x
+    cubeData[13] = midY - hlen; // y
+    cubeData[14] = midZ + hlen; // z
+    cubeData[15] = 1.0f; // w 
+
+    // back
+    // UpL
+    cubeData[16] = midX - hlen; // x
+    cubeData[17] = midY + hlen; // y
+    cubeData[18] = midZ - hlen; // z
+    cubeData[19] = 1.0f; // w 
+
+    // UpR
+    cubeData[20] = midX + hlen; // x
+    cubeData[21] = midY + hlen; // y
+    cubeData[22] = midZ - hlen; // z
+    cubeData[23] = 1.0f; // w 
+
+    // BotR
+    cubeData[24] = midX + hlen; // x
+    cubeData[25] = midY - hlen; // y
+    cubeData[26] = midZ - hlen; // z
+    cubeData[27] = 1.0f; // w 
+
+    // BotL
+    cubeData[28] = midX - hlen; // x
+    cubeData[29] = midY - hlen; // y
+    cubeData[30] = midZ - hlen; // z
+    cubeData[31] = 1.0f; // w 
+
+    return cubeData;
 }
 
-GLuint* genIds(enum GEN_TYPE type, int count) {
+GLuint loadTexture(const char* file, GLuint texture, GLboolean genMips) {
 
-    GLuint* ids = (GLuint*) malloc(sizeof (GLuint) * count);
-
-    switch (type) {
-        case VertexArray:
-            glGenVertexArrays(count, ids);
-            break;
-        case Buffer:
-            glGenBuffers(count, ids);
-            break;
-    }
-
-    return ids;
+    return 0;
 }
 
 /**
@@ -54,19 +92,6 @@ GLdouble* createArea(double minX, double maxX, double minY, double maxY, int res
     }
 
     return area;
-}
-
-void printArea(GLdouble* area, int size) {
-
-    for (int i = 0; i < size; i++) {
-
-        for (int j = 0; j < 2 * size; j += 2) {
-
-            printf("(%.3f, %.3f) ", area[i * (2 * size) + j], area[i * (2 * size) + j + 1]);
-        }
-
-        printf("\n");
-    }
 }
 
 GLfloat* colorMap(float startR, float startG, float startB, float endR, float endG, float endB, int length) {
