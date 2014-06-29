@@ -9,6 +9,7 @@
       <itemPath>GLHelper.h</itemPath>
       <itemPath>GLObject.h</itemPath>
       <itemPath>GLProgram.h</itemPath>
+      <itemPath>common.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -77,6 +78,8 @@
       </item>
       <item path="GLProgram.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="common.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="fragment" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
@@ -123,6 +126,8 @@
       <item path="GLProgram.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GLProgram.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="fragment" ex="false" tool="3" flavor2="0">
       </item>

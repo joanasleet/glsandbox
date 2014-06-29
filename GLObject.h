@@ -1,12 +1,7 @@
 #ifndef GLOBJECT_H
 #define	GLOBJECT_H
 
-#include <stdio.h>
-#include <cstdlib>
-
-#include <GL/glew.h>
-
-#define VERTEX_ARRAY_TARGET -1
+#include "common.h"
 
 class GLObject {
 public:

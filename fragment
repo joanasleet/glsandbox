@@ -1,14 +1,9 @@
 #version 440
 
-// uniform sampler2D tex;
-
-// in vec2 vs_tex_coord;
-
 in vec4 data;
 
 out vec4 color;
 
 void main() {
-    // color = texture(tex, vs_tex_coord);
     color = vec4(clamp(data.xyz, 0.5, 0.7), 1.0);
 }

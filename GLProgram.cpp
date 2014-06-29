@@ -1,11 +1,9 @@
 #include "GLProgram.h"
 
 GLProgram::GLProgram() {
-    printf("\n#######################\n");
-    printf("#   Loading program   # ");
+    printf("Loading program ");
     id = glCreateProgram();
-    printf("(ID: %d)", id);
-    printf("\n#######################\n");
+    printf("(Id: %d). OK.\n", id);
 }
 
 GLProgram::~GLProgram() {
@@ -23,13 +21,10 @@ void GLProgram::loadShader(const char* srcFile, GLenum type) {
     GLsizei logSize = 0;
     char* logMsg;
 
-    printf("##################\n");
-    printf("# Loading shader # (%s)\n", srcFile);
-    printf("##################\n");
-
-    printf("____________________ shader source _____________________\n");
+    printf("Loading shader from file <%s>\n", srcFile);
+    printf("––––––––––––––––––––––––––––––––––––––––––––––––––––––\n");
     printf("%s\n", shaderSrc);
-    printf("————————————————————————————————————————————————————————\n");
+    printf("—–————————————————————————————————————————————————————\n");
 
     /* compile shader */
     printf("Compiling...");
@@ -45,7 +40,7 @@ void GLProgram::loadShader(const char* srcFile, GLenum type) {
     logMsg = (char*) malloc(sizeof (char) * logSize);
     glGetShaderInfoLog(shaderId, logSize, &logSize, logMsg);
     if (logSize > 0) {
-        printf("\tError\n%s\n", logMsg);
+        printError((const char*) logMsg);
     } else {
         printf("\tOK\n");
     }
@@ -64,7 +59,7 @@ void GLProgram::loadShader(const char* srcFile, GLenum type) {
     logMsg = (char*) malloc(sizeof (char) * logSize);
     glGetProgramInfoLog(id, logSize, &logSize, logMsg);
     if (logSize > 0) {
-        printf("\tError\n%s\n", logMsg);
+        printError((const char*) logMsg);
     } else {
         printf("\tOK\n");
     }

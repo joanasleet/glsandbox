@@ -1,10 +1,7 @@
 #ifndef GLPROGRAM_H
 #define	GLPROGRAM_H
 
-#include <stdio.h>
-#include <cstdlib>
-
-#include <GL/glew.h>
+#include "common.h"
 
 class GLProgram {
 public:

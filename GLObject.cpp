@@ -6,7 +6,7 @@ GLObject::GLObject(GLenum bindTarget, bool doBind) {
 
     switch (target) {
             // vertex array
-        case VERTEX_ARRAY_TARGET:
+        case GL_VERTEX_ARRAY:
             glGenVertexArrays(1, &id);
             if (doBind) glBindVertexArray(id);
             break;

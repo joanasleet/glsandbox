@@ -1,12 +1,7 @@
 #ifndef GLCONTEXT_H
 #define	GLCONTEXT_H
 
-#include <cstdlib>
-#include <stdio.h>
-
-#include <GL/glew.h>
-#define GLFW_DLL
-#include <GLFW/glfw3.h>
+#include "common.h"
 
 #define BUFFER_OFFSET(offset) ((void *) (offset))
 
