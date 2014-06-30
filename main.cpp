@@ -11,6 +11,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 using namespace std;
 
 void setGLStates();
@@ -33,7 +36,6 @@ int main(int argc, char** argv) {
     GLObject* vertexBuffer = new GLObject(GL_ARRAY_BUFFER);
 
     static GLfloat coords[] = {
-
         // front vertices
         -1.0f, 1.0f, 1.0f, 1.0f, // 0
         -1.0f, -1.0f, 1.0f, 1.0f, // 1
@@ -44,9 +46,21 @@ int main(int argc, char** argv) {
         -1.0f, 1.0f, -1.0f, 1.0f, // 4
         -1.0f, -1.0f, -1.0f, 1.0f, // 5
         1.0f, -1.0f, -1.0f, 1.0f, // 6
-        1.0f, 1.0f, -1.0f, 1.0f // 7
+        1.0f, 1.0f, -1.0f, 1.0f, // 7
+
+        // texture coords
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.0f, 1.0f
     };
 
+    /*
     static GLfloat colors[] = {
         1.0f, 1.0f, 1.0f,
         1.0f, 1.0f, 1.0f,
@@ -58,10 +72,13 @@ int main(int argc, char** argv) {
         0.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f
     };
+     */
 
-    vertexBuffer->buffer(sizeof (coords) + sizeof (colors), coords, GL_STATIC_DRAW);
+    vertexBuffer->buffer(sizeof (coords), coords, GL_STATIC_DRAW);
+    /*
     vertexBuffer->subBuffer(0, sizeof (coords), coords);
     vertexBuffer->subBuffer(sizeof (coords), sizeof (colors), colors);
+     */
 
     GLObject* indexBuffer = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
     GLuint indices[] = {
@@ -82,6 +99,27 @@ int main(int argc, char** argv) {
     };
     indexBuffer->buffer(sizeof (indices), indices, GL_STATIC_DRAW);
 
+    int x, y, n;
+    int channels = 4;
+    const char* texFile = "textureBump.png";
+    unsigned char* image_data = stbi_load(texFile, &x, &y, &n, channels);
+    if (!image_data) {
+        char str[20];
+        sprintf(str, "Failed to load texture from file <%s>", texFile);
+        printError(str);
+    }
+    fprintf(stdout, "Texture attribute: %i x %i (%i)\n", x, y, n);
+
+    GLObject* tex = new GLObject(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0);
+
+    glTexImage2D(tex->target, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+
+    glTexParameteri(tex->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(tex->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(tex->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
     /* shader program setup */
     mainProg->loadShader("vertex", GL_VERTEX_SHADER);
     mainProg->loadShader("fragment", GL_FRAGMENT_SHADER);
@@ -92,7 +130,7 @@ int main(int argc, char** argv) {
 
     // set vertex buffer layout
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (coords)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*32));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -103,7 +141,6 @@ int main(int argc, char** argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindVertexArray(vao->id);
-        //glDrawArrays(GL_QUADS, 0, 24);
         glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, 0);
 
         glFlush();
@@ -119,10 +156,10 @@ int main(int argc, char** argv) {
 
 void setupMVP() {
 
-    glm::mat4 view = glm::rotate<float>(glm::mat4(), 45.0, glm::vec3(1, 1, 0));
+    glm::mat4 view = glm::rotate<float>(glm::mat4(), 10.0, glm::vec3(0, 1, 0));
     glUniformMatrix4fv(mainProg->getVar("V"), 1, GL_FALSE, glm::value_ptr(view));
 
-    glm::mat4 model = glm::translate<float>(glm::mat4(), glm::vec3(0.0, 0.0, -5.0));
+    glm::mat4 model = glm::translate<float>(glm::mat4(), glm::vec3(0.0, 0.0, -3.0));
     glUniformMatrix4fv(mainProg->getVar("M"), 1, GL_FALSE, glm::value_ptr(model));
 
     glm::mat4 perspective = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);

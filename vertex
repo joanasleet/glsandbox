@@ -1,9 +1,9 @@
 #version 440
 
 layout(location = 0) in vec4 coords;
-layout(location = 1) in vec4 color;
+layout(location = 1) in vec2 tex_coords;
 
-out vec4 vs_color;
+out vec2 vs_tex_coords;
 
 uniform mat4 M;
 uniform mat4 V;
@@ -15,5 +15,5 @@ void main() {
 
     //vs_color = vec4(0.5f, 0.5f, 0.7f, 1.0f);
 
-    vs_color = color;
+    vs_tex_coords = tex_coords;
 }
