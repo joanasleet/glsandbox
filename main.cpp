@@ -168,5 +168,5 @@ void setupMVP() {
 
 void setGLStates() {
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.25, 0.02, 0.02, 1.0);
+    glClearColor(0.35, 0.7, 0.8, 1.0);
 }
