@@ -12,13 +12,13 @@
 #include <stdio.h>
 
 // GLEW
-#include <GL/glew.h>
+#include "/u/zimmeral/libs/glew-1.10.0/include/GL/glew.h"
 
 // GLFW
 #ifndef GLFW_DLL
 #define GLFW_DLL
 #endif
-#include <GLFW/glfw3.h>
+#include "/u/zimmeral/libs/glfw-3.0.4/include/GLFW/glfw3.h"
 
 // Error Handling
 #include "ErrorHandler.h"
@@ -29,9 +29,9 @@
 // openGL Math
 #define GLM_FORCE_RADIANS
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "/u/zimmeral/libs/glm/glm/glm.hpp"
+#include "/u/zimmeral/libs/glm/glm/gtc/matrix_transform.hpp"
+#include "/u/zimmeral/libs/glm/glm/gtc/type_ptr.hpp"
 
 #endif	/* COMMON_H */
 

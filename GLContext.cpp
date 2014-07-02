@@ -27,10 +27,15 @@ GLContext::GLContext(int resX, int resY, const char* title) : resX(resX), resY(r
     printf("GLEW initialized.\n");
 }
 
-void GLContext::hideMouse() {
+void GLContext::config() {
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
     glfwSetInputMode(main, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
+void GLContext::printSpec() {
+    
+}
 
 GLContext::~GLContext() {
     glfwTerminate();

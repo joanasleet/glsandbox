@@ -35,14 +35,14 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/ErrorHandler.o \
-	${OBJECTDIR}/GLCamera.o \
-	${OBJECTDIR}/GLContext.o \
-	${OBJECTDIR}/GLHelper.o \
-	${OBJECTDIR}/GLObject.o \
+	${OBJECTDIR}/stb_image.o \
 	${OBJECTDIR}/GLProgram.o \
+	${OBJECTDIR}/GLObject.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/stb_image.o
+	${OBJECTDIR}/ErrorHandler.o \
+	${OBJECTDIR}/GLHelper.o \
+	${OBJECTDIR}/GLCamera.o \
+	${OBJECTDIR}/GLContext.o
 
 
 # C Compiler Flags
@@ -59,55 +59,61 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=`pkg-config --libs glew` `pkg-config --libs glfw3`  
+LDLIBSOPTIONS=../../libs/glfw-3.0.4/src/libglfw3.a ../../libs/glew-1.10.0/lib/libGLEW.so.1.10 `pkg-config --libs x11` `pkg-config --libs gl` `pkg-config --libs xrandr` `pkg-config --libs xi` `pkg-config --libs xxf86vm` /lib64/libpthread-2.18.so  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox
 
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: ../../libs/glfw-3.0.4/src/libglfw3.a
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: ../../libs/glew-1.10.0/lib/libGLEW.so.1.10
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: /lib64/libpthread-2.18.so
+
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/ErrorHandler.o: ErrorHandler.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ErrorHandler.o ErrorHandler.cpp
-
-${OBJECTDIR}/GLCamera.o: GLCamera.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLCamera.o GLCamera.cpp
-
-${OBJECTDIR}/GLContext.o: GLContext.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLContext.o GLContext.cpp
-
-${OBJECTDIR}/GLHelper.o: GLHelper.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLHelper.o GLHelper.cpp
-
-${OBJECTDIR}/GLObject.o: GLObject.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLObject.o GLObject.cpp
-
-${OBJECTDIR}/GLProgram.o: GLProgram.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLProgram.o GLProgram.cpp
-
-${OBJECTDIR}/main.o: main.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/stb_image.o: stb_image.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags glew` `pkg-config --cflags glfw3`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stb_image.o stb_image.c
+	${RM} $@.d
+	$(COMPILE.c) -g `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/stb_image.o stb_image.c
+
+${OBJECTDIR}/GLProgram.o: GLProgram.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/GLProgram.o GLProgram.cpp
+
+${OBJECTDIR}/GLObject.o: GLObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/GLObject.o GLObject.cpp
+
+${OBJECTDIR}/main.o: main.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
+
+${OBJECTDIR}/ErrorHandler.o: ErrorHandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/ErrorHandler.o ErrorHandler.cpp
+
+${OBJECTDIR}/GLHelper.o: GLHelper.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/GLHelper.o GLHelper.cpp
+
+${OBJECTDIR}/GLCamera.o: GLCamera.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/GLCamera.o GLCamera.cpp
+
+${OBJECTDIR}/GLContext.o: GLContext.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags x11` `pkg-config --cflags gl` `pkg-config --cflags xrandr` `pkg-config --cflags xi` `pkg-config --cflags xxf86vm`    -MMD -MP -MF $@.d -o ${OBJECTDIR}/GLContext.o GLContext.cpp
 
 # Subprojects
 .build-subprojects:

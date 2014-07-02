@@ -2,12 +2,13 @@
 #include "GLProgram.h"
 #include "GLHelper.h"
 #include "GLObject.h"
+#include "GLCamera.h"
 
 #include <iostream>
 
 using namespace std;
 
-/************* SANDBOX ********************/
+/*************** SANDBOX ********************/
 
 /* opengl context */
 GLContext* glc = new GLContext();
@@ -15,15 +16,18 @@ GLContext* glc = new GLContext();
 /* main shader program */
 GLProgram* mainProg = new GLProgram();
 
-// EXPERIMENTAL
-double xpos, ypos;
+GLCamera* cam = new GLCamera(glc, mainProg);
 
-#define ABS(x) ((x > 0) x : -x)
+// EXPERIMENTAL
+void zoomCallback(GLFWwindow* win, double xoffset, double yoffset) {
+    cam->zoom += yoffset;
+}
 
 int main(int argc, char** argv) {
 
-    setGLStates();
-
+    glc->config();
+    glfwSetScrollCallback(glc->main, zoomCallback);
+    
     /* -------------- cube -------------- */
     GLObject* vao_cube = new GLObject(GL_VERTEX_ARRAY);
     GLObject* vbo_cube = new GLObject(GL_ARRAY_BUFFER);
@@ -132,22 +136,20 @@ int main(int argc, char** argv) {
     mainProg->loadShader("vertex", GL_VERTEX_SHADER);
     mainProg->loadShader("fragment", GL_FRAGMENT_SHADER);
     mainProg->use();
-
-    /* MVP setup */
-
-    glc->hideMouse();
+    
     /* render loop */
     while (!glfwWindowShouldClose(glc->main) && !glfwGetKey(glc->main, GLFW_KEY_ESCAPE)) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        setupMVP();
+        /* MVP */
+        cam->update();
 
         glBindVertexArray(vao_cube->id);
         glBindTexture(tex_cube->target, tex_cube->id);
         glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-        
-        
+
+
         glBindVertexArray(vao_floor->id);
         glBindTexture(tex_floor->target, tex_floor->id);
         glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
@@ -162,41 +164,4 @@ int main(int argc, char** argv) {
     glc->~GLContext();
 
     return EXIT_SUCCESS;
-}
-
-void setupMVP() {
-
-    // camera movement
-    static double xpos_old, ypos_old;
-
-    double midX, midY;
-    midX = glc->resX / 2;
-    midY = glc->resY / 2;
-
-    double speed = 0.01;
-
-    glfwGetCursorPos(glc->main, &xpos, &ypos);
-    glfwSetCursorPos(glc->main, midX, midY);
-    xpos_old += (midX - xpos);
-    ypos_old += (midY - ypos);
-
-
-    // Camera
-    glm::mat4 yRotation = glm::rotate<float>(glm::mat4(), ypos_old * speed, glm::vec3(-1, 0, 0));
-    glm::mat4 xyRotation = glm::rotate<float>(yRotation, xpos_old * speed, glm::vec3(0, 1, 0));
-
-    // ModelView
-    glm::mat4 modelView = glm::translate<float>(glm::mat4(), glm::vec3(0.0, 0.0, -15.0));
-
-    // Perspective
-    glm::mat4 perspective = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-
-    // MVP
-    glm::mat4 MVP = perspective * modelView*xyRotation;
-    glUniformMatrix4fv(mainProg->getVar("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
-}
-
-void setGLStates() {
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(0.2, 0.2, 0.2, 1.0);
 }
