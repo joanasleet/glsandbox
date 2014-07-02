@@ -1,7 +1,6 @@
 #include "GLContext.h"
 
-GLContext::GLContext(int resX, int resY, const char* title) {
-    setRes(resX, resY);
+GLContext::GLContext(int resX, int resY, const char* title) : resX(resX), resY(resY) {
 
     if (!glfwInit()) {
         printError("Failed to start GLFW.");
@@ -28,11 +27,11 @@ GLContext::GLContext(int resX, int resY, const char* title) {
     printf("GLEW initialized.\n");
 }
 
-GLContext::~GLContext() {
-    glfwTerminate();
+void GLContext::hideMouse() {
+    glfwSetInputMode(main, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
-void GLContext::setRes(int x, int y) {
-    resX = x;
-    resY = y;
+
+GLContext::~GLContext() {
+    glfwTerminate();
 }

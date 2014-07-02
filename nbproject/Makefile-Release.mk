@@ -36,11 +36,13 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/ErrorHandler.o \
+	${OBJECTDIR}/GLCamera.o \
 	${OBJECTDIR}/GLContext.o \
 	${OBJECTDIR}/GLHelper.o \
 	${OBJECTDIR}/GLObject.o \
 	${OBJECTDIR}/GLProgram.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/stb_image.o
 
 
 # C Compiler Flags
@@ -72,6 +74,11 @@ ${OBJECTDIR}/ErrorHandler.o: ErrorHandler.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ErrorHandler.o ErrorHandler.cpp
 
+${OBJECTDIR}/GLCamera.o: GLCamera.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLCamera.o GLCamera.cpp
+
 ${OBJECTDIR}/GLContext.o: GLContext.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -96,6 +103,11 @@ ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+
+${OBJECTDIR}/stb_image.o: stb_image.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stb_image.o stb_image.c
 
 # Subprojects
 .build-subprojects:

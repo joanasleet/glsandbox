@@ -2,6 +2,20 @@
 
 #include <math.h>
 
+unsigned char* texture(const char* file, int* width, int* height, int* compression, int channels) {
+
+    unsigned char* image_data = stbi_load(file, width, height, compression, channels);
+
+    if (!image_data) {
+        char str[50];
+        sprintf(str, "Failed to load texture from file <%s>", file);
+        printError(str);
+    }
+    fprintf(stdout, "Texture attribute: %i x %i (%i) <%s>\n", *width, *height, *compression, file);
+
+    return image_data;
+}
+
 GLfloat* cube(float length, float midX, float midY, float midZ) {
     GLfloat* cubeData = (GLfloat*) malloc(sizeof (GLfloat) * 8 * 4);
 
@@ -58,9 +72,4 @@ GLfloat* cube(float length, float midX, float midY, float midZ) {
     cubeData[31] = 1.0f; // w 
 
     return cubeData;
-}
-
-GLuint loadTexture(const char* file, GLuint texture, GLboolean genMips) {
-
-    return 0;
 }

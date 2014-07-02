@@ -5,19 +5,7 @@
 
 #include <iostream>
 
-#define GLM_FORCE_RADIANS
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 using namespace std;
-
-void setGLStates();
-void setupMVP();
 
 /************* SANDBOX ********************/
 
@@ -27,15 +15,19 @@ GLContext* glc = new GLContext();
 /* main shader program */
 GLProgram* mainProg = new GLProgram();
 
+// EXPERIMENTAL
+double xpos, ypos;
+
+#define ABS(x) ((x > 0) x : -x)
+
 int main(int argc, char** argv) {
 
     setGLStates();
 
-    GLObject* vao = new GLObject(GL_VERTEX_ARRAY);
-
-    GLObject* vertexBuffer = new GLObject(GL_ARRAY_BUFFER);
-
-    static GLfloat coords[] = {
+    /* -------------- cube -------------- */
+    GLObject* vao_cube = new GLObject(GL_VERTEX_ARRAY);
+    GLObject* vbo_cube = new GLObject(GL_ARRAY_BUFFER);
+    static GLfloat cubeData[] = {
         // front vertices
         -1.0f, 1.0f, 1.0f, 1.0f, // 0
         -1.0f, -1.0f, 1.0f, 1.0f, // 1
@@ -59,29 +51,10 @@ int main(int argc, char** argv) {
         0.0f, 0.0f,
         0.0f, 1.0f
     };
+    vbo_cube->buffer(sizeof (cubeData), cubeData, GL_STATIC_DRAW);
 
-    /*
-    static GLfloat colors[] = {
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-
-        0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f
-    };
-     */
-
-    vertexBuffer->buffer(sizeof (coords), coords, GL_STATIC_DRAW);
-    /*
-    vertexBuffer->subBuffer(0, sizeof (coords), coords);
-    vertexBuffer->subBuffer(sizeof (coords), sizeof (colors), colors);
-     */
-
-    GLObject* indexBuffer = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
-    GLuint indices[] = {
+    GLObject* ib_cube = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
+    GLuint cubeIndx[] = {
         // front
         0, 1, 2, 3,
         // back
@@ -95,30 +68,65 @@ int main(int argc, char** argv) {
         // left
         0, 4, 5, 1,
         // right
-        3, 7, 6, 2
+        3, 7, 6, 2,
     };
-    indexBuffer->buffer(sizeof (indices), indices, GL_STATIC_DRAW);
+    ib_cube->buffer(sizeof (cubeIndx), cubeIndx);
 
-    int x, y, n;
-    int channels = 4;
-    const char* texFile = "textureBump.png";
-    unsigned char* image_data = stbi_load(texFile, &x, &y, &n, channels);
-    if (!image_data) {
-        char str[20];
-        sprintf(str, "Failed to load texture from file <%s>", texFile);
-        printError(str);
-    }
-    fprintf(stdout, "Texture attribute: %i x %i (%i)\n", x, y, n);
+    // texture
+    GLObject* tex_cube = new GLObject(GL_TEXTURE_2D);
+    tex_cube->loadTexture("tex0.png");
+    tex_cube->param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    tex_cube->param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    tex_cube->param(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    tex_cube->param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    GLObject* tex = new GLObject(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE0);
+    // set vertex buffer layout
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
 
-    glTexImage2D(tex->target, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+    // texture offset
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*32));
+    glEnableVertexAttribArray(1);
 
-    glTexParameteri(tex->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(tex->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(tex->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    /* ----------------- floor ------------------- */
+    GLObject* vao_floor = new GLObject(GL_VERTEX_ARRAY);
+    GLObject* vbo_floor = new GLObject(GL_ARRAY_BUFFER);
+    static GLfloat floorData[] = {
+
+        -100.0f, -1.0f, 100.0f, 1.0f, // 0
+        100.0f, -1.0f, 100.0f, 1.0f, // 1
+        100.0f, -1.0f, -100.0f, 1.0f, // 2
+        -100.0f, -1.0f, -100.0f, 1.0f, // 3
+
+        // tex coords
+        0.0f, 0.0f,
+        10.0f, 0.0f,
+        10.0f, 10.0f,
+        10.0f, 0.0f
+    };
+    vbo_floor->buffer(sizeof (floorData), floorData, GL_STATIC_DRAW);
+
+    GLObject* ib_floor = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
+    GLuint floorIndx[] = {
+        0, 1, 2, 3
+    };
+    ib_floor->buffer(sizeof (floorIndx), floorIndx);
+
+    // texture
+    GLObject* tex_floor = new GLObject(GL_TEXTURE_2D);
+    tex_floor->loadTexture("floor.png");
+    tex_floor->param(GL_TEXTURE_WRAP_S, GL_REPEAT);
+    tex_floor->param(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    tex_floor->param(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    tex_floor->param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // set vertex buffer layout
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    // texture offset
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*16));
+    glEnableVertexAttribArray(1);
 
     /* shader program setup */
     mainProg->loadShader("vertex", GL_VERTEX_SHADER);
@@ -126,22 +134,24 @@ int main(int argc, char** argv) {
     mainProg->use();
 
     /* MVP setup */
-    setupMVP();
 
-    // set vertex buffer layout
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*32));
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
+    glc->hideMouse();
     /* render loop */
     while (!glfwWindowShouldClose(glc->main) && !glfwGetKey(glc->main, GLFW_KEY_ESCAPE)) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glBindVertexArray(vao->id);
-        glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, 0);
+        setupMVP();
+
+        glBindVertexArray(vao_cube->id);
+        glBindTexture(tex_cube->target, tex_cube->id);
+        glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+        
+        
+        glBindVertexArray(vao_floor->id);
+        glBindTexture(tex_floor->target, tex_floor->id);
+        glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
 
         glFlush();
         glfwSwapBuffers(glc->main);
@@ -156,17 +166,37 @@ int main(int argc, char** argv) {
 
 void setupMVP() {
 
-    glm::mat4 view = glm::rotate<float>(glm::mat4(), 10.0, glm::vec3(0, 1, 0));
-    glUniformMatrix4fv(mainProg->getVar("V"), 1, GL_FALSE, glm::value_ptr(view));
+    // camera movement
+    static double xpos_old, ypos_old;
 
-    glm::mat4 model = glm::translate<float>(glm::mat4(), glm::vec3(0.0, 0.0, -3.0));
-    glUniformMatrix4fv(mainProg->getVar("M"), 1, GL_FALSE, glm::value_ptr(model));
+    double midX, midY;
+    midX = glc->resX / 2;
+    midY = glc->resY / 2;
 
+    double speed = 0.01;
+
+    glfwGetCursorPos(glc->main, &xpos, &ypos);
+    glfwSetCursorPos(glc->main, midX, midY);
+    xpos_old += (midX - xpos);
+    ypos_old += (midY - ypos);
+
+
+    // Camera
+    glm::mat4 yRotation = glm::rotate<float>(glm::mat4(), ypos_old * speed, glm::vec3(-1, 0, 0));
+    glm::mat4 xyRotation = glm::rotate<float>(yRotation, xpos_old * speed, glm::vec3(0, 1, 0));
+
+    // ModelView
+    glm::mat4 modelView = glm::translate<float>(glm::mat4(), glm::vec3(0.0, 0.0, -15.0));
+
+    // Perspective
     glm::mat4 perspective = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-    glUniformMatrix4fv(mainProg->getVar("P"), 1, GL_FALSE, glm::value_ptr(perspective));
+
+    // MVP
+    glm::mat4 MVP = perspective * modelView*xyRotation;
+    glUniformMatrix4fv(mainProg->getVar("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
 }
 
 void setGLStates() {
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.35, 0.7, 0.8, 1.0);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
 }

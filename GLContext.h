@@ -8,16 +8,19 @@
 class GLContext {
 public:
     GLFWwindow* main;
+    
+    int resX;
+    int resY;
 
     GLContext(int resX = 800, int resY = 600, const char* title = "OpenGL");
     ~GLContext();
-
-    void setRes(int x, int y);
+    
+    void hideMouse();
     void printSpec();
+    
 
 private:
-    int resX;
-    int resY;
+    
 };
 
 #endif	/* GLCONTEXT_H */

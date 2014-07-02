@@ -3,11 +3,12 @@
 
 #include "common.h"
 
+unsigned char* texture(const char* file, int* width, int* height, int* compression, int channels = 4);
+
 GLfloat* cube(float length, float midX, float midY, float midZ);
 
-void vertexLayout(int position, int numberOfCoords);
-
-GLuint loadTexture(const char* file);
+extern void setGLStates();
+extern void setupMVP();
 
 #endif	/* GLHELPER_H */
 

@@ -5,11 +5,13 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>ErrorHandler.h</itemPath>
+      <itemPath>GLCamera.h</itemPath>
       <itemPath>GLContext.h</itemPath>
       <itemPath>GLHelper.h</itemPath>
       <itemPath>GLObject.h</itemPath>
       <itemPath>GLProgram.h</itemPath>
       <itemPath>common.h</itemPath>
+      <itemPath>stb_image.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -21,11 +23,13 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>ErrorHandler.cpp</itemPath>
+      <itemPath>GLCamera.cpp</itemPath>
       <itemPath>GLContext.cpp</itemPath>
       <itemPath>GLHelper.cpp</itemPath>
       <itemPath>GLObject.cpp</itemPath>
       <itemPath>GLProgram.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
+      <itemPath>stb_image.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -62,6 +66,10 @@
       </item>
       <item path="ErrorHandler.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="GLCamera.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GLCamera.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="GLContext.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GLContext.h" ex="false" tool="3" flavor2="0">
@@ -83,6 +91,10 @@
       <item path="fragment" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="stb_image.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stb_image.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="vertex" ex="false" tool="3" flavor2="0">
       </item>
@@ -111,6 +123,10 @@
       </item>
       <item path="ErrorHandler.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="GLCamera.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GLCamera.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="GLContext.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GLContext.h" ex="false" tool="3" flavor2="0">
@@ -132,6 +148,10 @@
       <item path="fragment" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="stb_image.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stb_image.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="vertex" ex="false" tool="3" flavor2="0">
       </item>

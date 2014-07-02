@@ -11,9 +11,9 @@ public:
     ~GLProgram();
 
     void loadShader(const char* source, GLenum type);
-    void setVar();
-    GLuint getVar(const char* varName);
     void use();
+
+    GLuint getVar(const char* varName);
 
 private:
     char* bufferFile(const char* path);

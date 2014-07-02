@@ -1,8 +1,8 @@
 #include "GLObject.h"
+#include "GLHelper.h"
 #include "ErrorHandler.h"
 
-GLObject::GLObject(GLenum bindTarget, bool doBind) {
-    target = bindTarget;
+GLObject::GLObject(GLenum bindTarget, bool doBind) : target(bindTarget) {
 
     switch (target) {
             // vertex array
@@ -45,4 +45,23 @@ void GLObject::buffer(GLsizei size, GLvoid* data, GLenum usage) {
 void GLObject::subBuffer(GLintptr offset, GLsizeiptr size, const GLvoid* data) {
     glBufferSubData(target, offset, size, data);
     catchError();
+}
+
+void GLObject::loadTexture(const char* file, GLenum slot, GLint mipmaps, GLint colorFormat, GLenum pixelFormat, GLenum pixelType) {
+
+    // wie waehle ich das aus ?
+    glActiveTexture(slot);
+
+    int imgWidth, imgHeight, imgCompression;
+    unsigned char* imageData = texture(file, &imgWidth, &imgHeight, &imgCompression);
+
+    glTexImage2D(target, mipmaps, colorFormat, imgWidth, imgHeight, 0, pixelFormat, pixelType, imageData);
+}
+
+void GLObject::param(GLenum paramName, GLint paramValue) {
+    glTexParameteri(target, paramName, paramValue);
+}
+
+void GLObject::param(GLenum paramName, GLfloat paramValue) {
+    glTexParameterf(target, paramName, paramValue);
 }
