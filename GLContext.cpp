@@ -27,6 +27,10 @@ GLContext::GLContext(int resX, int resY, const char* title) : resX(resX), resY(r
     printf("GLEW initialized.\n");
 }
 
+GLContext::~GLContext() {
+    glfwTerminate();
+}
+
 void GLContext::config() {
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.2, 0.2, 0.2, 1.0);
@@ -37,6 +41,3 @@ void GLContext::printSpec() {
     
 }
 
-GLContext::~GLContext() {
-    glfwTerminate();
-}
