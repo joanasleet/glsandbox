@@ -3,28 +3,28 @@
 GLContext::GLContext(int resX, int resY, const char* title) : resX(resX), resY(resY) {
 
     if (!glfwInit()) {
-        printError("Failed to start GLFW.");
+        ERR("Failed to start GLFW.");
         exit(EXIT_FAILURE);
     }
 
-    printf("GLFW initialized.\n");
+    INFO("GLFW initialized.");
 
     main = glfwCreateWindow(resX, resY, title, NULL, NULL);
     if (!main) {
-        printError("Failed to create main window.");
+        ERR("Failed to create main window.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
     glfwMakeContextCurrent(main);
-    printf("Main window created.\n");
+    INFO("Main window created.");
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        printError("Failed to start GLEW.");
+        ERR("Failed to start GLEW.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    printf("GLEW initialized.\n");
+    INFO("GLEW initialized.");
 }
 
 GLContext::~GLContext() {

@@ -35,12 +35,15 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/ErrorHandler.o \
+	${OBJECTDIR}/Camera.o \
+	${OBJECTDIR}/Context.o \
 	${OBJECTDIR}/GLCamera.o \
 	${OBJECTDIR}/GLContext.o \
 	${OBJECTDIR}/GLHelper.o \
 	${OBJECTDIR}/GLObject.o \
 	${OBJECTDIR}/GLProgram.o \
+	${OBJECTDIR}/Logger.o \
+	${OBJECTDIR}/ShaderProgram.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/stb_image.o
 
@@ -69,10 +72,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/ErrorHandler.o: ErrorHandler.cpp 
+${OBJECTDIR}/Camera.o: Camera.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ErrorHandler.o ErrorHandler.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Camera.o Camera.cpp
+
+${OBJECTDIR}/Context.o: Context.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Context.o Context.cpp
 
 ${OBJECTDIR}/GLCamera.o: GLCamera.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -98,6 +106,16 @@ ${OBJECTDIR}/GLProgram.o: GLProgram.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLProgram.o GLProgram.cpp
+
+${OBJECTDIR}/Logger.o: Logger.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger.o Logger.cpp
+
+${OBJECTDIR}/ShaderProgram.o: ShaderProgram.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderProgram.o ShaderProgram.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}

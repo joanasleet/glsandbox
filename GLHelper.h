@@ -5,10 +5,10 @@
 
 unsigned char* texture(const char* file, int* width, int* height, int* compression, int channels = 4);
 
-GLfloat* cube(float length, float midX, float midY, float midZ);
+GLfloat* cubeVD(GLsizei* size, GLfloat length = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.5f, GLfloat midZ = 0.0f, bool genTexels = true);
+GLfloat* planeVD(GLsizei* size, GLfloat length = 100.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f, bool genTexels = true);
 
-extern void setGLStates();
-extern void setupMVP();
+
 
 #endif	/* GLHELPER_H */
 

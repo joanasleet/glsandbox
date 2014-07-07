@@ -6,6 +6,24 @@ layout(location = 2) in vec3 floor_coords;
 
 out vec2 vs_tex_coords;
 
+uniform float xang;
+uniform float yang;
+
+uniform float xcam;
+uniform float ycam;
+uniform float zcam;
+
+mat4 transToOrigin;
+
+mat4 xrota;
+mat4 yrota;
+
+mat4 transToPos;
+
+
+
+
+
 uniform mat4 MVP;
 
 void main() {

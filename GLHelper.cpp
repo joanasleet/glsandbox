@@ -7,69 +7,157 @@ unsigned char* texture(const char* file, int* width, int* height, int* compressi
     unsigned char* image_data = stbi_load(file, width, height, compression, channels);
 
     if (!image_data) {
-        char str[50];
-        sprintf(str, "Failed to load texture from file <%s>", file);
-        printError(str);
+        ERR("Failed to load texture from file <%s>", file);
     }
-    fprintf(stdout, "Texture attribute: %i x %i (%i) <%s>\n", *width, *height, *compression, file);
+    INFO("Texture attribute: %i x %i (%i) <%s>", *width, *height, *compression, file);
 
     return image_data;
 }
 
-GLfloat* cube(float length, float midX, float midY, float midZ) {
-    GLfloat* cubeData = (GLfloat*) malloc(sizeof (GLfloat) * 8 * 4);
+GLfloat* cubeVD(GLsizei* size, float length, float midX, float midY, float midZ, bool genTexels) {
 
-    float hlen = length / 2.0f;
+    GLfloat* vertexData;
+    GLsizei bufferSize;
+
+    if (genTexels) {
+        bufferSize = sizeof (GLfloat)*((8 * 4) + (8 * 2));
+    } else {
+        bufferSize = sizeof (GLfloat)*(8 * 4);
+    }
+
+    *size = bufferSize;
+    vertexData = (GLfloat*) malloc(bufferSize);
+
+    if (!vertexData) {
+        ERR("Failed to allocate vertex buffer.");
+        return NULL;
+    }
+
+    length /= 2.0f;
 
     // front
     // UpL
-    cubeData[0] = midX - hlen; // x
-    cubeData[1] = midY + hlen; // y
-    cubeData[2] = midZ + hlen; // z
-    cubeData[3] = 1.0f; // w 
+    vertexData[0] = midX - length; // x
+    vertexData[1] = midY + length; // y
+    vertexData[2] = midZ + length; // z
+    vertexData[3] = 1.0f; // w 
 
     // UpR
-    cubeData[4] = midX + hlen; // x
-    cubeData[5] = midY + hlen; // y
-    cubeData[6] = midZ + hlen; // z
-    cubeData[7] = 1.0f; // w 
+    vertexData[4] = midX + length; // x
+    vertexData[5] = midY + length; // y
+    vertexData[6] = midZ + length; // z
+    vertexData[7] = 1.0f; // w 
 
     // BotR
-    cubeData[8] = midX + hlen; // x
-    cubeData[9] = midY - hlen; // y
-    cubeData[10] = midZ + hlen; // z
-    cubeData[11] = 1.0f; // w 
+    vertexData[8] = midX + length; // x
+    vertexData[9] = midY - length; // y
+    vertexData[10] = midZ + length; // z
+    vertexData[11] = 1.0f; // w 
 
     // BotL
-    cubeData[12] = midX - hlen; // x
-    cubeData[13] = midY - hlen; // y
-    cubeData[14] = midZ + hlen; // z
-    cubeData[15] = 1.0f; // w 
+    vertexData[12] = midX - length; // x
+    vertexData[13] = midY - length; // y
+    vertexData[14] = midZ + length; // z
+    vertexData[15] = 1.0f; // w 
 
     // back
     // UpL
-    cubeData[16] = midX - hlen; // x
-    cubeData[17] = midY + hlen; // y
-    cubeData[18] = midZ - hlen; // z
-    cubeData[19] = 1.0f; // w 
+    vertexData[16] = midX - length; // x
+    vertexData[17] = midY + length; // y
+    vertexData[18] = midZ - length; // z
+    vertexData[19] = 1.0f; // w 
 
     // UpR
-    cubeData[20] = midX + hlen; // x
-    cubeData[21] = midY + hlen; // y
-    cubeData[22] = midZ - hlen; // z
-    cubeData[23] = 1.0f; // w 
+    vertexData[20] = midX + length; // x
+    vertexData[21] = midY + length; // y
+    vertexData[22] = midZ - length; // z
+    vertexData[23] = 1.0f; // w 
 
     // BotR
-    cubeData[24] = midX + hlen; // x
-    cubeData[25] = midY - hlen; // y
-    cubeData[26] = midZ - hlen; // z
-    cubeData[27] = 1.0f; // w 
+    vertexData[24] = midX + length; // x
+    vertexData[25] = midY - length; // y
+    vertexData[26] = midZ - length; // z
+    vertexData[27] = 1.0f; // w 
 
     // BotL
-    cubeData[28] = midX - hlen; // x
-    cubeData[29] = midY - hlen; // y
-    cubeData[30] = midZ - hlen; // z
-    cubeData[31] = 1.0f; // w 
+    vertexData[28] = midX - length; // x
+    vertexData[29] = midY - length; // y
+    vertexData[30] = midZ - length; // z
+    vertexData[31] = 1.0f; // w 
 
-    return cubeData;
+    return vertexData;
+}
+
+GLfloat* planeVD(GLsizei* size, GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, bool genTexels) {
+
+    GLfloat* vertexData;
+    GLsizei bufferSize;
+
+    if (genTexels) {
+        bufferSize = sizeof (GLfloat)*((4 * 4) + (4 * 2));
+    } else {
+        bufferSize = sizeof (GLfloat)*(4 * 4);
+    }
+
+    *size = bufferSize;
+    vertexData = (GLfloat*) malloc(bufferSize);
+
+    if (!vertexData) {
+        ERR("Failed to allocate vertex buffer.");
+        return NULL;
+    }
+
+    length /= 2.0f;
+
+    // --------
+    // -      -
+    // -      -
+    // -------O
+    vertexData[0] = midX + length;
+    vertexData[1] = midY;
+    vertexData[2] = midZ + length;
+    vertexData[3] = 1.0f;
+
+    // -------O
+    // -      -
+    // -      -
+    // --------
+    vertexData[4] = midX + length;
+    vertexData[5] = midY;
+    vertexData[6] = midZ - length;
+    vertexData[7] = 1.0f;
+
+    // O-------
+    // -      -
+    // -      -
+    // --------
+    vertexData[8] = midX - length;
+    vertexData[9] = midY;
+    vertexData[10] = midZ - length;
+    vertexData[11] = 1.0f;
+
+    // --------
+    // -      -
+    // -      -
+    // O-------
+    vertexData[12] = midX - length;
+    vertexData[13] = midY;
+    vertexData[14] = midZ + length;
+    vertexData[15] = 1.0f;
+
+    if (genTexels) {
+        vertexData[16] = 10.0f;
+        vertexData[17] = 0.0f;
+
+        vertexData[18] = 10.0f;
+        vertexData[19] = 10.0f;
+
+        vertexData[20] = 0.0f;
+        vertexData[21] = 10.0f;
+
+        vertexData[22] = 0.0f;
+        vertexData[23] = 0.0f;
+    }
+
+    return vertexData;
 }

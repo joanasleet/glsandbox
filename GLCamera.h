@@ -6,12 +6,11 @@
 #include "GLContext.h"
 
 #define FOV (45.0f)
-#define SCREEN_RATIO (4.0f / 3.0f)
+#define ASPECT_RATIO (4.0f / 3.0f)
 #define NEAR_PLANE (0.1f)
-#define FAR_PLANE (100.0f)
+#define FAR_PLANE (1000.0f)
 
 #define CAM_SPEED 0.01
-
 
 class GLCamera {
 public:
@@ -19,6 +18,9 @@ public:
     double rotaY;
     
     double zoom;
+    
+    double xoffset;
+    double yoffset;
     
     GLContext* context;
     GLProgram* program;

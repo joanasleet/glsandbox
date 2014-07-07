@@ -1,6 +1,6 @@
 #include "GLObject.h"
 #include "GLHelper.h"
-#include "ErrorHandler.h"
+#include "Logger.h"
 
 GLObject::GLObject(GLenum bindTarget, bool doBind) : target(bindTarget) {
 
@@ -32,13 +32,13 @@ GLObject::GLObject(GLenum bindTarget, bool doBind) : target(bindTarget) {
             if (doBind) glBindSampler(target, id);
             break;
         default:
-            fprintf(stderr, "Unknown bind target (%d).\n", target);
+            ERR("Unknown bind target (%d)", target);
             break;
     }
 }
 
 void GLObject::buffer(GLsizei size, GLvoid* data, GLenum usage) {
-    glBufferData(target, size, data, usage);
+    glBufferData(target, size, (const GLvoid*) data, usage);
     catchError();
 }
 
@@ -56,6 +56,11 @@ void GLObject::loadTexture(const char* file, GLenum slot, GLint mipmaps, GLint c
     unsigned char* imageData = texture(file, &imgWidth, &imgHeight, &imgCompression);
 
     glTexImage2D(target, mipmaps, colorFormat, imgWidth, imgHeight, 0, pixelFormat, pixelType, imageData);
+
+    param(GL_TEXTURE_WRAP_S, GL_REPEAT);
+    param(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    param(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
 void GLObject::param(GLenum paramName, GLint paramValue) {

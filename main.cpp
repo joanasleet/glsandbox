@@ -1,8 +1,7 @@
-#include "GLContext.h"
-#include "GLProgram.h"
 #include "GLHelper.h"
 #include "GLObject.h"
-#include "GLCamera.h"
+#include "Camera.h"
+#include "Context.h"
 
 #include <iostream>
 
@@ -11,120 +10,54 @@ using namespace std;
 /*************** SANDBOX ********************/
 
 /* opengl context */
-GLContext* glc = new GLContext();
+Context* context = createContext();
 
 /* main shader program */
-GLProgram* mainProg = new GLProgram();
+GLuint shaderProg = glCreateProgram();
 
-GLCamera* cam = new GLCamera(glc, mainProg);
-
-// EXPERIMENTAL
-void zoomCallback(GLFWwindow* win, double xoffset, double yoffset) {
-    cam->zoom += yoffset;
-}
+/* main camera */
+Camera* cam = createCamera(0, 5, 0);
 
 int main(int argc, char** argv) {
 
-    glc->config();
-    glfwSetScrollCallback(glc->main, zoomCallback);
-    
-    /* -------------- cube -------------- */
-    GLObject* vao_cube = new GLObject(GL_VERTEX_ARRAY);
-    GLObject* vbo_cube = new GLObject(GL_ARRAY_BUFFER);
-    static GLfloat cubeData[] = {
-        // front vertices
-        -1.0f, 1.0f, 1.0f, 1.0f, // 0
-        -1.0f, -1.0f, 1.0f, 1.0f, // 1
-        1.0f, -1.0f, 1.0f, 1.0f, // 2
-        1.0f, 1.0f, 1.0f, 1.0f, // 3
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
+    glfwSetInputMode(context->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-        // back vertices
-        -1.0f, 1.0f, -1.0f, 1.0f, // 4
-        -1.0f, -1.0f, -1.0f, 1.0f, // 5
-        1.0f, -1.0f, -1.0f, 1.0f, // 6
-        1.0f, 1.0f, -1.0f, 1.0f, // 7
+    glfwSetCursorPos(context->win, context->xRes / 2, context->yRes / 2);
 
-        // texture coords
-        0.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
+    glfwSetScrollCallback(context->win, scrollCB);
+    glfwSetKeyCallback(context->win, keyCB);
 
-        1.0f, 1.0f,
-        1.0f, 0.0f,
-        0.0f, 0.0f,
-        0.0f, 1.0f
-    };
-    vbo_cube->buffer(sizeof (cubeData), cubeData, GL_STATIC_DRAW);
 
-    GLObject* ib_cube = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
-    GLuint cubeIndx[] = {
-        // front
-        0, 1, 2, 3,
-        // back
-        4, 5, 6, 7,
 
-        // top
-        0, 3, 7, 4,
-        // bot
-        1, 5, 6, 2,
-
-        // left
-        0, 4, 5, 1,
-        // right
-        3, 7, 6, 2,
-    };
-    ib_cube->buffer(sizeof (cubeIndx), cubeIndx);
-
-    // texture
+    // textures
     GLObject* tex_cube = new GLObject(GL_TEXTURE_2D);
     tex_cube->loadTexture("tex0.png");
-    tex_cube->param(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    tex_cube->param(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    tex_cube->param(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    tex_cube->param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    // set vertex buffer layout
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(0);
+    GLObject* tex_floor = new GLObject(GL_TEXTURE_2D);
+    tex_floor->loadTexture("plane.png");
 
-    // texture offset
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*32));
-    glEnableVertexAttribArray(1);
+    /* ################# floor ################### */
+    /* ########################################### */
 
-    /* ----------------- floor ------------------- */
+    /* VAO */
     GLObject* vao_floor = new GLObject(GL_VERTEX_ARRAY);
     GLObject* vbo_floor = new GLObject(GL_ARRAY_BUFFER);
-    static GLfloat floorData[] = {
 
-        -100.0f, -1.0f, 100.0f, 1.0f, // 0
-        100.0f, -1.0f, 100.0f, 1.0f, // 1
-        100.0f, -1.0f, -100.0f, 1.0f, // 2
-        -100.0f, -1.0f, -100.0f, 1.0f, // 3
+    /* VBO */
+    GLsizei vbo_size;
+    GLfloat* floorData = planeVD(&vbo_size, 10000.0f);
+    vbo_floor->buffer(vbo_size, floorData, GL_STATIC_DRAW);
 
-        // tex coords
-        0.0f, 0.0f,
-        10.0f, 0.0f,
-        10.0f, 10.0f,
-        10.0f, 0.0f
-    };
-    vbo_floor->buffer(sizeof (floorData), floorData, GL_STATIC_DRAW);
-
+    /* EBO */
     GLObject* ib_floor = new GLObject(GL_ELEMENT_ARRAY_BUFFER);
     GLuint floorIndx[] = {
         0, 1, 2, 3
     };
     ib_floor->buffer(sizeof (floorIndx), floorIndx);
 
-    // texture
-    GLObject* tex_floor = new GLObject(GL_TEXTURE_2D);
-    tex_floor->loadTexture("floor.png");
-    tex_floor->param(GL_TEXTURE_WRAP_S, GL_REPEAT);
-    tex_floor->param(GL_TEXTURE_WRAP_T, GL_REPEAT);
-    tex_floor->param(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    tex_floor->param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    // set vertex buffer layout
+    // VBO layout
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
@@ -133,35 +66,63 @@ int main(int argc, char** argv) {
     glEnableVertexAttribArray(1);
 
     /* shader program setup */
-    mainProg->loadShader("vertex", GL_VERTEX_SHADER);
-    mainProg->loadShader("fragment", GL_FRAGMENT_SHADER);
-    mainProg->use();
-    
+    loadShader("vertex", GL_VERTEX_SHADER, shaderProg);
+    loadShader("fragment", GL_FRAGMENT_SHADER, shaderProg);
+    glUseProgram(shaderProg);
+
+    glBindVertexArray(vao_floor->id);
+    glBindTexture(tex_floor->target, tex_floor->id);
+
     /* render loop */
-    while (!glfwWindowShouldClose(glc->main) && !glfwGetKey(glc->main, GLFW_KEY_ESCAPE)) {
+    while (!glfwWindowShouldClose(context->win) && !glfwGetKey(context->win, GLFW_KEY_ESCAPE)) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        /* MVP */
-        cam->update();
-
-        glBindVertexArray(vao_cube->id);
-        glBindTexture(tex_cube->target, tex_cube->id);
-        glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-
-
-        glBindVertexArray(vao_floor->id);
-        glBindTexture(tex_floor->target, tex_floor->id);
+        update(cam, context, shaderProg);
+        
         glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
-
         glFlush();
-        glfwSwapBuffers(glc->main);
+        glfwSwapBuffers(context->win);
         glfwPollEvents();
     }
 
-    mainProg->~GLProgram();
-    glc->~GLContext();
+    glDeleteProgram(shaderProg);
+    free(context);
+    free(cam);
+
+    glfwTerminate();
 
     return EXIT_SUCCESS;
+}
+
+void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
+    cam->yPos += yoffset;
+    INFO("(x,y) offset: (%.1d,%.1d)", xoffset, yoffset);
+
+}
+
+void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
+
+    float speed = 3.0f;
+
+    switch (key) {
+        case GLFW_KEY_W:
+            cam->zPos += speed;
+            break;
+        case GLFW_KEY_A:
+            cam->xPos += speed;
+            break;
+        case GLFW_KEY_S:
+            cam->zPos += -speed;
+            break;
+        case GLFW_KEY_D:
+            cam->xPos += -speed;
+            break;
+        default:
+
+            break;
+    }
+    
+    INFO("Cam position: (%.0f,%.0f,%.0f)", cam->xPos, cam->yPos, cam->zPos);
 }

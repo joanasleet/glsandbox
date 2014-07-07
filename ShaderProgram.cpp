@@ -1,20 +1,9 @@
-#include "GLProgram.h"
+#include "ShaderProgram.h"
 
-GLProgram::GLProgram() {
-
-    id = glCreateProgram();
-    INFO("Program loaded (Id: %d).", id);
-}
-
-GLProgram::~GLProgram() {
-    glDeleteProgram(id);
-}
-
-void GLProgram::loadShader(const char* srcFile, GLenum type) {
+void loadShader(const char* srcFile, GLenum type, GLuint prog) {
 
     GLuint shaderId = glCreateShader(type);
 
-    /* get shader source */
     char* shaderSrc = bufferFile(srcFile);
 
     GLint resultFlag = GL_FALSE;
@@ -23,7 +12,7 @@ void GLProgram::loadShader(const char* srcFile, GLenum type) {
 
     INFO("Loading shader from file <%s>", srcFile);
     INFO("\n%s", shaderSrc);
-    
+
     /* compile shader */
     glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);
     glCompileShader(shaderId);
@@ -42,15 +31,15 @@ void GLProgram::loadShader(const char* srcFile, GLenum type) {
     logSize = 0;
     free(logMsg);
 
-    glAttachShader(id, shaderId);
-    glLinkProgram(id);
+    glAttachShader(prog, shaderId);
+    glLinkProgram(prog);
     INFO("Shader program linked.");
 
     /* check main program */
-    glGetProgramiv(id, GL_LINK_STATUS, &resultFlag);
-    glGetProgramiv(id, GL_INFO_LOG_LENGTH, &logSize);
+    glGetProgramiv(prog, GL_LINK_STATUS, &resultFlag);
+    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logSize);
     logMsg = (char*) malloc(sizeof (char) * logSize);
-    glGetProgramInfoLog(id, logSize, &logSize, logMsg);
+    glGetProgramInfoLog(prog, logSize, &logSize, logMsg);
     if (logSize > 0) {
         ERR("%s", logMsg);
     } else {
@@ -61,15 +50,7 @@ void GLProgram::loadShader(const char* srcFile, GLenum type) {
     glDeleteShader(shaderId);
 }
 
-GLuint GLProgram::getVar(const char* varName) {
-    return glGetUniformLocation(id, varName);
-}
-
-void GLProgram::use() {
-    glUseProgram(id);
-}
-
-char* GLProgram::bufferFile(const char* path) {
+char* bufferFile(const char* path) {
 
     char * fileContent = NULL;
     FILE * file = fopen(path, "r");
@@ -107,3 +88,4 @@ char* GLProgram::bufferFile(const char* path) {
     fclose(file);
     return fileContent;
 }
+
