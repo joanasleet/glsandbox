@@ -16,16 +16,12 @@ Context* context = createContext();
 GLuint shaderProg = glCreateProgram();
 
 /* main camera */
-Camera* cam = createCamera(0, 5, 0);
-
-int keyDown;
-float forwardSpeed = 0.0f;
-float sideSpeed = 0.0f;
+Camera* cam = createCamera(0, 15, 0);
 
 int main(int argc, char** argv) {
 
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.2, 0.2, 0.2, 1.0);
+    glClearColor(0.5, 0.5, 0.7, 1.0);
     glfwSetInputMode(context->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     glfwSetCursorPos(context->win, context->xRes / 2, context->yRes / 2);
@@ -33,14 +29,12 @@ int main(int argc, char** argv) {
     glfwSetScrollCallback(context->win, scrollCB);
     glfwSetKeyCallback(context->win, keyCB);
 
-
-
     // textures
     GLObject* tex_cube = new GLObject(GL_TEXTURE_2D);
-    tex_cube->loadTexture("tex0.png");
+    tex_cube->loadTexture("textures/tex0.png");
 
     GLObject* tex_floor = new GLObject(GL_TEXTURE_2D);
-    tex_floor->loadTexture("plane.png");
+    tex_floor->loadTexture("textures/plane.png");
 
     /* ################# floor ################### */
     /* ########################################### */
@@ -80,7 +74,6 @@ int main(int argc, char** argv) {
     /* render loop */
     while (!glfwWindowShouldClose(context->win) && !glfwGetKey(context->win, GLFW_KEY_ESCAPE)) {
 
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         update(cam, context, shaderProg);
@@ -90,7 +83,6 @@ int main(int argc, char** argv) {
         glFlush();
         glfwSwapBuffers(context->win);
         glfwPollEvents();
-
     }
 
     glDeleteProgram(shaderProg);
@@ -103,9 +95,10 @@ int main(int argc, char** argv) {
 }
 
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
-    cam->yPos += yoffset;
-    INFO("(x,y) offset: (%.1f,%.1f)", xoffset, yoffset);
+    INFO("Scroll input (%.0f, %.0f)", xoffset, yoffset);
 
+    cam->yPos += yoffset;
+    cam->rotaZ += -xoffset;
 }
 
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {

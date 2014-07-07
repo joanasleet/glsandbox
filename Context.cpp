@@ -11,7 +11,7 @@ Context* createContext(unsigned int xRes, unsigned int yRes, const char* title) 
     }
 
     INFO("GLFW initialized.");
-
+        
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
         ERR("Failed to create main window.");
