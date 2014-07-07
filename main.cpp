@@ -18,6 +18,10 @@ GLuint shaderProg = glCreateProgram();
 /* main camera */
 Camera* cam = createCamera(0, 5, 0);
 
+int keyDown;
+float forwardSpeed = 0.0f;
+float sideSpeed = 0.0f;
+
 int main(int argc, char** argv) {
 
     glEnable(GL_DEPTH_TEST);
@@ -76,15 +80,17 @@ int main(int argc, char** argv) {
     /* render loop */
     while (!glfwWindowShouldClose(context->win) && !glfwGetKey(context->win, GLFW_KEY_ESCAPE)) {
 
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         update(cam, context, shaderProg);
-        
+
         glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
         glFlush();
         glfwSwapBuffers(context->win);
         glfwPollEvents();
+
     }
 
     glDeleteProgram(shaderProg);
@@ -98,31 +104,49 @@ int main(int argc, char** argv) {
 
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
     cam->yPos += yoffset;
-    INFO("(x,y) offset: (%.1d,%.1d)", xoffset, yoffset);
+    INFO("(x,y) offset: (%.1f,%.1f)", xoffset, yoffset);
 
 }
 
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
-    float speed = 3.0f;
-
     switch (key) {
         case GLFW_KEY_W:
-            cam->zPos += speed;
+
+            if (action == GLFW_PRESS) {
+                cam->zspeed = 3.0f;
+            } else if (action == GLFW_RELEASE) {
+                cam->zspeed = 0.0f;
+            }
             break;
         case GLFW_KEY_A:
-            cam->xPos += speed;
+
+            if (action == GLFW_PRESS) {
+                cam->xspeed = -3.0f;
+            } else if (action == GLFW_RELEASE) {
+                cam->xspeed = 0.0f;
+            }
             break;
         case GLFW_KEY_S:
-            cam->zPos += -speed;
+
+            if (action == GLFW_PRESS) {
+                cam->zspeed = -3.0f;
+            } else if (action == GLFW_RELEASE) {
+                cam->zspeed = 0.0f;
+            }
             break;
         case GLFW_KEY_D:
-            cam->xPos += -speed;
+
+            if (action == GLFW_PRESS) {
+                cam->xspeed = 3.0f;
+            } else if (action == GLFW_RELEASE) {
+                cam->xspeed = 0.0f;
+            }
             break;
         default:
-
+            return;
             break;
     }
-    
+
     INFO("Cam position: (%.0f,%.0f,%.0f)", cam->xPos, cam->yPos, cam->zPos);
 }

@@ -12,6 +12,9 @@ Camera* createCamera(float x, float y, float z) {
     cam->yPos = y;
     cam->zPos = z;
 
+    cam->xspeed = 0.0f;
+    cam->zspeed = 0.0f;
+
     return cam;
 }
 
@@ -21,6 +24,9 @@ void update(Camera* cam, Context* context, GLuint prog) {
 
     double midX = context->xRes / 2;
     double midY = context->yRes / 2;
+    
+    cam->zPos += cam->zspeed;
+    cam->xPos += cam->xspeed;
 
     glfwGetCursorPos(context->win, &xpos, &ypos);
     glfwSetCursorPos(context->win, midX, midY);
@@ -41,7 +47,7 @@ void update(Camera* cam, Context* context, GLuint prog) {
 
 
     // MVP
-    glm::mat4 MVP = perspective * translateToPosition * translateToOrigin *  yRota * xRota *  translateToOrigin;
+    glm::mat4 MVP = perspective * translateToPosition * translateToOrigin * yRota * xRota * translateToOrigin;
     glUniformMatrix4fv(glGetUniformLocation(prog, "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
 
 

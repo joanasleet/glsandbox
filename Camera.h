@@ -22,6 +22,9 @@ typedef struct Camera {
     float xPos;
     float yPos;
     float zPos;
+    
+    float zspeed;
+    float xspeed;
 } Camera;
 
 Camera* createCamera(float x, float y, float z);
