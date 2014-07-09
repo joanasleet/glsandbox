@@ -43,6 +43,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/GLObject.o \
 	${OBJECTDIR}/GLProgram.o \
 	${OBJECTDIR}/Logger.o \
+	${OBJECTDIR}/Object.o \
 	${OBJECTDIR}/ShaderProgram.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/stb_image.o
@@ -111,6 +112,11 @@ ${OBJECTDIR}/Logger.o: Logger.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger.o Logger.cpp
+
+${OBJECTDIR}/Object.o: Object.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Object.o Object.cpp
 
 ${OBJECTDIR}/ShaderProgram.o: ShaderProgram.cpp 
 	${MKDIR} -p ${OBJECTDIR}

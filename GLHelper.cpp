@@ -1,26 +1,12 @@
 #include "GLHelper.h"
 
-#include <math.h>
-
-unsigned char* texture(const char* file, int* width, int* height, int* compression, int channels) {
-
-    unsigned char* image_data = stbi_load(file, width, height, compression, channels);
-
-    if (!image_data) {
-        ERR("Failed to load texture from file <%s>", file);
-    }
-    INFO("Texture attribute: %i x %i (%i) <%s>", *width, *height, *compression, file);
-
-    return image_data;
-}
-
 GLfloat* cubeVD(GLsizei* size, float length, float midX, float midY, float midZ, bool genTexels) {
 
     GLfloat* vertexData;
     GLsizei bufferSize;
 
     if (genTexels) {
-        bufferSize = sizeof (GLfloat)*((8 * 4) + (8 * 2));
+        bufferSize = sizeof (GLfloat)*((8 * 4) + (8 * 3));
     } else {
         bufferSize = sizeof (GLfloat)*(8 * 4);
     }
@@ -85,6 +71,41 @@ GLfloat* cubeVD(GLsizei* size, float length, float midX, float midY, float midZ,
     vertexData[30] = midZ - length; // z
     vertexData[31] = 1.0f; // w 
 
+    if (genTexels) {
+        vertexData[32] = 0.0f;
+        vertexData[33] = 1.0f;
+        vertexData[34] = 0.0f;
+
+        vertexData[35] = 1.0f;
+        vertexData[36] = 1.0f;
+        vertexData[37] = 0.0f;
+
+        vertexData[38] = 1.0f;
+        vertexData[39] = 0.0f;
+        vertexData[40] = 0.0f;
+
+        vertexData[41] = 0.0f;
+        vertexData[42] = 0.0f;
+        vertexData[43] = 0.0f;
+
+
+        vertexData[44] = 0.0f;
+        vertexData[45] = 1.0f;
+        vertexData[46] = 1.0f;
+
+        vertexData[47] = 1.0f;
+        vertexData[48] = 1.0f;
+        vertexData[49] = 1.0f;
+
+        vertexData[50] = 1.0f;
+        vertexData[51] = 0.0f;
+        vertexData[52] = 1.0f;
+
+        vertexData[53] = 0.0f;
+        vertexData[54] = 0.0f;
+        vertexData[55] = 1.0f;
+    }
+
     return vertexData;
 }
 
@@ -94,7 +115,7 @@ GLfloat* planeVD(GLsizei* size, GLfloat length, GLfloat midX, GLfloat midY, GLfl
     GLsizei bufferSize;
 
     if (genTexels) {
-        bufferSize = sizeof (GLfloat)*((4 * 4) + (4 * 2));
+        bufferSize = sizeof (GLfloat)*((4 * 4) + (4 * 3));
     } else {
         bufferSize = sizeof (GLfloat)*(4 * 4);
     }
@@ -148,16 +169,115 @@ GLfloat* planeVD(GLsizei* size, GLfloat length, GLfloat midX, GLfloat midY, GLfl
     if (genTexels) {
         vertexData[16] = 10.0f;
         vertexData[17] = 0.0f;
+        vertexData[18] = 0.0f;
 
-        vertexData[18] = 10.0f;
         vertexData[19] = 10.0f;
-
-        vertexData[20] = 0.0f;
-        vertexData[21] = 10.0f;
+        vertexData[20] = 10.0f;
+        vertexData[21] = 0.0f;
 
         vertexData[22] = 0.0f;
-        vertexData[23] = 0.0f;
+        vertexData[23] = 10.0f;
+        vertexData[24] = 0.0f;
+
+        vertexData[25] = 0.0f;
+        vertexData[26] = 0.0f;
+        vertexData[27] = 0.0f;
     }
 
     return vertexData;
 }
+
+Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+
+    Object* cubeVao = newObj(GL_VERTEX_ARRAY);
+    glBindVertexArray(cubeVao->id);
+
+    Object* cubeVbo = newObj(GL_ARRAY_BUFFER);
+    cubeVao->bufferId = cubeVbo->id;
+    glBindBuffer(cubeVbo->target, cubeVbo->id);
+
+    float l = length / 2.0f;
+
+    GLfloat vboData[] = {
+        // bot
+        midX - l, midY - l, midZ + l, 1.0f,
+        midX + l, midY - l, midZ + l, 1.0f,
+        midX + l, midY - l, midZ - l, 1.0f,
+        midX - l, midY - l, midZ - l, 1.0f,
+
+        // top
+        midX - l, midY + l, midZ + l, 1.0f,
+        midX + l, midY + l, midZ + l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX - l, midY + l, midZ - l, 1.0f,
+
+        // front
+        midX - l, midY + l, midZ + l, 1.0f,
+        midX + l, midY + l, midZ + l, 1.0f,
+        midX + l, midY - l, midZ + l, 1.0f,
+        midX - l, midY - l, midZ + l, 1.0f,
+
+        // back
+        midX - l, midY + l, midZ - l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX + l, midY - l, midZ - l, 1.0f,
+        midX - l, midY - l, midZ - l, 1.0f,
+
+        // left
+        midX - l, midY + l, midZ + l, 1.0f,
+        midX - l, midY + l, midZ - l, 1.0f,
+        midX - l, midY - l, midZ - l, 1.0f,
+        midX - l, midY - l, midZ + l, 1.0f,
+
+        // right
+        midX + l, midY + l, midZ + l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX + l, midY - l, midZ - l, 1.0f,
+        midX + l, midY - l, midZ + l, 1.0f
+    };
+    glBufferData(cubeVbo->target, sizeof (vboData), vboData, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    free(cubeVbo);
+
+    return cubeVao;
+}
+
+Object* planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+
+    Object* planeVao = newObj(GL_VERTEX_ARRAY);
+    glBindVertexArray(planeVao->id);
+
+    Object* planeVbo = newObj(GL_ARRAY_BUFFER);
+    planeVao->bufferId = planeVbo->id;
+    glBindBuffer(planeVbo->target, planeVbo->id);
+
+    float l = length / 2.0f;
+
+    GLfloat vboData[] = {
+        midX - l, midY, midZ + l, 1.0f,
+        midX + l, midY, midZ + l, 1.0f,
+        midX + l, midY, midZ - l, 1.0f,
+        midX - l, midY, midZ - l, 1.0f,
+
+        0.0f, 0.0f,
+        texRes, 0.0f,
+        texRes, texRes,
+        0.0f, texRes
+    };
+    glBufferData(planeVbo->target, sizeof (vboData), vboData, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*16));
+    glEnableVertexAttribArray(1);
+
+    free(planeVbo);
+
+    return planeVao;
+}
+
+

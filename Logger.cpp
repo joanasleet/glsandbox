@@ -4,14 +4,14 @@
 FILE* watchlog;
 
 void openLog() {
-    watchlog = fopen(LOG_NAME, "a");
+    watchlog = fopen(LOG_NAME, "a+");
     if (!watchlog) {
         ERR("Failed to open log <%s>", LOG_NAME);
     }
 }
 
 void closeLog() {
-    if (!watchlog) {
+    if (watchlog) {
         fclose(watchlog);
     }
 }

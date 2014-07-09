@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-#define BUFFER_OFFSET(offset) ((void *) (offset))
-
 class GLContext {
 public:
     GLFWwindow* main;

@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <stdio.h>
+#include <math.h>
 
 // GLEW
 #include <GL/glew.h>
@@ -25,6 +26,7 @@
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #endif	/* COMMON_H */

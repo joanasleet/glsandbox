@@ -10,7 +10,10 @@ typedef struct Context {
     GLFWwindow* win;
 } Context;
 
-Context* createContext(unsigned int xRes = 800, unsigned int yRes = 600, const char* title = "OpenGL");
+Context* createContext(unsigned int xRes = 1024, unsigned int yRes = 768, const char* title = "OpenGL");
+
+void config();
+void contextErrorCB(int code, const char* msg);
 
 #endif	/* CONTEXT_H */
 

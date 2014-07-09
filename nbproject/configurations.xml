@@ -12,6 +12,7 @@
       <itemPath>GLObject.h</itemPath>
       <itemPath>GLProgram.h</itemPath>
       <itemPath>Logger.h</itemPath>
+      <itemPath>Object.h</itemPath>
       <itemPath>ShaderProgram.h</itemPath>
       <itemPath>common.h</itemPath>
       <itemPath>stb_image.h</itemPath>
@@ -19,8 +20,10 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
-      <itemPath>fragment</itemPath>
-      <itemPath>vertex</itemPath>
+      <itemPath>cube.fs</itemPath>
+      <itemPath>cube.vs</itemPath>
+      <itemPath>floor.fs</itemPath>
+      <itemPath>floor.vs</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -33,6 +36,7 @@
       <itemPath>GLObject.cpp</itemPath>
       <itemPath>GLProgram.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
+      <itemPath>Object.cpp</itemPath>
       <itemPath>ShaderProgram.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>stb_image.c</itemPath>
@@ -114,21 +118,29 @@
       </item>
       <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Object.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Object.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="ShaderProgram.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ShaderProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="fragment" ex="false" tool="3" flavor2="0">
+      <item path="cube.fs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cube.vs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="floor.fs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="floor.vs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="stb_image.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="stb_image.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="vertex" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -183,21 +195,29 @@
       </item>
       <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Object.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Object.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="ShaderProgram.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ShaderProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="fragment" ex="false" tool="3" flavor2="0">
+      <item path="cube.fs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cube.vs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="floor.fs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="floor.vs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="stb_image.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="stb_image.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="vertex" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

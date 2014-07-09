@@ -15,6 +15,10 @@
 #define CAM_SPEED 0.01
 
 typedef struct Camera {
+    float dirX;
+    float dirY;
+    float dirZ;
+
     double rotaX;
     double rotaY;
     double rotaZ;
@@ -22,16 +26,16 @@ typedef struct Camera {
     float xPos;
     float yPos;
     float zPos;
-    
+
     float zspeed;
     float xspeed;
-    
-    float zRotaSpeed;
+
 } Camera;
 
 Camera* createCamera(float x, float y, float z);
-void update(Camera* cam, Context* context, GLuint shaderProg);
+void update(Camera* cam, Context* context, GLuint* shaders);
 
+void cursorCB(GLFWwindow* win, double xpos, double ypos);
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset);
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods);
 

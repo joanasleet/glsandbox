@@ -21,7 +21,7 @@ public:
     void loadTexture(const char* file, GLenum slot = GL_TEXTURE0, GLint mipmaps = 0,
             GLint colorFormat = GL_RGBA, GLenum pixelFormat = GL_RGBA,
             GLenum pixelType = GL_UNSIGNED_BYTE);
-    
+
     void param(GLenum paramName, GLint paramValue);
     void param(GLenum paramName, GLfloat paramValue);
 

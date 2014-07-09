@@ -1,9 +1,12 @@
 #include "Context.h"
 
 Context* createContext(unsigned int xRes, unsigned int yRes, const char* title) {
+    INFO("–––––––––––––––– Log Start ––––––––––––––––––");
     Context* context = (Context*) malloc(sizeof (Context));
     context->xRes = xRes;
     context->yRes = yRes;
+
+    glfwSetErrorCallback(contextErrorCB);
 
     if (!glfwInit()) {
         ERR("Failed to start GLFW.");
@@ -11,7 +14,7 @@ Context* createContext(unsigned int xRes, unsigned int yRes, const char* title) 
     }
 
     INFO("GLFW initialized.");
-        
+
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
         ERR("Failed to create main window.");
@@ -30,4 +33,8 @@ Context* createContext(unsigned int xRes, unsigned int yRes, const char* title) 
     INFO("GLEW initialized.");
 
     return context;
+}
+
+void contextErrorCB(int code, const char* msg) {
+    ERR("In context - %s (Code %i)", msg, code);
 }

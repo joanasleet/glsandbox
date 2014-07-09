@@ -8,6 +8,10 @@ Camera* createCamera(float x, float y, float z) {
     cam->rotaY = 0.0f;
     cam->rotaZ = 0.0f;
 
+    cam->dirX = 0.0f;
+    cam->dirY = 0.0f;
+    cam->dirZ = -1.0f;
+
     cam->xPos = x;
     cam->yPos = y;
     cam->zPos = z;
@@ -15,39 +19,37 @@ Camera* createCamera(float x, float y, float z) {
     cam->xspeed = 0.0f;
     cam->zspeed = 0.0f;
 
-    cam->zRotaSpeed = 0.0f;
-
     return cam;
 }
 
-void update(Camera* cam, Context* context, GLuint prog) {
+void update(Camera* cam, Context* context, GLuint* shaders) {
 
-    double xpos, ypos;
+    //cam->zPos += -cam->zspeed;
+    //cam->xPos += cam->xspeed;
 
-    double midX = context->xRes / 2;
-    double midY = context->yRes / 2;
+    glm::mat4 yRotaB = glm::rotate<float>(glm::mat4(1.0f), cam->rotaY * CAM_SPEED, glm::vec3(1, 0, 0));
+    glm::mat4 xRotaB = glm::rotate<float>(glm::mat4(1.0f), cam->rotaX * CAM_SPEED, glm::vec3(0, 1, 0));
+    glm::mat4 zRotaB = glm::rotate<float>(glm::mat4(1.0f), cam->rotaZ * CAM_SPEED * 10, glm::vec3(0, 0, 1));
 
-    cam->zPos += -cam->zspeed;
-    cam->xPos += cam->xspeed;
+    glm::vec4 camDir = xRotaB * yRotaB * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+    
+    cam->xPos += camDir.x * cam->zspeed;
+    cam->yPos += camDir.y * cam->zspeed;
+    cam->zPos += camDir.z * cam->zspeed;
 
-    cam->rotaZ += cam->zRotaSpeed;
+    glm::vec3 translVec = glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos);
 
-    glfwGetCursorPos(context->win, &xpos, &ypos);
-    glfwSetCursorPos(context->win, midX, midY);
-
-    cam->rotaX += (midX - xpos);
-    cam->rotaY += (midY - ypos);
-
-    glm::mat4 translateCamera = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
-
-    glm::mat4 yRota = glm::rotate<float>(glm::mat4(1.0f), cam->rotaY * CAM_SPEED, glm::vec3(-1, 0, 0));
+    glm::mat4 translateCamera = glm::translate<float>(glm::mat4(1.0f), translVec);
+    glm::mat4 yRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaY * CAM_SPEED, glm::vec3(1, 0, 0));
     glm::mat4 xRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaX * CAM_SPEED, glm::vec3(0, 1, 0));
     glm::mat4 zRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaZ * CAM_SPEED * 10, glm::vec3(0, 0, 1));
-
     glm::mat4 perspective = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
 
-
-    // MVP: move around camera (0, 0, 0)
     glm::mat4 MVP = perspective * yRota * xRota * zRota * translateCamera;
-    glUniformMatrix4fv(glGetUniformLocation(prog, "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
+    glUniformMatrix4fv(glGetUniformLocation(shaders[0], "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
+
+
+    //MVP = perspective * yRota * xRota * zRota;
+
+    glUniformMatrix4fv(glGetUniformLocation(shaders[1], "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
 }

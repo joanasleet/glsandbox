@@ -49,18 +49,7 @@ void GLObject::subBuffer(GLintptr offset, GLsizeiptr size, const GLvoid* data) {
 
 void GLObject::loadTexture(const char* file, GLenum slot, GLint mipmaps, GLint colorFormat, GLenum pixelFormat, GLenum pixelType) {
 
-    // wie waehle ich das aus ?
-    glActiveTexture(slot);
-
-    int imgWidth, imgHeight, imgCompression;
-    unsigned char* imageData = texture(file, &imgWidth, &imgHeight, &imgCompression);
-
-    glTexImage2D(target, mipmaps, colorFormat, imgWidth, imgHeight, 0, pixelFormat, pixelType, imageData);
-
-    param(GL_TEXTURE_WRAP_S, GL_REPEAT);
-    param(GL_TEXTURE_WRAP_T, GL_REPEAT);
-    param(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   
 }
 
 void GLObject::param(GLenum paramName, GLint paramValue) {
