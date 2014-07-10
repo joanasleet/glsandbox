@@ -37,11 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/Camera.o \
 	${OBJECTDIR}/Context.o \
-	${OBJECTDIR}/GLCamera.o \
-	${OBJECTDIR}/GLContext.o \
 	${OBJECTDIR}/GLHelper.o \
-	${OBJECTDIR}/GLObject.o \
-	${OBJECTDIR}/GLProgram.o \
 	${OBJECTDIR}/Logger.o \
 	${OBJECTDIR}/Object.o \
 	${OBJECTDIR}/ShaderProgram.o \
@@ -83,30 +79,10 @@ ${OBJECTDIR}/Context.o: Context.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Context.o Context.cpp
 
-${OBJECTDIR}/GLCamera.o: GLCamera.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLCamera.o GLCamera.cpp
-
-${OBJECTDIR}/GLContext.o: GLContext.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLContext.o GLContext.cpp
-
 ${OBJECTDIR}/GLHelper.o: GLHelper.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLHelper.o GLHelper.cpp
-
-${OBJECTDIR}/GLObject.o: GLObject.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLObject.o GLObject.cpp
-
-${OBJECTDIR}/GLProgram.o: GLProgram.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLProgram.o GLProgram.cpp
 
 ${OBJECTDIR}/Logger.o: Logger.cpp 
 	${MKDIR} -p ${OBJECTDIR}

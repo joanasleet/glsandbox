@@ -15,5 +15,7 @@ Context* createContext(unsigned int xRes = 1024, unsigned int yRes = 768, const 
 void config();
 void contextErrorCB(int code, const char* msg);
 
+void fps();
+
 #endif	/* CONTEXT_H */
 

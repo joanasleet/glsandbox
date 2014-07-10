@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <math.h>
+#include <ctime>
+#include <cstdarg>
 
 // GLEW
 #include <GL/glew.h>
@@ -15,6 +17,7 @@
 #include <GLFW/glfw3.h>
 
 // Error Handling
+#define LOG_TO_FILE
 #include "Logger.h"
 
 // stb_image header only

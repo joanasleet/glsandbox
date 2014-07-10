@@ -2,8 +2,6 @@
 #define	CAMERA_H
 
 #include "common.h"
-#include "GLProgram.h"
-#include "GLContext.h"
 #include "Context.h"
 #include "ShaderProgram.h"
 
@@ -36,6 +34,7 @@ Camera* createCamera(float x, float y, float z);
 void update(Camera* cam, Context* context, GLuint* shaders);
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos);
+void cursorEnterCB(GLFWwindow* win, int enter);
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset);
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods);
 

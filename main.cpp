@@ -1,99 +1,59 @@
-
-
 #include "GLHelper.h"
 #include "Camera.h"
 #include "Context.h"
 #include "Object.h"
-#include "GLObject.h"
 
 #include <iostream>
 
 using namespace std;
 
-/*************** SANDBOX ********************/
-
-
-
 /* opengl context */
 Context* context = createContext();
 
-/* main shader program */
+/* shaders */
 GLuint floorShader = glCreateProgram();
 GLuint cubeShader = glCreateProgram();
 
 /* main camera */
-Camera* cam = createCamera(0, 10, 0);
+#define CAM_YOFFSET (-1980)
+Camera* cam = createCamera(0, CAM_YOFFSET, 0);
 
-bool mouseSet = false;
+bool mouseGrabbed = false;
 
 int main(int argc, char** argv) {
 
     config();
 
-    /* ################# skybox ################## */
-    /* ########################################### */
+    /* ############# skybox ############### */
+    Object* cubeVao = cubeVAO(100000.0f, 10.0f);
 
-    Object* cubeTex = newObj(GL_TEXTURE_CUBE_MAP);
-    glBindTexture(cubeTex->target, cubeTex->id);
+    const char* cubeFaces[] = {
+        "textures/sky1.bmp",
+        "textures/sky4.bmp",
+        "textures/sky3.bmp",
+        "textures/cmbot.png",
+        "textures/sky5.bmp",
+        "textures/sky2.bmp"
+    };
+    Object* cubeTex = cubeMap(cubeFaces);
 
-    int w, h, c;
+    loadShader("cube.vs", GL_VERTEX_SHADER, cubeShader);
+    loadShader("cube.fs", GL_FRAGMENT_SHADER, cubeShader);
 
-    unsigned char* cm_right = texBuffer("textures/sky1.bmp", &w, &h, &c);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, w, h, 0, GL_RGBA,
-            GL_UNSIGNED_BYTE, cm_right);
-    free(cm_right);
-
-    unsigned char* cm_left = texBuffer("textures/sky4.bmp", &w, &h, &c);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, w, h, 0, GL_RGBA,
-            GL_UNSIGNED_BYTE, cm_left);
-    free(cm_left);
-
-    unsigned char* cm_front = texBuffer("textures/sky5.bmp", &w, &h, &c);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, w, h, 0, GL_RGBA,
-            GL_UNSIGNED_BYTE, cm_front);
-    free(cm_front);
-
-    unsigned char* cm_back = texBuffer("textures/sky2.bmp", &w, &h, &c);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, w, h, 0, GL_RGBA,
-            GL_UNSIGNED_BYTE, cm_back);
-    free(cm_back);
-
-    unsigned char* cm_top = texBuffer("textures/sky3.bmp", &w, &h, &c);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, w, h, 0, GL_RGBA,
-            GL_UNSIGNED_BYTE, cm_top);
-    free(cm_top);
-
-    unsigned char* cm_bot = texBuffer("textures/cmbot.png", &w, &h, &c);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, w, h, 0, GL_RGBA,
-            GL_UNSIGNED_BYTE, cm_bot);
-    free(cm_bot);
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-
-    Object* cubeVao = cubeVAO(10000.0f, 10.0f, 0, 0, 0);
-
-    /* ################# floor ################### */
-    /* ########################################### */
-
-    Object* planeVao = planeVAO(50000.0f, 50.0f, 0, 0, 0);
+    /* ############# floor ################# */
+    Object* planeVao = planeVAO(50000.0f, 50.0f, 0, CAM_YOFFSET - 20, 0);
 
     Object* planeTex = texture("textures/concrete.jpg", GL_TEXTURE_2D);
 
     loadShader("floor.vs", GL_VERTEX_SHADER, floorShader);
     loadShader("floor.fs", GL_FRAGMENT_SHADER, floorShader);
 
-    loadShader("cube.vs", GL_VERTEX_SHADER, cubeShader);
-    loadShader("cube.fs", GL_FRAGMENT_SHADER, cubeShader);
-
     GLuint shaders[] = {floorShader, cubeShader};
 
     /* render loop */
     while (!glfwWindowShouldClose(context->win) && !glfwGetKey(context->win, GLFW_KEY_ESCAPE)) {
+
+        fps();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -120,6 +80,13 @@ int main(int argc, char** argv) {
 
     glDeleteProgram(floorShader);
     glDeleteProgram(cubeShader);
+
+    free(cubeVao);
+    free(cubeTex);
+
+    free(planeVao);
+    free(planeTex);
+
     free(context);
     free(cam);
 
@@ -134,21 +101,25 @@ void config() {
     glClearColor(0.5, 0.5, 0.7, 1.0);
     glfwSetInputMode(context->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-    glfwSetCursorPosCallback(context->win, cursorCB);
+    glfwSetCursorEnterCallback(context->win, cursorEnterCB);
     glfwSetScrollCallback(context->win, scrollCB);
     glfwSetKeyCallback(context->win, keyCB);
-
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {
 
-    double midX = context->xRes / 2.0f;
-    double midY = context->yRes / 2.0f;
+    cam->rotaX += (context->xRes / 2.0f) - xpos;
+    cam->rotaY += (context->yRes / 2.0f) - ypos;
 
-    cam->rotaX += midX - xpos;
-    cam->rotaY += midY - ypos;
+    glfwSetCursorPos(win, (context->xRes / 2.0f), (context->yRes / 2.0f));
 
-    glfwSetCursorPos(win, midX, midY);
+    INFO("Cam direction: (%.3f, %.3f, %.3f)", cam->dirX, cam->dirY, cam->dirZ);
+}
+
+void cursorEnterCB(GLFWwindow* win, int enter) {
+    if (enter == GL_TRUE) {
+
+    }
 }
 
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
@@ -198,10 +169,39 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
                 cam->xspeed = 0.0f;
             }
             break;
+        case GLFW_KEY_C:
+
+            if (action == GLFW_PRESS && !mouseGrabbed) {
+                glfwSetCursorPos(win, context->xRes / 2.0f, context->yRes / 2.0f);
+                glfwSetCursorPosCallback(win, cursorCB);
+                glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                mouseGrabbed = true;
+            } else if (action == GLFW_PRESS && mouseGrabbed) {
+                glfwSetCursorPosCallback(win, NULL);
+                glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                mouseGrabbed = false;
+            }
+            break;
         default:
             return;
             break;
     }
 
     INFO("Cam position: (%.0f,%.0f,%.0f)", cam->xPos, cam->yPos, cam->zPos);
+}
+
+void fps() {
+    static double prevTime = glfwGetTime();
+    double currTime = glfwGetTime();
+    double diffTime = currTime - prevTime;
+    static int frames = 0;
+
+    if (diffTime > 0.5) {
+        prevTime = currTime;
+        char title[20];
+        sprintf(title, "OpenGL @ %.2f", (double) frames / diffTime);
+        glfwSetWindowTitle(context->win, title);
+        frames = 0;
+    }
+    ++frames;
 }

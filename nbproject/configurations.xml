@@ -6,11 +6,7 @@
                    projectFiles="true">
       <itemPath>Camera.h</itemPath>
       <itemPath>Context.h</itemPath>
-      <itemPath>GLCamera.h</itemPath>
-      <itemPath>GLContext.h</itemPath>
       <itemPath>GLHelper.h</itemPath>
-      <itemPath>GLObject.h</itemPath>
-      <itemPath>GLProgram.h</itemPath>
       <itemPath>Logger.h</itemPath>
       <itemPath>Object.h</itemPath>
       <itemPath>ShaderProgram.h</itemPath>
@@ -30,11 +26,7 @@
                    projectFiles="true">
       <itemPath>Camera.cpp</itemPath>
       <itemPath>Context.cpp</itemPath>
-      <itemPath>GLCamera.cpp</itemPath>
-      <itemPath>GLContext.cpp</itemPath>
       <itemPath>GLHelper.cpp</itemPath>
-      <itemPath>GLObject.cpp</itemPath>
-      <itemPath>GLProgram.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
       <itemPath>Object.cpp</itemPath>
       <itemPath>ShaderProgram.cpp</itemPath>
@@ -94,25 +86,9 @@
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GLCamera.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLCamera.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GLContext.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLContext.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="GLHelper.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GLHelper.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GLObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLObject.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GLProgram.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Logger.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -171,25 +147,9 @@
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GLCamera.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLCamera.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GLContext.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLContext.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="GLHelper.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GLHelper.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GLObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLObject.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GLProgram.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLProgram.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Logger.cpp" ex="false" tool="1" flavor2="0">
       </item>

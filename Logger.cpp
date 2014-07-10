@@ -1,19 +1,77 @@
 #include "Logger.h"
 #include "GLHelper.h"
 
-FILE* watchlog;
+FILE* scrollLog;
+FILE* watchLog;
+
+GLenum GLattribIds[] = {
+    GL_MAJOR_VERSION,
+    GL_MINOR_VERSION,
+    GL_MAX_VERTEX_ATTRIBS,
+    GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
+    GL_MAX_VERTEX_UNIFORM_COMPONENTS,
+    GL_ACTIVE_TEXTURE,
+    GL_MAX_TEXTURE_SIZE,
+    GL_MAX_3D_TEXTURE_SIZE,
+    GL_MAX_CUBE_MAP_TEXTURE_SIZE,
+    GL_MAX_TEXTURE_IMAGE_UNITS,
+    GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
+    GL_MAX_COLOR_TEXTURE_SAMPLES,
+    GL_MAX_ARRAY_TEXTURE_LAYERS,
+    GL_CURRENT_PROGRAM,
+    GL_ARRAY_BUFFER_BINDING,
+    GL_ELEMENT_ARRAY_BUFFER_BINDING,
+    GL_MAX_DRAW_BUFFERS,
+    GL_MAX_FRAGMENT_UNIFORM_COMPONENTS,
+    GL_STEREO,
+    GL_MAX_VARYING_FLOATS,
+    GL_DEPTH_TEST
+};
+
+const char* GLattribStrings[] = {
+    "GL_MAJOR_VERSION",
+    "GL_MINOR_VERSION",
+    "GL_MAX_VERTEX_ATTRIBS",
+    "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS",
+    "GL_MAX_VERTEX_UNIFORM_COMPONENTS",
+    "GL_ACTIVE_TEXTURE",
+    "GL_MAX_TEXTURE_SIZE",
+    "GL_MAX_3D_TEXTURE_SIZE",
+    "GL_MAX_CUBE_MAP_TEXTURE_SIZE",
+    "GL_MAX_TEXTURE_IMAGE_UNITS",
+    "GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS",
+    "GL_MAX_COLOR_TEXTURE_SAMPLES",
+    "GL_MAX_ARRAY_TEXTURE_LAYERS",
+    "GL_CURRENT_PROGRAM",
+    "GL_ARRAY_BUFFER_BINDING",
+    "GL_ELEMENT_ARRAY_BUFFER_BINDING",
+    "GL_MAX_DRAW_BUFFERS",
+    "GL_MAX_FRAGMENT_UNIFORM_COMPONENTS",
+    "GL_STEREO",
+    "GL_MAX_VARYING_FLOATS",
+    "GL_DEPTH_TEST",
+};
 
 void openLog() {
-    watchlog = fopen(LOG_NAME, "a+");
-    if (!watchlog) {
-        ERR("Failed to open log <%s>", LOG_NAME);
+    scrollLog = fopen(SCROLL_LOG_NAME, "a+");
+    if (!scrollLog) {
+        ERR("Failed to open log <%s>", SCROLL_LOG_NAME);
     }
 }
 
 void closeLog() {
-    if (watchlog) {
-        fclose(watchlog);
+    if (scrollLog) {
+        fclose(scrollLog);
     }
+}
+
+void printWatchLog() {
+    watchLog = fopen(WATCH_LOG_NAME, "w");
+    if (!watchLog) {
+        ERR("Failed to open log <%s>", WATCH_LOG_NAME);
+        return;
+    }
+    
 }
 
 void catchError() {

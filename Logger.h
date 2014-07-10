@@ -3,22 +3,19 @@
 
 #include "common.h"
 
-#include <ctime>
-#include <cstdarg>
-
-#define LOG_NAME "gl_watch.log"
-
-#define LOG_TO_FILE
+#define SCROLL_LOG_NAME "gl_scroll.log"
+#define WATCH_LOG_NAME "gl_watch.log"
 
 #ifdef LOG_TO_FILE
-#define ERR_LOG watchlog
-#define INFO_LOG watchlog
+#define ERR_LOG scrollLog
+#define INFO_LOG scrollLog
 #else
 #define ERR_LOG stderr
 #define INFO_LOG stdout
 #endif
 
-extern FILE* watchlog;
+extern FILE* scrollLog;
+extern FILE* watchLog;
 
 #define INFO(args, ...) \
 do { \
@@ -38,11 +35,19 @@ do { \
     free(time); \
 } while (0) \
 
+
 #define CATCH_EXCEPTION
+
+// GL runtime infos
+extern GLenum GLattribIds[];
+extern const char* GLattribStrings[];
 
 // init log file
 void openLog();
 void closeLog();
+
+// print watchable log
+void printWatchLog();
 
 // exception catching
 void catchError();
