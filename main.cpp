@@ -14,8 +14,10 @@ Context* context = createContext();
 GLuint floorShader = glCreateProgram();
 GLuint cubeShader = glCreateProgram();
 
+GLint mvpLoc[2];
+
 /* main camera */
-#define CAM_YOFFSET (-1980)
+#define CAM_YOFFSET (-1580)
 Camera* cam = createCamera(0, CAM_YOFFSET, 0);
 
 bool mouseGrabbed = false;
@@ -47,9 +49,11 @@ int main(int argc, char** argv) {
 
     loadShader("floor.vs", GL_VERTEX_SHADER, floorShader);
     loadShader("floor.fs", GL_FRAGMENT_SHADER, floorShader);
-
-    GLuint shaders[] = {floorShader, cubeShader};
-
+    
+    mvpLoc[0] = glGetUniformLocation(floorShader, "MVP");
+    mvpLoc[1] = glGetUniformLocation(cubeShader, "MVP");
+    
+    
     /* render loop */
     while (!glfwWindowShouldClose(context->win) && !glfwGetKey(context->win, GLFW_KEY_ESCAPE)) {
 
@@ -57,21 +61,22 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        update(cam);
+        
+        updateMVP(floorShader, mvpLoc[0]);
+        //glUseProgram(floorShader);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(planeTex->target, planeTex->id);
+        glBindVertexArray(planeVao->id);
+        glDrawArrays(GL_QUADS, 0, 4);
+
+        updateMVP(cubeShader, mvpLoc[1]);
         glUseProgram(cubeShader);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(cubeTex->target, cubeTex->id);
         glBindVertexArray(cubeVao->id);
         glDrawArrays(GL_QUADS, 0, 24);
 
-        update(cam, context, shaders);
-
-        glUseProgram(floorShader);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(planeTex->target, planeTex->id);
-        glBindVertexArray(planeVao->id);
-        glDrawArrays(GL_QUADS, 0, 4);
-
-        update(cam, context, shaders);
 
         glFlush();
         glfwSwapBuffers(context->win);
@@ -98,6 +103,10 @@ int main(int argc, char** argv) {
 void config() {
 
     glEnable(GL_DEPTH_TEST);
+    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    
     glClearColor(0.5, 0.5, 0.7, 1.0);
     glfwSetInputMode(context->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
@@ -136,8 +145,7 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
         case GLFW_KEY_W:
 
             if (action == GLFW_PRESS) {
-                cam->zspeed = 5.0f;
-
+                cam->zspeed = 3.0f;
             } else if (action == GLFW_RELEASE) {
                 cam->zspeed = 0.0f;
             }
@@ -146,7 +154,6 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
             if (action == GLFW_PRESS) {
                 cam->xspeed = -5.0f;
-
             } else if (action == GLFW_RELEASE) {
                 cam->xspeed = 0.0f;
             }
@@ -155,7 +162,6 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
             if (action == GLFW_PRESS) {
                 cam->zspeed = -5.0f;
-
             } else if (action == GLFW_RELEASE) {
                 cam->zspeed = 0.0f;
             }
@@ -164,7 +170,6 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
             if (action == GLFW_PRESS) {
                 cam->xspeed = 5.0f;
-
             } else if (action == GLFW_RELEASE) {
                 cam->xspeed = 0.0f;
             }
@@ -204,4 +209,18 @@ void fps() {
         frames = 0;
     }
     ++frames;
+}
+
+void updateMVP(GLuint prog, GLint location) {
+
+    glm::mat4 translateCamera = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
+    glm::mat4 yRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaY * CAM_SPEED, glm::vec3(1, 0, 0));
+    glm::mat4 xRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaX * CAM_SPEED, glm::vec3(0, 1, 0));
+    glm::mat4 zRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaZ * CAM_SPEED, glm::vec3(0, 0, 1));
+    glm::mat4 perspective = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
+
+    glm::mat4 MVP = perspective * yRota * xRota * zRota * translateCamera;
+
+    glUseProgram(prog);
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(MVP));
 }

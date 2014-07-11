@@ -31,7 +31,9 @@ typedef struct Camera {
 } Camera;
 
 Camera* createCamera(float x, float y, float z);
-void update(Camera* cam, Context* context, GLuint* shaders);
+void update(Camera* cam);
+
+void updateMVP(GLuint prog, GLint location);
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos);
 void cursorEnterCB(GLFWwindow* win, int enter);

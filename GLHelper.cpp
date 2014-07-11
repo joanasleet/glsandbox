@@ -20,9 +20,9 @@ Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfl
 
         // top
         midX - l, midY + l, midZ + l, 1.0f,
-        midX + l, midY + l, midZ + l, 1.0f,
-        midX + l, midY + l, midZ - l, 1.0f,
         midX - l, midY + l, midZ - l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX + l, midY + l, midZ + l, 1.0f,
 
         // front
         midX - l, midY + l, midZ + l, 1.0f,
@@ -31,16 +31,16 @@ Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfl
         midX - l, midY - l, midZ + l, 1.0f,
 
         // back
-        midX - l, midY + l, midZ - l, 1.0f,
-        midX + l, midY + l, midZ - l, 1.0f,
-        midX + l, midY - l, midZ - l, 1.0f,
         midX - l, midY - l, midZ - l, 1.0f,
+        midX + l, midY - l, midZ - l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX - l, midY + l, midZ - l, 1.0f,
 
         // left
-        midX - l, midY + l, midZ + l, 1.0f,
-        midX - l, midY + l, midZ - l, 1.0f,
-        midX - l, midY - l, midZ - l, 1.0f,
         midX - l, midY - l, midZ + l, 1.0f,
+        midX - l, midY - l, midZ - l, 1.0f,
+        midX - l, midY + l, midZ - l, 1.0f,
+        midX - l, midY + l, midZ + l, 1.0f,
 
         // right
         midX + l, midY + l, midZ + l, 1.0f,
