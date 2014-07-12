@@ -1,6 +1,6 @@
 #include "GLHelper.h"
 
-Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+Object* cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
     Object* cubeVao = newObj(GL_VERTEX_ARRAY);
     glBindVertexArray(cubeVao->id);
@@ -58,6 +58,64 @@ Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfl
     return cubeVao;
 }
 
+Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+
+    Object* cubeVao = newObj(GL_VERTEX_ARRAY);
+    glBindVertexArray(cubeVao->id);
+
+    Object* cubeVbo = newObj(GL_ARRAY_BUFFER);
+    cubeVao->bufferId = cubeVbo->id;
+    glBindBuffer(cubeVbo->target, cubeVbo->id);
+
+    float l = length / 2.0f;
+
+    GLfloat vboData[] = {
+        // bot
+        midX - l, midY - l, midZ - l, 1.0f,
+        midX + l, midY - l, midZ - l, 1.0f,
+        midX + l, midY - l, midZ + l, 1.0f,
+        midX - l, midY - l, midZ + l, 1.0f,
+
+        // top
+        midX + l, midY + l, midZ + l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX - l, midY + l, midZ - l, 1.0f,
+        midX - l, midY + l, midZ + l, 1.0f,
+
+        // front
+        midX - l, midY - l, midZ + l, 1.0f,
+        midX + l, midY - l, midZ + l, 1.0f,
+        midX + l, midY + l, midZ + l, 1.0f,
+        midX - l, midY + l, midZ + l, 1.0f,
+
+        // back
+        midX - l, midY + l, midZ - l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX + l, midY - l, midZ - l, 1.0f,
+        midX - l, midY - l, midZ - l, 1.0f,
+
+        // left
+        midX - l, midY + l, midZ + l, 1.0f,
+        midX - l, midY + l, midZ - l, 1.0f,
+        midX - l, midY - l, midZ - l, 1.0f,
+        midX - l, midY - l, midZ + l, 1.0f,
+
+        // right
+        midX + l, midY - l, midZ + l, 1.0f,
+        midX + l, midY - l, midZ - l, 1.0f,
+        midX + l, midY + l, midZ - l, 1.0f,
+        midX + l, midY + l, midZ + l, 1.0f
+    };
+    glBufferData(cubeVbo->target, sizeof (vboData), vboData, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    free(cubeVbo);
+
+    return cubeVao;
+}
+
 Object* planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
     Object* planeVao = newObj(GL_VERTEX_ARRAY);
@@ -93,7 +151,7 @@ Object* planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLf
     return planeVao;
 }
 
-Object* cubeMap(const char* cubeFaces[]) {
+Object* cubeMapTex(const char* cubeFaces[], bool allSame) {
 
     Object* cubeTex = newObj(GL_TEXTURE_CUBE_MAP);
     glBindTexture(cubeTex->target, cubeTex->id);
@@ -102,8 +160,14 @@ Object* cubeMap(const char* cubeFaces[]) {
 
     unsigned char* faceTexBuffer;
 
+    if (allSame) {
+        faceTexBuffer = texBuffer(cubeFaces[0], &w, &h, &c);
+    }
+
     for (int face = 0; face < 6; face++) {
-        faceTexBuffer = texBuffer(cubeFaces[face], &w, &h, &c);
+        if (!allSame) {
+            faceTexBuffer = texBuffer(cubeFaces[face], &w, &h, &c);
+        }
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, w, h, 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, faceTexBuffer);
     }

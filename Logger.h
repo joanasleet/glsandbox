@@ -2,6 +2,7 @@
 #define	LOGGER_H
 
 #include "common.h"
+#include "Camera.h"
 
 #define SCROLL_LOG_NAME "gl_scroll.log"
 #define WATCH_LOG_NAME "gl_watch.log"
@@ -42,12 +43,11 @@ do { \
 extern GLenum GLattribIds[];
 extern const char* GLattribStrings[];
 
+extern void printWatchLog();
+
 // init log file
 void openLog();
 void closeLog();
-
-// print watchable log
-void printWatchLog();
 
 // exception catching
 void catchError();

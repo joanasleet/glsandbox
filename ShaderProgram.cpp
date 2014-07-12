@@ -10,8 +10,8 @@ void loadShader(const char* srcFile, GLenum type, GLuint prog) {
     GLsizei logSize = 0;
     char* logMsg;
 
-    INFO("Loading shader from file <%s>", srcFile);
-    INFO("\n%s", shaderSrc);
+    INFO("Loading shader <%s>", srcFile);
+    //INFO("\n%s", shaderSrc);
 
     /* compile shader */
     glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);

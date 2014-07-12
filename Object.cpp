@@ -73,9 +73,9 @@ unsigned char* texBuffer(const char* file, int* width, int* height, int* compres
     unsigned char* tex_data = stbi_load(file, width, height, compression, channels);
 
     if (!tex_data) {
-        ERR("Failed to load texture from file <%s>", file);
+        ERR("Failed to load texture <%s>", file);
     }
-    INFO("Texture attribute: %i x %i (%i) <%s>", *width, *height, *compression, file);
+    INFO("Texture <%s>: %i x %i (%i) ", file, *width, *height, *compression);
 
     return tex_data;
 }

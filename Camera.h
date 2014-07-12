@@ -10,7 +10,8 @@
 #define NEAR_PLANE (0.1f)
 #define FAR_PLANE (1000.0f)
 
-#define CAM_SPEED 0.01
+#define TURN_SPEED 0.01f
+#define DEFAULT_CAM_SPEED 5.0f
 
 typedef struct Camera {
     float dirX;
@@ -25,8 +26,13 @@ typedef struct Camera {
     float yPos;
     float zPos;
 
-    float zspeed;
     float xspeed;
+    float yspeed;
+    float zspeed;
+
+    float defaultSpeed;
+
+    bool mouseGrab;
 
 } Camera;
 

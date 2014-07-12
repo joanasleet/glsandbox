@@ -17,5 +17,7 @@ void contextErrorCB(int code, const char* msg);
 
 void fps();
 
+void resizeCB(GLFWwindow* win, int w, int h);
+
 #endif	/* CONTEXT_H */
 

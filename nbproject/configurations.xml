@@ -20,6 +20,8 @@
       <itemPath>cube.vs</itemPath>
       <itemPath>floor.fs</itemPath>
       <itemPath>floor.vs</itemPath>
+      <itemPath>lcube.fs</itemPath>
+      <itemPath>lcube.vs</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -112,6 +114,10 @@
       </item>
       <item path="floor.vs" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="lcube.fs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lcube.vs" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="stb_image.c" ex="false" tool="0" flavor2="0">
@@ -172,6 +178,10 @@
       <item path="floor.fs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="floor.vs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lcube.fs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lcube.vs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>

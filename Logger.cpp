@@ -1,5 +1,4 @@
 #include "Logger.h"
-#include "GLHelper.h"
 
 FILE* scrollLog;
 FILE* watchLog;
@@ -65,13 +64,18 @@ void closeLog() {
     }
 }
 
-void printWatchLog() {
+void printWatchLog(Camera* cam) {
     watchLog = fopen(WATCH_LOG_NAME, "w");
     if (!watchLog) {
         ERR("Failed to open log <%s>", WATCH_LOG_NAME);
         return;
     }
     
+    fprintf(watchLog, "–––––––––––––– Watch Log ––––––––––––––\n");
+    fprintf(watchLog, "Cam direction:\t(%.1f, %.1f, %.1f)\n", cam->dirX, cam->dirY, cam->dirZ);
+    fprintf(watchLog, "Cam position:\t(%.1f, %.1f, %.1f)\n", cam->xPos, cam->yPos, cam->zPos);
+    
+    fclose(watchLog);
 }
 
 void catchError() {
