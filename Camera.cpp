@@ -43,7 +43,7 @@ void update(Camera* cam) {
     cam->dirZ = camDir.z;
 
     cam->xPos += camDir.x * cam->zspeed + strafe.x * cam->xspeed;
-    //cam->yPos += camDir.y * cam->zspeed + strafe.y * cam->xspeed + cam->yspeed;
-    cam->yPos += cam->yspeed;
+    cam->yPos += camDir.y * cam->zspeed + strafe.y * cam->xspeed + cam->yspeed;
+    //cam->yPos += cam->yspeed;
     cam->zPos += camDir.z * cam->zspeed + strafe.z * cam->xspeed;
 }

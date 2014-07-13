@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     config();
 
     /* ############# skybox ############### */
-    Object* cubeVao = cubeMapVAO(50000.0f, 10.0f);
+    Object* cubeVao = cubeMapVAO(100000.0f, 10.0f);
 
     const char* cubeFaces[] = {
         "textures/SBRIGHT.png",
@@ -43,15 +43,15 @@ int main(int argc, char** argv) {
     loadShader("cube.fs", GL_FRAGMENT_SHADER, cubeShader);
 
     /* ############# floor ################# */
-    Object* planeVao = planeVAO(10000.0f, 50.0f, 0, CAM_YOFFSET - 20, 0);
+    Object* planeVao = planeVAO(10000.0f, 20.0f, 0, CAM_YOFFSET - 20, 0);
 
-    Object* planeTex = texture("textures/concrete.jpg", GL_TEXTURE_2D);
+    Object* planeTex = texture("textures/tiles.png", GL_TEXTURE_2D);
+    
 
     loadShader("floor.vs", GL_VERTEX_SHADER, floorShader);
     loadShader("floor.fs", GL_FRAGMENT_SHADER, floorShader);
 
     /* ############# little cube ############ */
-    //Object* lcubeVao = cubeVAO(100.0f, 1.0f, 0.0f, CAM_YOFFSET-20+50, -250.0f);
     Object* lcubeVao = cubeVAO(3200.0f, 1.0f, 0.0f, 0.0f, 0.0f);
 
     glBindVertexArray(lcubeVao->id);
@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
         fps();
         printWatchLog();
         update(cam);
-        
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         updateMVP(floorShader, mvpLoc[0]);
@@ -180,8 +180,6 @@ void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
 
     cam->defaultSpeed += 5 * yoffset;
     cam->defaultSpeed = MAX(cam->defaultSpeed, 0);
-
-    //cam->zspeed = cam->defaultSpeed;
 }
 
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
@@ -251,7 +249,7 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 void resizeCB(GLFWwindow* win, int w, int h) {
     context->xRes = w;
     context->yRes = h;
-    glViewport(0,0,w,h);
+    glViewport(0, 0, w, h);
 }
 
 void fps() {
@@ -298,7 +296,7 @@ void printWatchLog() {
         return;
     }
 
-    fprintf(watchLog, "\n–––––––––––––– Watch Log ––––––––––––––\n");
+    fprintf(watchLog, "–––––––––––––– Watch Log ––––––––––––––\n");
     fprintf(watchLog, "DIRECTION:\n\t%.1f  %.1f  %.1f\n", cam->dirX, cam->dirY, cam->dirZ);
     fprintf(watchLog, "POSITION:\n\t%.1f  %.1f  %.1f\n", cam->xPos, cam->yPos, cam->zPos);
     fprintf(watchLog, "SPEED:\n\t%.1f\n", cam->defaultSpeed);
