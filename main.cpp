@@ -13,30 +13,39 @@ Context* context = newContext();
 
 Camera* cam = createCamera();
 
-ShaderCache* shaderCache;
-UniformCache* uniformsCache;
+ShaderCache* shaderCache = newCache();
+UniformCache* uniformsCache = newCache();
 
-void a() {
-    printf("func a();\n");
+// djb2
+
+unsigned long hashh(unsigned char* str) {
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+
+    return hash;
 }
-
-void b() {
-    printf("func b();\n");
-}
-
-void c() {
-    printf("func c();\n");
-}
-
-void (* funcs[])() = {a, b, c};
 
 int main(int argc, char** argv) {
 
     config();
-   
-    for (int i = 0; i < 3; ++i) {
-        (* funcs[i])();
-    }
+
+    char s1[] = "asdad";
+    const char* s2 = (const char*) s1;
+    
+    
+
+    cache(shaderCache, "Test", 1337);
+    cache(shaderCache, "Test2", 1227);
+
+    unsigned char str[] = "1_Light";
+
+    printf("%lu\n", hashh(str) % 10);
+
+    exit(0);
 
     /* render loop */
     while (!glfwWindowShouldClose(context->win) && !glfwGetKey(context->win, GLFW_KEY_ESCAPE)) {

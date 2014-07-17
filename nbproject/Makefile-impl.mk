@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=glSandbox
+PROJECTNAME=glsandbox
 
 # Active Configuration
 DEFAULTCONF=Debug

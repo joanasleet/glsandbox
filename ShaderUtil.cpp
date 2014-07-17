@@ -11,7 +11,7 @@ GLenum SHADER_TYPE[] = {
 
 extern ShaderCache* shaderCache;
 
-void addShader(const char* srcFile, GLenum type, GLuint prog) {
+void addShader(char* srcFile, GLenum type, GLuint prog) {
 
     GLuint shaderId = get(shaderCache, srcFile);
 
@@ -40,7 +40,7 @@ void addShader(const char* srcFile, GLenum type, GLuint prog) {
 
 }
 
-GLuint compileShader(const char* srcFile, GLenum type) {
+GLuint compileShader(char* srcFile, GLenum type) {
 
     GLuint shaderId = glCreateShader(type);
 
