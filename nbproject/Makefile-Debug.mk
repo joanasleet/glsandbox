@@ -37,10 +37,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/Camera.o \
 	${OBJECTDIR}/Context.o \
-	${OBJECTDIR}/GLHelper.o \
 	${OBJECTDIR}/Logger.o \
-	${OBJECTDIR}/Object.o \
-	${OBJECTDIR}/ShaderProgram.o \
+	${OBJECTDIR}/Mesh.o \
+	${OBJECTDIR}/MeshUtil.o \
+	${OBJECTDIR}/ShaderCache.o \
+	${OBJECTDIR}/ShaderUtil.o \
+	${OBJECTDIR}/Texture.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/stb_image.o
 
@@ -79,25 +81,35 @@ ${OBJECTDIR}/Context.o: Context.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Context.o Context.cpp
 
-${OBJECTDIR}/GLHelper.o: GLHelper.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GLHelper.o GLHelper.cpp
-
 ${OBJECTDIR}/Logger.o: Logger.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger.o Logger.cpp
 
-${OBJECTDIR}/Object.o: Object.cpp 
+${OBJECTDIR}/Mesh.o: Mesh.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Object.o Object.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mesh.o Mesh.cpp
 
-${OBJECTDIR}/ShaderProgram.o: ShaderProgram.cpp 
+${OBJECTDIR}/MeshUtil.o: MeshUtil.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderProgram.o ShaderProgram.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MeshUtil.o MeshUtil.cpp
+
+${OBJECTDIR}/ShaderCache.o: ShaderCache.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderCache.o ShaderCache.cpp
+
+${OBJECTDIR}/ShaderUtil.o: ShaderUtil.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderUtil.o ShaderUtil.cpp
+
+${OBJECTDIR}/Texture.o: Texture.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Texture.o Texture.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}

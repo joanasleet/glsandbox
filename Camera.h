@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "Context.h"
-#include "ShaderProgram.h"
+#include <glm/fwd.hpp>
 
 #define FOV (45.0f)
 #define ASPECT_RATIO (4.0f / 3.0f)
@@ -34,18 +34,18 @@ typedef struct Camera {
 
     bool mouseGrab;
 
+    glm::mat4* perspective;
+    glm::mat4* modelview;
+
 } Camera;
 
-Camera* createCamera(float x, float y, float z);
+Camera* createCamera(float x = 0.0f, float y = 0.0f, float z = 0.0f);
 void update(Camera* cam);
-
-void updateMVP(GLuint prog, GLint location);
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos);
 void cursorEnterCB(GLFWwindow* win, int enter);
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset);
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods);
-
 
 #endif	/* CAMERA_H */
 

@@ -37,7 +37,14 @@ do { \
 } while (0) \
 
 
-#define CATCH_EXCEPTION
+#define CATCH_EXCEPTION \
+do { \
+    char* time = getTime(); \
+    openLog(); \
+    fprintf(ERR_LOG, "[%s][%s:%i] EXCEPTION: %s\n", time, __FILE__, __LINE__, getErrorMessage()); \
+    closeLog(); \
+    free(time); \
+} while (0) \
 
 // GL runtime infos
 extern GLenum GLattribIds[];
@@ -50,7 +57,7 @@ void openLog();
 void closeLog();
 
 // exception catching
-void catchError();
+const char* getErrorMessage();
 
 // helper 
 char* getTime();

@@ -1,17 +1,15 @@
-#include "GLHelper.h"
+#include "MeshUtil.h"
+#include "Mesh.h"
 
-Object* cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
-    Object* cubeVao = newObj(GL_VERTEX_ARRAY);
-    glBindVertexArray(cubeVao->id);
-
-    Object* cubeVbo = newObj(GL_ARRAY_BUFFER);
-    cubeVao->bufferId = cubeVbo->id;
-    glBindBuffer(cubeVbo->target, cubeVbo->id);
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
 
     float l = length / 2.0f;
 
     GLfloat vboData[] = {
+        // vertices
         // bot
         midX - l, midY - l, midZ + l, 1.0f,
         midX + l, midY - l, midZ + l, 1.0f,
@@ -46,30 +44,25 @@ Object* cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, G
         midX + l, midY + l, midZ + l, 1.0f,
         midX + l, midY + l, midZ - l, 1.0f,
         midX + l, midY - l, midZ - l, 1.0f,
-        midX + l, midY - l, midZ + l, 1.0f
+        midX + l, midY - l, midZ + l, 1.0f,
     };
-    glBufferData(cubeVbo->target, sizeof (vboData), vboData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (vboData), vboData, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    free(cubeVbo);
-
-    return cubeVao;
+    return vao;
 }
 
-Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
-    Object* cubeVao = newObj(GL_VERTEX_ARRAY);
-    glBindVertexArray(cubeVao->id);
-
-    Object* cubeVbo = newObj(GL_ARRAY_BUFFER);
-    cubeVao->bufferId = cubeVbo->id;
-    glBindBuffer(cubeVbo->target, cubeVbo->id);
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
 
     float l = length / 2.0f;
 
     GLfloat vboData[] = {
+        // vertices
         // bot
         midX - l, midY - l, midZ - l, 1.0f,
         midX + l, midY - l, midZ - l, 1.0f,
@@ -104,41 +97,111 @@ Object* cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfl
         midX + l, midY - l, midZ + l, 1.0f,
         midX + l, midY - l, midZ - l, 1.0f,
         midX + l, midY + l, midZ - l, 1.0f,
-        midX + l, midY + l, midZ + l, 1.0f
+        midX + l, midY + l, midZ + l, 1.0f,
+
+        // texture coords
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+
+        // normals
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f
     };
-    glBufferData(cubeVbo->target, sizeof (vboData), vboData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (vboData), vboData, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    free(cubeVbo);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*96));
+    glEnableVertexAttribArray(1);
 
-    return cubeVao;
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*(96 + 48)));
+    glEnableVertexAttribArray(2);
+
+    return vao;
 }
 
-Object* planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+GLuint planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
-    Object* planeVao = newObj(GL_VERTEX_ARRAY);
-    glBindVertexArray(planeVao->id);
-
-    Object* planeVbo = newObj(GL_ARRAY_BUFFER);
-    planeVao->bufferId = planeVbo->id;
-    glBindBuffer(planeVbo->target, planeVbo->id);
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
 
     float l = length / 2.0f;
 
     GLfloat vboData[] = {
+        // vertices
         midX - l, midY, midZ + l, 1.0f,
         midX + l, midY, midZ + l, 1.0f,
         midX + l, midY, midZ - l, 1.0f,
         midX - l, midY, midZ - l, 1.0f,
 
+        // texture coords
         0.0f, 0.0f,
         texRes, 0.0f,
         texRes, texRes,
-        0.0f, texRes
+        0.0f, texRes,
+
+        // normals
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
     };
-    glBufferData(planeVbo->target, sizeof (vboData), vboData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (vboData), vboData, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
@@ -146,37 +209,8 @@ Object* planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLf
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*16));
     glEnableVertexAttribArray(1);
 
-    free(planeVbo);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*(16 + 8)));
+    glEnableVertexAttribArray(2);
 
-    return planeVao;
-}
-
-Object* cubeMapTex(const char* cubeFaces[], bool allSame) {
-
-    Object* cubeTex = newObj(GL_TEXTURE_CUBE_MAP);
-    glBindTexture(cubeTex->target, cubeTex->id);
-
-    int w, h, c;
-
-    unsigned char* faceTexBuffer;
-
-    if (allSame) {
-        faceTexBuffer = texBuffer(cubeFaces[0], &w, &h, &c);
-    }
-
-    for (int face = 0; face < 6; face++) {
-        if (!allSame) {
-            faceTexBuffer = texBuffer(cubeFaces[face], &w, &h, &c);
-        }
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, w, h, 0,
-                GL_RGBA, GL_UNSIGNED_BYTE, faceTexBuffer);
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    return cubeTex;
+    return vao;
 }

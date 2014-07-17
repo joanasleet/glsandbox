@@ -70,65 +70,52 @@ void printWatchLog(Camera* cam) {
         ERR("Failed to open log <%s>", WATCH_LOG_NAME);
         return;
     }
-    
+
     fprintf(watchLog, "–––––––––––––– Watch Log ––––––––––––––\n");
     fprintf(watchLog, "Cam direction:\t(%.1f, %.1f, %.1f)\n", cam->dirX, cam->dirY, cam->dirZ);
     fprintf(watchLog, "Cam position:\t(%.1f, %.1f, %.1f)\n", cam->xPos, cam->yPos, cam->zPos);
-    
+
     fclose(watchLog);
 }
 
-void catchError() {
-    GLenum error = glGetError();
-    switch (error) {
+const char* getErrorMessage() {
+
+    switch (glGetError()) {
         case GL_NO_ERROR:
             break;
         case GL_INVALID_ENUM:
-            ERR("An unacceptable value is specified for an enumerated argument."
-                    " The offending command is ignored and has no other side"
-                    " effect than to set the error flag. (Code: %i)", error);
+            return "GL_INVALID_ENUM";
             break;
         case GL_INVALID_VALUE:
-            ERR("A numeric argument is out of range."
-                    " The offending command is ignored and has no other side"
-                    " effect than to set the error flag. (Code: %i)", error);
+            return "GL_INVALID_VALUE";
             break;
         case GL_INVALID_OPERATION:
-            ERR("The specified operation is not allowed in the current"
-                    " state. The offending command is ignored and has no other"
-                    " side effect than to set the error flag. (Code: %i)", error);
+            return "GL_INVALID_OPERATION";
             break;
         case GL_INVALID_FRAMEBUFFER_OPERATION:
-            ERR("The framebuffer object is not complete. The offending"
-                    " command is ignored and has no other side effect than to"
-                    " set the error flag. (Code: %i)", error);
+            return "GL_INVALID_FRAMEBUFFER_OPERATION";
             break;
         case GL_OUT_OF_MEMORY:
-            ERR("There is not enough memory left to execute the command."
-                    " The state of the GL is undefined, except for the state of"
-                    " the error flags, after this error is recorded. (Code: %i)", error);
+            return "GL_OUT_OF_MEMORY";
             break;
         case GL_STACK_UNDERFLOW:
-            ERR("An attempt has been made to perform an operation that"
-                    " would cause an internal stack to underflow. (Code: %i)", error);
+            return "GL_STACK_UNDERFLOW";
             break;
         case GL_STACK_OVERFLOW:
-            ERR("An attempt has been made to perform an operation that"
-                    " would cause an internal stack to overflow. (Code: %i)", error);
+            return "GL_STACK_OVERFLOW";
             break;
         default:
-            ERR("Unknown error (Code: %i)", error);
+            return "Unknown shit happend";
             break;
     }
+    return "";
 }
 
 char* getTime() {
 
-    size_t buffLen = 20;
-    char* timeStr = (char*) malloc(sizeof (char)*buffLen);
-
+    char* timeStr = (char*) malloc(sizeof (char)*20);
     time_t rawtime = time(0);
-    strftime(timeStr, buffLen, "%d.%m.%y %H:%M:%S", localtime(&rawtime));
+    strftime(timeStr, 20, "%d.%m.%y %H:%M:%S", localtime(&rawtime));
 
     return timeStr;
 }

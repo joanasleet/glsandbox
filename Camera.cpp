@@ -1,5 +1,7 @@
 #include "Camera.h"
-#include "Context.h"
+
+extern Camera* cam;
+extern Context* context;
 
 Camera* createCamera(float x, float y, float z) {
     Camera* cam = (Camera*) malloc(sizeof (Camera));
@@ -29,6 +31,7 @@ Camera* createCamera(float x, float y, float z) {
 
 void update(Camera* cam) {
 
+    // Camera Direction + Movement
     glm::mat4 yRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaY * TURN_SPEED, glm::vec3(1, 0, 0));
     glm::mat4 xRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
     glm::mat4 zRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
@@ -44,6 +47,103 @@ void update(Camera* cam) {
 
     cam->xPos += camDir.x * cam->zspeed + strafe.x * cam->xspeed;
     cam->yPos += camDir.y * cam->zspeed + strafe.y * cam->xspeed + cam->yspeed;
-    //cam->yPos += cam->yspeed;
     cam->zPos += camDir.z * cam->zspeed + strafe.z * cam->xspeed;
+
+    // Perspective + ModelView
+    glm::mat4 yRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaY * TURN_SPEED, glm::vec3(1, 0, 0));
+    glm::mat4 xRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
+    glm::mat4 zRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
+
+    glm::mat4 translateCamera = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
+    glm::mat4 P = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
+    glm::mat4 MV = yRota * xRota * zRota * translateCamera;
+
+    cam->modelview = &MV;
+    cam->perspective = &P;
+}
+
+void cursorCB(GLFWwindow* win, double xpos, double ypos) {
+
+    cam->rotaX += (context->xRes / 2.0f) - xpos;
+    cam->rotaY += (context->yRes / 2.0f) - ypos;
+
+    glfwSetCursorPos(win, (context->xRes / 2.0f), (context->yRes / 2.0f));
+
+    printWatchLog();
+}
+
+void cursorEnterCB(GLFWwindow* win, int enter) {
+    if (enter == GL_TRUE) {
+
+    }
+}
+
+void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
+
+    cam->defaultSpeed += 5 * yoffset;
+    cam->defaultSpeed = MAX(cam->defaultSpeed, 0);
+}
+
+void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
+
+    switch (key) {
+        case GLFW_KEY_W:
+
+            if (action == GLFW_PRESS) {
+                cam->zspeed = cam->defaultSpeed;
+            } else if (action == GLFW_RELEASE) {
+                cam->zspeed = 0.0f;
+            }
+            break;
+        case GLFW_KEY_A:
+
+            if (action == GLFW_PRESS) {
+                cam->xspeed = -cam->defaultSpeed;
+            } else if (action == GLFW_RELEASE) {
+                cam->xspeed = 0.0f;
+            }
+            break;
+        case GLFW_KEY_S:
+
+            if (action == GLFW_PRESS) {
+                cam->zspeed = -cam->defaultSpeed;
+            } else if (action == GLFW_RELEASE) {
+                cam->zspeed = 0.0f;
+            }
+            break;
+        case GLFW_KEY_D:
+
+            if (action == GLFW_PRESS) {
+                cam->xspeed = cam->defaultSpeed;
+            } else if (action == GLFW_RELEASE) {
+                cam->xspeed = 0.0f;
+            }
+            break;
+        case GLFW_KEY_SPACE:
+
+            if (action == GLFW_PRESS) {
+                cam->yspeed = cam->defaultSpeed;
+            } else if (action == GLFW_RELEASE) {
+                cam->yspeed = 0.0f;
+            }
+            break;
+        case GLFW_KEY_C:
+
+            if (action == GLFW_PRESS && !cam->mouseGrab) {
+                glfwSetCursorPos(win, context->xRes / 2.0f, context->yRes / 2.0f);
+                glfwSetCursorPosCallback(win, cursorCB);
+                glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                cam->mouseGrab = true;
+            } else if (action == GLFW_PRESS && cam->mouseGrab) {
+                glfwSetCursorPosCallback(win, NULL);
+                glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                cam->mouseGrab = false;
+            }
+            break;
+        default:
+            return;
+            break;
+    }
+
+    printWatchLog();
 }

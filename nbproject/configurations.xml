@@ -6,32 +6,38 @@
                    projectFiles="true">
       <itemPath>Camera.h</itemPath>
       <itemPath>Context.h</itemPath>
-      <itemPath>GLHelper.h</itemPath>
       <itemPath>Logger.h</itemPath>
-      <itemPath>Object.h</itemPath>
-      <itemPath>ShaderProgram.h</itemPath>
+      <itemPath>Mesh.h</itemPath>
+      <itemPath>MeshUtil.h</itemPath>
+      <itemPath>ShaderCache.h</itemPath>
+      <itemPath>ShaderUtil.h</itemPath>
+      <itemPath>Texture.h</itemPath>
       <itemPath>common.h</itemPath>
       <itemPath>stb_image.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <itemPath>base.vert</itemPath>
       <itemPath>cube.fs</itemPath>
       <itemPath>cube.vs</itemPath>
       <itemPath>floor.fs</itemPath>
       <itemPath>floor.vs</itemPath>
       <itemPath>lcube.fs</itemPath>
       <itemPath>lcube.vs</itemPath>
+      <itemPath>tex.frag</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>Camera.cpp</itemPath>
       <itemPath>Context.cpp</itemPath>
-      <itemPath>GLHelper.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
-      <itemPath>Object.cpp</itemPath>
-      <itemPath>ShaderProgram.cpp</itemPath>
+      <itemPath>Mesh.cpp</itemPath>
+      <itemPath>MeshUtil.cpp</itemPath>
+      <itemPath>ShaderCache.cpp</itemPath>
+      <itemPath>ShaderUtil.cpp</itemPath>
+      <itemPath>Texture.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>stb_image.c</itemPath>
     </logicalFolder>
@@ -88,21 +94,31 @@
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GLHelper.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLHelper.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="Logger.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Object.cpp" ex="false" tool="1" flavor2="0">
+      <item path="Mesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="Object.h" ex="false" tool="3" flavor2="0">
+      <item path="Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="ShaderProgram.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MeshUtil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="ShaderProgram.h" ex="false" tool="3" flavor2="0">
+      <item path="MeshUtil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ShaderCache.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ShaderCache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ShaderUtil.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ShaderUtil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Texture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Texture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="base.vert" ex="false" tool="3" flavor2="0">
       </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -123,6 +139,8 @@
       <item path="stb_image.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="stb_image.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tex.frag" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -153,21 +171,31 @@
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GLHelper.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GLHelper.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="Logger.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Object.cpp" ex="false" tool="1" flavor2="0">
+      <item path="Mesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="Object.h" ex="false" tool="3" flavor2="0">
+      <item path="Mesh.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="ShaderProgram.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MeshUtil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="ShaderProgram.h" ex="false" tool="3" flavor2="0">
+      <item path="MeshUtil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ShaderCache.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ShaderCache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ShaderUtil.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ShaderUtil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Texture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Texture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="base.vert" ex="false" tool="3" flavor2="0">
       </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -188,6 +216,8 @@
       <item path="stb_image.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="stb_image.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tex.frag" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

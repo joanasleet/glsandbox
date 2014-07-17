@@ -1,59 +1,79 @@
-#include "ShaderProgram.h"
+#include "ShaderUtil.h"
 
-void loadShader(const char* srcFile, GLenum type, GLuint prog) {
+GLenum SHADER_TYPE[] = {
+    GL_VERTEX_SHADER,
+    GL_FRAGMENT_SHADER,
+    GL_TESS_CONTROL_SHADER,
+    GL_TESS_EVALUATION_SHADER,
+    GL_GEOMETRY_SHADER,
+    GL_COMPUTE_SHADER
+};
 
-    GLuint shaderId = glCreateShader(type);
+extern ShaderCache* shaderCache;
 
-    char* shaderSrc = bufferFile(srcFile);
+void addShader(const char* srcFile, GLenum type, GLuint prog) {
 
-    GLint resultFlag = GL_FALSE;
-    GLsizei logSize = 0;
-    char* logMsg;
+    GLuint shaderId = get(shaderCache, srcFile);
 
-    INFO("Loading shader <%s>", srcFile);
-    //INFO("\n%s", shaderSrc);
-
-    /* compile shader */
-    glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);
-    glCompileShader(shaderId);
-    free(shaderSrc);
-
-    /* check shader */
-    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &resultFlag);
-    glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logSize);
-    logMsg = (char*) malloc(sizeof (char) * logSize);
-    glGetShaderInfoLog(shaderId, logSize, &logSize, logMsg);
-    if (logSize > 0) {
-        ERR("%s", logMsg);
-    } else {
-        INFO("Shader compiled.");
+    if (!shaderId) {
+        shaderId = compileShader(srcFile, type);
+        cache(shaderCache, srcFile, shaderId);
     }
-    logSize = 0;
-    free(logMsg);
+
+    char* logMsg;
+    GLsizei logSize = 0;
+
+    INFO("Adding shader %d to program %d...", shaderId, prog);
 
     glAttachShader(prog, shaderId);
     glLinkProgram(prog);
-    INFO("Shader program linked.");
 
-    /* check main program */
-    glGetProgramiv(prog, GL_LINK_STATUS, &resultFlag);
     glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logSize);
     logMsg = (char*) malloc(sizeof (char) * logSize);
     glGetProgramInfoLog(prog, logSize, &logSize, logMsg);
     if (logSize > 0) {
         ERR("%s", logMsg);
     } else {
-        INFO("\t-> No errors.");
+        INFO("Done");
     }
     free(logMsg);
 
-    glDeleteShader(shaderId);
+}
+
+GLuint compileShader(const char* srcFile, GLenum type) {
+
+    GLuint shaderId = glCreateShader(type);
+
+    char* shaderSrc = bufferFile(srcFile);
+
+    char* logMsg;
+    GLsizei logSize = 0;
+
+    INFO("Compiling shader <%s>...", srcFile);
+    //INFO("\n%s", shaderSrc);
+
+    glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);
+    glCompileShader(shaderId);
+    free(shaderSrc);
+
+    glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logSize);
+    logMsg = (char*) malloc(sizeof (char) * logSize);
+    glGetShaderInfoLog(shaderId, logSize, &logSize, logMsg);
+    if (logSize > 0) {
+        ERR("%s", logMsg);
+    } else {
+        INFO("Done");
+    }
+    logSize = 0;
+    free(logMsg);
+
+    return shaderId;
 }
 
 char* bufferFile(const char* path) {
 
-    char * fileContent = NULL;
-    FILE * file = fopen(path, "r");
+    char* fileContent = NULL;
+    FILE* file = fopen(path, "r");
 
     if (!file) {
         ERR("Couldn't access file %s", path);
