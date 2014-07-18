@@ -56,7 +56,7 @@ void render(Mesh* mesh) {
 
     for (int i = 0; i < mesh->uniLen; ++i) {
         loc = get(uniformCache, getKey(mesh->uniforms[i], mesh->shaderProgram));
-        (*mesh->setUniformFunc)(loc);
+        (*mesh->setUniformFunc[i])(loc);
     }
 
     bind(mesh->tex);
@@ -75,17 +75,17 @@ void drawElements(GLenum mode, GLint* first, GLsizei count) {
 
 /* uniform setter */
 void P(GLint loc) {
-    glm::mat4 P = *cam->perspective;
+    glm::mat4 P = *(cam->perspective);
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P));
 }
 
 void MV(GLint loc) {
-    glm::mat4 MV = *cam->modelview;
+    glm::mat4 MV = *(cam->modelview);
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MV));
 }
 
 void MVP(GLint loc) {
-    glm::mat4 MV = *cam->modelview;
-    glm::mat4 P = *cam->perspective;
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P*MV));
+    glm::mat4 P = *(cam->perspective);
+    glm::mat4 MV = *(cam->modelview);
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P * MV));
 }

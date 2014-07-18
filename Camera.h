@@ -11,7 +11,7 @@
 #define FAR_PLANE (1000.0f)
 
 #define TURN_SPEED 0.01f
-#define DEFAULT_CAM_SPEED 5.0f
+#define DEFAULT_CAM_SPEED 2.0f
 
 typedef struct Camera {
     float dirX;

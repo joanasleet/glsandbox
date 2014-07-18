@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#define ANISOTROPIC_LVL 4.0f
+
 extern GLenum freeTexSlot; // managed by context
 extern int maxTexSlots;
 

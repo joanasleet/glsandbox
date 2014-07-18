@@ -3,7 +3,7 @@
 in vec2 texcoord;
 uniform sampler2D sampler;
 
-//uniform mat4 MV;
+uniform mat4 MV;
 
 out vec4 finalColor;
 

@@ -33,8 +33,6 @@ void addShader(const char* srcFile, GLenum type, GLuint prog) {
     glGetProgramInfoLog(prog, logSize, &logSize, logMsg);
     if (logSize > 0) {
         ERR("%s", logMsg);
-    } else {
-        INFO("Done");
     }
     free(logMsg);
 
@@ -61,8 +59,6 @@ GLuint compileShader(const char* srcFile, GLenum type) {
     glGetShaderInfoLog(shaderId, logSize, &logSize, logMsg);
     if (logSize > 0) {
         ERR("%s", logMsg);
-    } else {
-        INFO("Done");
     }
     logSize = 0;
     free(logMsg);

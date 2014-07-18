@@ -1,26 +1,25 @@
 #version 440
 
-in vec3 cube_texel;
-uniform samplerCube sampler;
+in vec2 texcoord;
+uniform sampler2D sampler;
 
 in vec3 position_eye, normal_eye;
 
-// supposed to be just the view matrix
 uniform mat4 MV;
 
 out vec4 finalColor;
 
 
-vec3 light_position_world = vec3(24000.0, 9000.0, 24000.0);
-vec3 Ls = vec3(1.0, 1.0, 1.0);
-vec3 Ld = vec3(0.7, 0.7, 0.7);
+vec3 light_position_world = vec3(50000.0, 20000.0, 50000.0);
+vec3 Ls = vec3(0.8, 0.8, 0.8);
+vec3 Ld = vec3(0.6, 0.6, 0.6);
 vec3 La = vec3(0.2, 0.2, 0.2);
 
-vec3 Ks = vec3(0.5, 0.5, 0.5);
+vec3 Ks = vec3(0.3, 0.3, 0.3);
 vec3 Kd = vec3(1.0, 0.5, 0.0);
-vec3 Ka = vec3(0.5, 0.5, 0.5);
+vec3 Ka = vec3(0.3, 0.3, 0.3);
 
-float spec_exp = 25.0;
+float spec_exp = 10.0;
 
 void main() {
 
@@ -53,6 +52,6 @@ void main() {
     vec3 Is = Ls * Ks * specular_factor;
     
        
-    finalColor = texture(sampler, cube_texel) + vec4(Is+Id+Ia, 1.0);
+    finalColor = texture(sampler, texcoord) + vec4(Is+Id+Ia, 1.0);
     //finalColor = vec4(Is+Id+Ia, 1.0);
 }

@@ -3,9 +3,6 @@
 extern Camera* cam;
 extern Context* context;
 
-extern glm::mat4 perspective;
-extern glm::mat4 modelview;
-
 Camera* createCamera(float x, float y, float z) {
     Camera* cam = (Camera*) malloc(sizeof (Camera));
 
@@ -28,7 +25,7 @@ Camera* createCamera(float x, float y, float z) {
     cam->defaultSpeed = DEFAULT_CAM_SPEED;
 
     cam->mouseGrab = false;
-
+    
     return cam;
 }
 
@@ -60,9 +57,9 @@ void update(Camera* cam) {
     glm::mat4 translateCamera = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
     glm::mat4 P = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
     glm::mat4 MV = yRota * xRota * zRota * translateCamera;
-
-    modelview = MV;
-    perspective = P;
+    
+    cam->perspective = &P;
+    cam->modelview = &MV;
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {
@@ -83,7 +80,7 @@ void cursorEnterCB(GLFWwindow* win, int enter) {
 
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
 
-    cam->defaultSpeed += 5 * yoffset;
+    cam->defaultSpeed += 1 * yoffset;
     cam->defaultSpeed = MAX(cam->defaultSpeed, 0);
 }
 

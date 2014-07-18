@@ -16,8 +16,6 @@ Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
     tex->target = target;
     glBindTexture(tex->target, tex->id);
 
-
-
     tex->data = texData(file, &tex->width, &tex->height);
 
     glTexImage2D(tex->target, 0, GL_RGBA, tex->width, tex->height,
@@ -33,6 +31,8 @@ Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
         glGenerateMipmap(tex->target);
         glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
+
+    glTexParameterf(tex->target, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPIC_LVL);
 
     return tex;
 }
@@ -111,6 +111,7 @@ Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
         glGenerateMipmap(tex->target);
         glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
+
 
     return tex;
 }

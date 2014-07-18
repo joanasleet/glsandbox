@@ -38,19 +38,19 @@ GLint get(Hash* cache, const char* key) {
     Element* iterator = target.last;
 
     if (!iterator) {
-        ERR("Key '%s' is not cached.", key);
+        INFO("Key '%s' is not cached.", key);
         return NOT_CACHED;
     }
 
     do {
         if (strcmp(iterator->key, key) == 0) {
-            INFO("Retrieved value %i (key '%s')", iterator->value, key);
+            //INFO("Retrieved value %i (key '%s')", iterator->value, key);
             return iterator->value;
         }
         iterator = iterator->prev;
     } while (iterator);
 
-    ERR("Key '%'s is not cached.", key);
+    INFO("Key '%s' is not cached.", key);
     return NOT_CACHED;
 }
 
