@@ -10,11 +10,13 @@ Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
         return NULL;
     }
 
+    //glActiveTexture(freeTexSlot++);
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &tex->id);
     tex->target = target;
     glBindTexture(tex->target, tex->id);
 
-    glActiveTexture(freeTexSlot++);
+
 
     tex->data = texData(file, &tex->width, &tex->height);
 
@@ -66,12 +68,12 @@ unsigned char* texData(const char* file, int* width, int* height) {
 }
 
 void bind(Texture* tex) {
-    glActiveTexture(tex->slot);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(tex->target, tex->id);
 }
 
 Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
-    
+
     Texture* tex = (Texture*) malloc(sizeof (Texture));
     if (!tex) {
         ERR("Failed to allocate cube map texture");
@@ -104,7 +106,7 @@ Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
+
     if (genMipMaps) {
         glGenerateMipmap(tex->target);
         glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

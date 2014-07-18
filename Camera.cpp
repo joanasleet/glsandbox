@@ -3,6 +3,9 @@
 extern Camera* cam;
 extern Context* context;
 
+extern glm::mat4 perspective;
+extern glm::mat4 modelview;
+
 Camera* createCamera(float x, float y, float z) {
     Camera* cam = (Camera*) malloc(sizeof (Camera));
 
@@ -58,8 +61,8 @@ void update(Camera* cam) {
     glm::mat4 P = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
     glm::mat4 MV = yRota * xRota * zRota * translateCamera;
 
-    cam->modelview = &MV;
-    cam->perspective = &P;
+    modelview = MV;
+    perspective = P;
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {

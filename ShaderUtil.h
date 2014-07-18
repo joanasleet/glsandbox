@@ -6,8 +6,8 @@
 
 extern GLenum SHADER_TYPE[];
 
-void addShader(char* source, GLenum type, GLuint prog);
-GLuint compileShader(char* source, GLenum type);
+void addShader(const char* source, GLenum type, GLuint prog);
+GLuint compileShader(const char* source, GLenum type);
 
 char* bufferFile(const char* path);
 

@@ -8,7 +8,7 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
     Context* context = (Context*) malloc(sizeof (Context));
     context->xRes = xRes;
     context->yRes = yRes;
-
+    
     glfwSetErrorCallback(contextErrorCB);
 
     if (!glfwInit()) {
@@ -34,8 +34,6 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
         exit(EXIT_FAILURE);
     }
     INFO("GLEW initialized.");
-
-
 
     return context;
 }

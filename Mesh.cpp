@@ -1,7 +1,7 @@
 #include "Mesh.h"
 
 extern ShaderCache* shaderCache;
-extern UniformCache* uniformsCache;
+extern UniformCache* uniformCache;
 
 extern GLenum SHADER_TYPE[];
 
@@ -27,29 +27,36 @@ Mesh* newMesh(bool newVao) {
     return mesh;
 }
 
-void preRender(Mesh* mesh) {
+void preload(Mesh* mesh) {
 
-    
-    
+    GLint prog = mesh->shaderProgram;
+
+    /* cache shaders */
+    for (int i = 0; i < mesh->shadersLen; ++i) {
+        addShader(mesh->shaders[i], SHADER_TYPE[i], prog);
+    }
+
+    /* cache uniform locations */
+    GLint loc;
+    const char* str;
+    const char* key;
+
+    for (int i = 0; i < mesh->uniLen; ++i) {
+        str = mesh->uniforms[i];
+        loc = glGetUniformLocation(prog, str);
+        key = getKey(str, prog);
+        cache(uniformCache, key, loc);
+    }
 }
 
 void render(Mesh* mesh) {
 
+    GLint loc;
     glUseProgram(mesh->shaderProgram);
 
-    char* key;
-    const char* uniform;
-    const char** uniforms = mesh->uniforms;
-
-
-    int n = sizeof (uniforms) / sizeof (uniforms[0]);
-    int digits = floor(log10(abs(mesh->shaderProgram))) + 1;
-    for (int i = 0; i < n; ++i) {
-        uniform = uniforms[i];
-        key = (char*) malloc(sizeof (char)*(strlen(uniform) + digits));
-        sprintf(key, "%i%s", mesh->shaderProgram, uniform);
-        
-        free(key);
+    for (int i = 0; i < mesh->uniLen; ++i) {
+        loc = get(uniformCache, getKey(mesh->uniforms[i], mesh->shaderProgram));
+        (*mesh->setUniformFunc)(loc);
     }
 
     bind(mesh->tex);
@@ -57,10 +64,28 @@ void render(Mesh* mesh) {
     (*mesh->drawFunc)(mesh->mode, &mesh->first, mesh->count);
 }
 
+/* draw functions */
 void drawArrays(GLenum mode, GLint* first, GLsizei count) {
     glDrawArrays(mode, *first, count);
 }
 
 void drawElements(GLenum mode, GLint* first, GLsizei count) {
     glDrawElements(mode, count, GL_UNSIGNED_INT, (GLvoid*) first);
+}
+
+/* uniform setter */
+void P(GLint loc) {
+    glm::mat4 P = *cam->perspective;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P));
+}
+
+void MV(GLint loc) {
+    glm::mat4 MV = *cam->modelview;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MV));
+}
+
+void MVP(GLint loc) {
+    glm::mat4 MV = *cam->modelview;
+    glm::mat4 P = *cam->perspective;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P*MV));
 }

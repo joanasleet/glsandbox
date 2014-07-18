@@ -1,5 +1,4 @@
 #include "MeshUtil.h"
-#include "Mesh.h"
 
 GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 

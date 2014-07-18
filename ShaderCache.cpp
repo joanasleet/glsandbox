@@ -38,24 +38,24 @@ GLint get(Hash* cache, const char* key) {
     Element* iterator = target.last;
 
     if (!iterator) {
-        INFO("Key %s is not cached.", key);
+        ERR("Key '%s' is not cached.", key);
         return NOT_CACHED;
     }
 
     do {
         if (strcmp(iterator->key, key) == 0) {
-            INFO("Retrieved value %i (key %s)\n", iterator->value, key);
+            INFO("Retrieved value %i (key '%s')", iterator->value, key);
             return iterator->value;
         }
         iterator = iterator->prev;
     } while (iterator);
 
-    INFO("Key %s is not cached.", key);
+    ERR("Key '%'s is not cached.", key);
     return NOT_CACHED;
 }
 
 void cache(Hash* cache, const char* key, GLint value) {
-    INFO("Caching key %s (value %i)\n", key, value);
+    INFO("Caching key '%s' (value: %i)", key, value);
 
     int index = hash(key);
     Bucket target = cache->buckets[index];
@@ -69,23 +69,53 @@ void cache(Hash* cache, const char* key, GLint value) {
     }
 
     cache->buckets[index].last = newE;
-    
 }
+
+// djb2
 
 int hash(const char* key) {
 
-    return 0;
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *key++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+
+    return hash % BUCKETS;
 }
 
-char* getKey(char* str, GLint num) {
-    int len = strlen((const char*) str);
+const char* getKey(const char* str, GLint num) {
+    int len = strlen(str);
     int digits = floor(log10(abs(num))) + 1;
     size_t size = len + digits + 2;
-    char* key = (char*) malloc(sizeof (char)*size);
+    char* key = (char*) malloc(sizeof(char)*size);
     sprintf(key, "%i_%s", num, str);
-    return key;
+    const char* rkey = (const char*) key;
+    return rkey;
 }
 
 void printCache(Hash* cache) {
 
+    Bucket bit;
+    Element* elit;
+
+    for (int i = 0; i < BUCKETS; ++i) {
+        bit = cache->buckets[i];
+        elit = bit.last;
+
+        printf("[%d] { ", i);
+
+        if (!elit) {
+            printf("}\n");
+            continue;
+        }
+
+        do {
+            printf("%s ", elit->key);
+            elit = elit->prev;
+        } while (elit);
+
+        printf("}\n");
+    }
 }

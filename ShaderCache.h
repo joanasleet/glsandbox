@@ -4,7 +4,7 @@
 #include "common.h"
 
 #define BUCKETS 10
-#define NOT_CACHED -1
+#define NOT_CACHED 0
 
 typedef struct Element {
 
@@ -33,7 +33,7 @@ void cache(Hash* cache, const char* key, GLint value);
 
 int hash(const char* key);
 
-char* getKey(char* str, GLint num);
+const char* getKey(const char* str, GLint num);
 
 void printCache(Hash* cache);
 

@@ -82,6 +82,7 @@ const char* getErrorMessage() {
 
     switch (glGetError()) {
         case GL_NO_ERROR:
+            return "None";
             break;
         case GL_INVALID_ENUM:
             return "GL_INVALID_ENUM";

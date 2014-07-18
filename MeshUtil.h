@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "Texture.h"
+#include "Mesh.h"
 
 #define BUFFER_OFFSET(offset) ((void *) (offset))
 
@@ -15,6 +16,21 @@ glBindVertexArray(name); \
 GLuint name; \
 glGenBuffers(1, &name); \
 glBindBuffer(target, name); \
+
+#define MAX_MESHES 10
+extern Mesh* meshes[MAX_MESHES];
+extern int nextMeshSlot;
+
+#define ADD_MESH(mesh) \
+do { \
+    if (nextMeshSlot > MAX_MESHES) { \
+        ERR("Max meshes reached"); \
+        break; \
+    } \
+    meshes[nextMeshSlot++] = mesh;\
+} while (0);\
+
+
 
 /* facing inside */
 GLuint cubeMapVAO(GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
