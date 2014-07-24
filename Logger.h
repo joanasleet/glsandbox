@@ -4,6 +4,9 @@
 #include "common.h"
 #include "Camera.h"
 
+#define TIME_FORMAT_REDC "%H:%M:%S"
+#define TIME_FORMAT_FULL "%d.%m.%y %H:%M:%S"
+
 #define SCROLL_LOG_NAME "gl_scroll.log"
 #define WATCH_LOG_NAME "gl_watch.log"
 
@@ -58,6 +61,10 @@ void closeLog();
 
 // exception catching
 const char* getErrorMessage();
+void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
+        GLsizei length, const GLchar *msg, void* userParam);
+
+
 
 // helper 
 char* getTime();

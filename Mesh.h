@@ -24,6 +24,7 @@ typedef struct Mesh {
     GLint first;
     GLsizei count;
 
+    
 } Mesh;
 
 Mesh* newMesh(bool newVao = false);

@@ -30,10 +30,15 @@ Mesh* newMesh(bool newVao) {
 void preload(Mesh* mesh) {
 
     GLint prog = mesh->shaderProgram;
+    const char* shader;
 
     /* cache shaders */
     for (int i = 0; i < mesh->shadersLen; ++i) {
-        addShader(mesh->shaders[i], SHADER_TYPE[i], prog);
+        shader = mesh->shaders[i];
+
+        if (strlen(shader) > 0) {
+            addShader(shader, SHADER_TYPE[i], prog);
+        }
     }
 
     /* cache uniform locations */

@@ -8,7 +8,7 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
     Context* context = (Context*) malloc(sizeof (Context));
     context->xRes = xRes;
     context->yRes = yRes;
-    
+
     glfwSetErrorCallback(contextErrorCB);
 
     if (!glfwInit()) {
@@ -18,6 +18,7 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
 
     INFO("GLFW initialized.");
 
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
         ERR("Failed to create main window.");
@@ -35,6 +36,14 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
     }
     INFO("GLEW initialized.");
 
+    if (GLEW_KHR_debug) {
+        int param = -1;
+        glDebugMessageCallback(debugCB, &param);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    }
+
+
+
     return context;
 }
 
@@ -42,8 +51,10 @@ void config() {
 
     glEnable(GL_DEPTH_TEST);
 
+    /*
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+     */
 
     glClearColor(0.5, 0.5, 0.7, 1.0);
     glfwSetInputMode(context->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -54,6 +65,8 @@ void config() {
     glfwSetWindowSizeCallback(context->win, resizeCB);
 
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTexSlots);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void fps() {

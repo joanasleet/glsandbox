@@ -19,8 +19,10 @@
                    displayName="Resource Files"
                    projectFiles="true">
       <itemPath>base.vert</itemPath>
+      <itemPath>control.tess</itemPath>
       <itemPath>cubemap.frag</itemPath>
       <itemPath>cubemap.vert</itemPath>
+      <itemPath>eval.tess</itemPath>
       <itemPath>tex.frag</itemPath>
       <itemPath>tex_light.frag</itemPath>
       <itemPath>tex_light.vert</itemPath>
@@ -121,9 +123,13 @@
       </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="control.tess" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cubemap.frag" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cubemap.vert" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eval.tess" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -194,9 +200,13 @@
       </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="control.tess" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cubemap.frag" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cubemap.vert" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eval.tess" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>

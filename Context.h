@@ -9,7 +9,7 @@
 typedef struct Context {
     unsigned int xRes;
     unsigned int yRes;
-    
+
     GLFWwindow* win;
 } Context;
 

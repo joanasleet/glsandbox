@@ -11,7 +11,8 @@ Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
     }
 
     //glActiveTexture(freeTexSlot++);
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE0);
+
     glGenTextures(1, &tex->id);
     tex->target = target;
     glBindTexture(tex->target, tex->id);
@@ -68,7 +69,7 @@ unsigned char* texData(const char* file, int* width, int* height) {
 }
 
 void bind(Texture* tex) {
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE0);
     glBindTexture(tex->target, tex->id);
 }
 
@@ -84,7 +85,8 @@ Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
     tex->target = GL_TEXTURE_CUBE_MAP;
     glBindTexture(tex->target, tex->id);
 
-    glActiveTexture(freeTexSlot++);
+    //glActiveTexture(freeTexSlot++);
+    //glActiveTexture(GL_TEXTURE0);
 
     int w, h;
     unsigned char* faceTexBuffer;
@@ -111,7 +113,6 @@ Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
         glGenerateMipmap(tex->target);
         glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
-
 
     return tex;
 }

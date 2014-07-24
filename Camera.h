@@ -11,7 +11,7 @@
 #define FAR_PLANE (1000.0f)
 
 #define TURN_SPEED 0.01f
-#define DEFAULT_CAM_SPEED 2.0f
+#define DEFAULT_CAM_SPEED 0.5f
 
 typedef struct Camera {
     float dirX;
@@ -46,6 +46,8 @@ void cursorCB(GLFWwindow* win, double xpos, double ypos);
 void cursorEnterCB(GLFWwindow* win, int enter);
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset);
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods);
+
+void screenshot();
 
 #endif	/* CAMERA_H */
 

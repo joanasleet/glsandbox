@@ -25,7 +25,7 @@ Camera* createCamera(float x, float y, float z) {
     cam->defaultSpeed = DEFAULT_CAM_SPEED;
 
     cam->mouseGrab = false;
-    
+
     return cam;
 }
 
@@ -57,7 +57,7 @@ void update(Camera* cam) {
     glm::mat4 translateCamera = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
     glm::mat4 P = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
     glm::mat4 MV = yRota * xRota * zRota * translateCamera;
-    
+
     cam->perspective = &P;
     cam->modelview = &MV;
 }
@@ -68,8 +68,6 @@ void cursorCB(GLFWwindow* win, double xpos, double ypos) {
     cam->rotaY += (context->yRes / 2.0f) - ypos;
 
     glfwSetCursorPos(win, (context->xRes / 2.0f), (context->yRes / 2.0f));
-
-    printWatchLog();
 }
 
 void cursorEnterCB(GLFWwindow* win, int enter) {
@@ -81,10 +79,15 @@ void cursorEnterCB(GLFWwindow* win, int enter) {
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
 
     cam->defaultSpeed += 1 * yoffset;
-    cam->defaultSpeed = MAX(cam->defaultSpeed, 0);
+    cam->defaultSpeed = MAX(cam->defaultSpeed, 1);
 }
 
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
+
+    static GLfloat inTessLvl = 2.0f;
+    static GLfloat outTessLvl = 2.0f;
+
+    static bool wireframe = true;
 
     switch (key) {
         case GLFW_KEY_W:
@@ -140,10 +143,85 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
                 cam->mouseGrab = false;
             }
             break;
+        case GLFW_KEY_V:
+            if (action == GLFW_PRESS) {
+                screenshot();
+            }
+            break;
+        case GLFW_KEY_UP:
+            if (action == GLFW_PRESS) {
+                glUseProgram(1);
+                glUniform1f(glGetUniformLocation(1, "tessLevelInner"), ++inTessLvl);
+            }
+            break;
+        case GLFW_KEY_DOWN:
+            if (action == GLFW_PRESS) {
+                glUseProgram(1);
+                glUniform1f(glGetUniformLocation(1, "tessLevelInner"), --inTessLvl);
+            }
+            break;
+        case GLFW_KEY_LEFT:
+            if (action == GLFW_PRESS) {
+                glUseProgram(1);
+                glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), --outTessLvl);
+            }
+            break;
+        case GLFW_KEY_RIGHT:
+            if (action == GLFW_PRESS) {
+                glUseProgram(1);
+                glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), ++outTessLvl);
+            }
+            break;
+        case GLFW_KEY_F:
+
+            if (action == GLFW_PRESS && !wireframe) {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                wireframe = true;
+            } else if (action == GLFW_PRESS && wireframe) {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                wireframe = false;
+            }
+            break;
         default:
             return;
             break;
     }
 
-    printWatchLog();
+    INFO("TessLevels:\n\tInner = %.0f\n\tOuter = %.0f", inTessLvl, outTessLvl);
+}
+
+void screenshot() {
+
+    unsigned int x = context->xRes;
+    unsigned int y = context->yRes;
+
+    unsigned char* buffer = (unsigned char*) malloc(sizeof (unsigned char)*x * y * 3);
+    glReadPixels(0, 0, x, y, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+
+    char name[1024];
+    long int t = time(NULL);
+    sprintf(name, "screenshot_%ld.raw", t);
+
+    FILE* target = fopen(name, "wb");
+    if (!target) {
+        ERR("Failed writing screenshot to <%s>", name);
+    }
+
+    int start_of_row;
+    int bytes_in_row = x * 3;
+    int bytes_left = x * y * 3;
+    while (bytes_left > 0) {
+        start_of_row = bytes_left - bytes_in_row;
+        fwrite(&buffer[start_of_row], 1, bytes_in_row, target);
+        bytes_left -= bytes_in_row;
+    }
+    fclose(target);
+    free(buffer);
+
+    char cmd[2048];
+    sprintf(cmd, "convert -depth 8 -size %ix%i rgb:screenshot_%ld.raw screenshots/screenshot_%ld.png", x, y, t, t);
+
+    system(cmd);
+    sprintf(cmd, "rm -f %s", name);
+    system(cmd);
 }

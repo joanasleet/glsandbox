@@ -10,14 +10,14 @@ uniform mat4 MV;
 out vec4 finalColor;
 
 
-vec3 light_position_world = vec3(50000.0, 20000.0, 50000.0);
-vec3 Ls = vec3(0.8, 0.8, 0.8);
-vec3 Ld = vec3(0.6, 0.6, 0.6);
+vec3 light_position_world = vec3(50000.0, 20000.0, -30000.0);
+vec3 Ls = vec3(0.7, 0.7, 0.7);
+vec3 Ld = vec3(0.1, 0.6, 0.8);
 vec3 La = vec3(0.2, 0.2, 0.2);
 
 vec3 Ks = vec3(0.3, 0.3, 0.3);
-vec3 Kd = vec3(1.0, 0.5, 0.0);
-vec3 Ka = vec3(0.3, 0.3, 0.3);
+vec3 Kd = vec3(0.0, 0.4, 0.6);
+vec3 Ka = vec3(0.2, 0.2, 0.2);
 
 float spec_exp = 10.0;
 

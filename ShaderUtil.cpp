@@ -13,6 +13,7 @@ extern ShaderCache* shaderCache;
 
 void addShader(const char* srcFile, GLenum type, GLuint prog) {
 
+    INFO("–");
     GLuint shaderId = get(shaderCache, srcFile);
 
     if (!shaderId) {
@@ -23,8 +24,7 @@ void addShader(const char* srcFile, GLenum type, GLuint prog) {
     char* logMsg;
     GLsizei logSize = 0;
 
-    INFO("Adding shader %d to program %d...", shaderId, prog);
-
+    INFO("Adding shader <%s>(ID: %d) to program %d", srcFile, shaderId, prog);
     glAttachShader(prog, shaderId);
     glLinkProgram(prog);
 
@@ -34,8 +34,8 @@ void addShader(const char* srcFile, GLenum type, GLuint prog) {
     if (logSize > 0) {
         ERR("%s", logMsg);
     }
-    free(logMsg);
 
+    free(logMsg);
 }
 
 GLuint compileShader(const char* srcFile, GLenum type) {
@@ -47,9 +47,9 @@ GLuint compileShader(const char* srcFile, GLenum type) {
     char* logMsg;
     GLsizei logSize = 0;
 
-    INFO("Compiling shader <%s>...", srcFile);
-    //INFO("\n%s", shaderSrc);
 
+    INFO("Compiling shader <%s>", srcFile);
+    //INFO("\n%s", shaderSrc);
     glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);
     glCompileShader(shaderId);
     free(shaderSrc);
@@ -81,7 +81,6 @@ char* bufferFile(const char* path) {
     fclose(file);
 
     file = fopen(path, "r");
-
     if (!file) {
         ERR("Couldn't access file <%s>", path);
         exit(EXIT_FAILURE);

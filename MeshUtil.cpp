@@ -103,27 +103,27 @@ GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLflo
         1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 0.0f,
-        
+
         0.0f, 1.0f,
         1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 0.0f,
-        
+
         0.0f, 1.0f,
         1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 0.0f,
-        
+
         0.0f, 1.0f,
         1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 0.0f,
-        
+
         0.0f, 1.0f,
         1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 0.0f,
-        
+
         0.0f, 1.0f,
         1.0f, 1.0f,
         1.0f, 0.0f,
@@ -213,3 +213,42 @@ GLuint planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfl
 
     return vao;
 }
+
+GLuint terrainVAO(GLfloat xlength, GLfloat zlength, GLfloat midX, GLfloat midY, GLfloat midZ) {
+
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
+
+    GLfloat xl = xlength / 2.0f;
+    GLfloat zl = zlength / 2.0f;
+
+    const GLfloat data[] = {
+
+        midX - xl, midY, midZ + zl, 1.0f,
+        midX - xl, midY, midZ - zl, 1.0f,
+        midX + xl, midY, midZ - zl, 1.0f,
+
+        midX + xl, midY, midZ - zl, 1.0f,
+        midX + xl, midY, midZ + zl, 1.0f,
+        midX - xl, midY, midZ + zl, 1.0f,
+
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof (data), data, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*24));
+    glEnableVertexAttribArray(1);
+
+    return vao;
+}
+
+

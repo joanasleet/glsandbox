@@ -51,6 +51,30 @@ const char* GLattribStrings[] = {
     "GL_DEPTH_TEST",
 };
 
+const char* SEVERITY_LVL[] = {
+    "HIGH",
+    "MEDIUM",
+    "LOW"
+};
+
+const char* SOURCE[] = {
+    "API",
+    "WINDOW SYSTEM",
+    "SHADER COMPILER",
+    "THIRD PARTY",
+    "APPLICATION",
+    "OTHER"
+};
+
+const char* TYPE[] = {
+    "ERROR",
+    "DEPRECATED BEHAVIOUR",
+    "UNDEFINED DEHAVIOUR",
+    "PORTABILITY",
+    "PERFORMANCE",
+    "OTHER"
+};
+
 void openLog() {
     scrollLog = fopen(SCROLL_LOG_NAME, "a+");
     if (!scrollLog) {
@@ -116,7 +140,19 @@ char* getTime() {
 
     char* timeStr = (char*) malloc(sizeof (char)*20);
     time_t rawtime = time(0);
-    strftime(timeStr, 20, "%d.%m.%y %H:%M:%S", localtime(&rawtime));
+    strftime(timeStr, 20, TIME_FORMAT_REDC, localtime(&rawtime));
 
     return timeStr;
+}
+
+void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
+        GLsizei length, const GLchar *msg, void* userParam) {
+
+    int src_i = source - 0x8246;
+    int type_i = type - 0x824C;
+    int sev_i = severity - 0x9146;
+
+    ERR("\n\tSource: %s %s\n\tId: %u\n\tSeverity: %s\n\tUserParam: %i\n\tMessage:\n%s",
+            SOURCE[src_i], TYPE[type_i], id, SEVERITY_LVL[sev_i], *(int*) userParam,
+            msg);
 }

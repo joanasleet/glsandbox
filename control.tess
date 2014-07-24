@@ -1,0 +1,19 @@
+#version 440
+
+layout (vertices = 6) out;
+
+in vec3 control_point[];
+
+out vec3 eval_point[];
+
+uniform float tessLevelInner = 2.0;
+uniform float tessLevelOuter = 2.0;
+
+void main() {
+    eval_point[gl_InvocationID] = control_point[gl_InvocationID];
+    
+    gl_TessLevelInner[0] = tessLevelInner;
+    gl_TessLevelOuter[0] = tessLevelOuter;
+    gl_TessLevelOuter[1] = tessLevelOuter;
+    gl_TessLevelOuter[2] = tessLevelOuter;
+}
