@@ -30,8 +30,6 @@ do { \
     meshes[nextMeshSlot++] = mesh;\
 } while (0);\
 
-
-
 /* facing inside */
 GLuint cubeMapVAO(GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
 

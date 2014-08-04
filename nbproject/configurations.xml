@@ -19,6 +19,7 @@
                    displayName="Resource Files"
                    projectFiles="true">
       <itemPath>base.vert</itemPath>
+      <itemPath>base_tess.vert</itemPath>
       <itemPath>control.tess</itemPath>
       <itemPath>cubemap.frag</itemPath>
       <itemPath>cubemap.vert</itemPath>
@@ -121,6 +122,8 @@
       </item>
       <item path="base.vert" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="base_tess.vert" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="control.tess" ex="false" tool="3" flavor2="0">
@@ -197,6 +200,8 @@
       <item path="Texture.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="base.vert" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="base_tess.vert" ex="false" tool="3" flavor2="0">
       </item>
       <item path="common.h" ex="false" tool="3" flavor2="0">
       </item>

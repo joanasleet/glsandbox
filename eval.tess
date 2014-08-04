@@ -1,13 +1,10 @@
 #version 440
 
-layout (triangles, equal_spacing, ccw) in;
+layout (quads, equal_spacing, ccw) in;
 
 in vec3 eval_point[];
 
-//uniform float tessLevelInner = 2.0;
-//uniform float tessLevelOuter = 2.0;
-
-uniform mat4 MV, P;
+uniform mat4 P, MV;
 
 void main() {
 

@@ -35,7 +35,8 @@ typedef struct Camera {
     bool mouseGrab;
 
     glm::mat4* perspective;
-    glm::mat4* modelview;
+    glm::mat4* orientation;
+    glm::mat4* translation;
 
 } Camera;
 

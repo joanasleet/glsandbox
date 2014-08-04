@@ -38,6 +38,7 @@ GLint get(Hash* cache, const char* key) {
     Element* iterator = target.last;
 
     if (!iterator) {
+        INFO("Key: %s not cached", key);
         return NOT_CACHED;
     }
 
@@ -48,6 +49,7 @@ GLint get(Hash* cache, const char* key) {
         iterator = iterator->prev;
     } while (iterator);
 
+    INFO("Key: %s not cached", key);
     return NOT_CACHED;
 }
 

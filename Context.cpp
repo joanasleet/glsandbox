@@ -50,13 +50,13 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
 void config() {
 
     glEnable(GL_DEPTH_TEST);
-
+    
     /*
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
      */
 
-    glClearColor(0.5, 0.5, 0.7, 1.0);
+    glClearColor(0.5, 0.5, 0.5, 1.0);
     glfwSetInputMode(context->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     glfwSetCursorEnterCallback(context->win, cursorEnterCB);

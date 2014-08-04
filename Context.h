@@ -21,5 +21,10 @@ void fps();
 void contextErrorCB(int code, const char* msg);
 void resizeCB(GLFWwindow* win, int w, int h);
 
+
+// should be part of the engine
+void exitIfNoMeshes();
+void preloadMeshes();
+void renderMeshes();
 #endif	/* CONTEXT_H */
 

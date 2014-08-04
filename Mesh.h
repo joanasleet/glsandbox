@@ -24,7 +24,7 @@ typedef struct Mesh {
     GLint first;
     GLsizei count;
 
-    
+
 } Mesh;
 
 Mesh* newMesh(bool newVao = false);
@@ -40,6 +40,7 @@ void drawElements(GLenum mode, GLint* first, GLsizei count);
 void P(GLint loc);
 void MV(GLint loc);
 void MVP(GLint loc);
+void MVPnoTrans(GLint loc);
 
 
 #endif	/* MESH_H */

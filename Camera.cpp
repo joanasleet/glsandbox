@@ -54,12 +54,13 @@ void update(Camera* cam) {
     glm::mat4 xRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
     glm::mat4 zRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
 
-    glm::mat4 translateCamera = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
-    glm::mat4 P = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
-    glm::mat4 MV = yRota * xRota * zRota * translateCamera;
+    glm::mat4 translation = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
+    glm::mat4 orientation = yRota * xRota * zRota;
+    glm::mat4 perspective = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
 
-    cam->perspective = &P;
-    cam->modelview = &MV;
+    cam->perspective = &perspective;
+    cam->orientation = &orientation;
+    cam->translation = &translation;
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {
@@ -78,8 +79,13 @@ void cursorEnterCB(GLFWwindow* win, int enter) {
 
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
 
-    cam->defaultSpeed += 1 * yoffset;
-    cam->defaultSpeed = MAX(cam->defaultSpeed, 1);
+    if (cam->defaultSpeed > 1) {
+        cam->defaultSpeed += 1 * yoffset;
+    } else {
+        cam->defaultSpeed += 0.1 * yoffset;
+    }
+
+    cam->defaultSpeed = MAX(cam->defaultSpeed, 0.1);
 }
 
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
@@ -186,8 +192,6 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
             return;
             break;
     }
-
-    INFO("TessLevels:\n\tInner = %.0f\n\tOuter = %.0f", inTessLvl, outTessLvl);
 }
 
 void screenshot() {

@@ -54,7 +54,8 @@ const char* GLattribStrings[] = {
 const char* SEVERITY_LVL[] = {
     "HIGH",
     "MEDIUM",
-    "LOW"
+    "LOW",
+    "NOTE"
 };
 
 const char* SOURCE[] = {
@@ -152,7 +153,13 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
     int type_i = type - 0x824C;
     int sev_i = severity - 0x9146;
 
+    if (severity == 0x826B) {
+        sev_i = 3;
+    }
+
     ERR("\n\tSource: %s %s\n\tId: %u\n\tSeverity: %s\n\tUserParam: %i\n\tMessage:\n%s",
             SOURCE[src_i], TYPE[type_i], id, SEVERITY_LVL[sev_i], *(int*) userParam,
             msg);
+
+
 }

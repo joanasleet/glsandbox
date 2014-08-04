@@ -7,8 +7,7 @@ out vec3 vs_tex_coords;
 uniform mat4 MVP;
 
 void main() {
-    
-    gl_Position = MVP * coords;
-    
+      
     vs_tex_coords = coords.xyz;
+    gl_Position = MVP * coords;
 }

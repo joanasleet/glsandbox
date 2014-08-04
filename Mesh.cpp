@@ -64,7 +64,7 @@ void render(Mesh* mesh) {
         (*mesh->setUniformFunc[i])(loc);
     }
 
-    bind(mesh->tex);
+    glBindTexture(mesh->tex->target, mesh->tex->id);
     glBindVertexArray(mesh->vaoId);
     (*mesh->drawFunc)(mesh->mode, &mesh->first, mesh->count);
 }
@@ -85,12 +85,23 @@ void P(GLint loc) {
 }
 
 void MV(GLint loc) {
-    glm::mat4 MV = *(cam->modelview);
+    glm::mat4 orientation = *(cam->orientation);
+    glm::mat4 translation = *(cam->translation);
+    glm::mat4 MV = orientation * translation;
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MV));
 }
 
 void MVP(GLint loc) {
     glm::mat4 P = *(cam->perspective);
-    glm::mat4 MV = *(cam->modelview);
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P * MV));
+    glm::mat4 orientation = *(cam->orientation);
+    glm::mat4 translation = *(cam->translation);
+    glm::mat4 MVP = P * orientation * translation;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
+}
+
+void MVPnoTrans(GLint loc) {
+    glm::mat4 P = *(cam->perspective);
+    glm::mat4 orientation = *(cam->orientation);
+    glm::mat4 MVP = P * orientation;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
 }
