@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
             "textures/zn.bmp"
         };
 
-        skybox->vaoId = cubeMapVAO(20.0f);
+        skybox->vaoId = cubeMapVAO(2.0f);
         skybox->tex = cubeMap(cubefaces, false, false);
         skybox->uniforms = uniforms;
         skybox->setUniformFunc = funcs;
@@ -105,45 +105,52 @@ int main(int argc, char** argv) {
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
     //glFrontFace(GL_CCW);
+    //glDepthRange(0.1f, 1.0f);
 
     INFO("–––––––––– Rendering ––––––––––");
     while (!glfwWindowShouldClose(context->win) && !glfwGetKey(context->win, GLFW_KEY_ESCAPE)) {
 
+
+
         fps();
         //printWatchLog();
-
         update(cam);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glDepthMask(GL_FALSE);
-        render(skybox);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         /*
+        glDepthMask(GL_FALSE);
+        render(skybox);
+        glDepthMask(GL_TRUE);
+         * */
+
+
+        //glDepthMask(GL_FALSE);
+
         glUseProgram(skybox->shaderProgram);
         MVPnoTrans(glGetUniformLocation(skybox->shaderProgram, "MVP"));
         glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->tex->id);
         glBindVertexArray(skybox->vaoId);
         glDrawArrays(GL_QUADS, 0, 24);
-         * */
 
-        glDepthMask(GL_TRUE);
+        //glDepthMask(GL_TRUE);
 
-        // das laeuft wohl richtig
-        render(plane);
+        glClear(GL_DEPTH_BUFFER_BIT);
 
-        /*
         glUseProgram(plane->shaderProgram);
         P(glGetUniformLocation(plane->shaderProgram, "P"));
         MV(glGetUniformLocation(plane->shaderProgram, "MV"));
         glBindTexture(GL_TEXTURE_2D, plane->tex->id);
         glBindVertexArray(plane->vaoId);
         glDrawArrays(GL_QUADS, 0, 4);
-         * */
 
-        glFinish();
-        glfwPollEvents();
+        // das laeuft wohl richtig
+        //render(plane);
+        //render(skybox);
+
+        glFlush();
         glfwSwapBuffers(context->win);
+        glfwPollEvents();
     }
 
     free(context);
@@ -172,4 +179,12 @@ void renderMeshes() {
     for (int i = 0; i < nextMeshSlot; ++i) {
         render(meshes[i]);
     }
+}
+
+void add(Mesh* mesh) {
+    if (nextMeshSlot > MAX_MESHES - 1) {
+        ERR("Max meshes reached.");
+        return;
+    }
+    meshes[nextMeshSlot++] = mesh;
 }

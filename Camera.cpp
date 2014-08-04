@@ -57,6 +57,7 @@ void update(Camera* cam) {
     glm::mat4 translation = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
     glm::mat4 orientation = yRota * xRota * zRota;
     glm::mat4 perspective = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
+    //glm::mat4 perspective = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE * 20.0f);
 
     cam->perspective = &perspective;
     cam->orientation = &orientation;

@@ -29,6 +29,7 @@ typedef struct Mesh {
 
 Mesh* newMesh(bool newVao = false);
 
+void add(Mesh* mesh);
 void preload(Mesh* mesh);
 void render(Mesh* mesh);
 
