@@ -2,8 +2,7 @@
 #define	CAMERA_H
 
 #include "common.h"
-#include "Context.h"
-#include <glm/fwd.hpp>
+#include <glm/glm.hpp>
 
 #define FOV (45.0f)
 #define ASPECT_RATIO (4.0f / 3.0f)
@@ -33,6 +32,7 @@ typedef struct Camera {
     float defaultSpeed;
 
     bool mouseGrab;
+    bool wireframe;
 
     glm::mat4* perspective;
     glm::mat4* orientation;

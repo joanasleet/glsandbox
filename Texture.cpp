@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include "Logger.h"
 
 GLenum freeTexSlot = GL_TEXTURE0;
 int maxTexSlots;
@@ -19,7 +20,7 @@ Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
 
     tex->data = texData(file, &tex->width, &tex->height);
 
-    glTexImage2D(tex->target, 0, GL_RGBA, tex->width, tex->height,
+    glTexImage2D(tex->target, 0, GL_SRGB_ALPHA, tex->width, tex->height,
             0, GL_RGBA, GL_UNSIGNED_BYTE, tex->data);
 
     glTexParameteri(tex->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -99,7 +100,7 @@ Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
         if (!allSame) {
             faceTexBuffer = texData(cubeFaces[face], &w, &h);
         }
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, w, h, 0,
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB_ALPHA, w, h, 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, faceTexBuffer);
     }
 

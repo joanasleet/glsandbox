@@ -3,9 +3,6 @@
 
 #include "common.h"
 
-#include "Camera.h"
-#include "Texture.h"
-
 typedef struct Context {
     unsigned int xRes;
     unsigned int yRes;
@@ -15,16 +12,14 @@ typedef struct Context {
 
 Context* newContext(unsigned int xRes = 1024, unsigned int yRes = 768, const char* title = "OpenGL");
 
-void config();
 void fps();
-
 void contextErrorCB(int code, const char* msg);
 void resizeCB(GLFWwindow* win, int w, int h);
 
-
 // should be part of the engine
-void exitIfNoMeshes();
-void preloadMeshes();
-void renderMeshes();
+
+double elapsedTime();
+void resetTimer();
+
 #endif	/* CONTEXT_H */
 

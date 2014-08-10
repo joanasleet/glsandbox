@@ -1,4 +1,6 @@
 #include "ShaderCache.h"
+#include "Logger.h"
+#include <string.h>
 
 Element* newElement(const char* key, GLint value) {
     Element* element = (Element*) malloc(sizeof (Element));
@@ -70,8 +72,7 @@ void cache(Hash* cache, const char* key, GLint value) {
     cache->buckets[index].last = newE;
 }
 
-// djb2
-
+/* djb2 */
 int hash(const char* key) {
 
     unsigned long hash = 5381;
@@ -94,7 +95,7 @@ const char* getKey(const char* str, GLint num) {
     return rkey;
 }
 
-void printCache(Hash* cache) {
+void printCache(Hash* cache, FILE* stream) {
 
     Bucket bit;
     Element* elit;
@@ -103,18 +104,18 @@ void printCache(Hash* cache) {
         bit = cache->buckets[i];
         elit = bit.last;
 
-        printf("[%d] { ", i);
+        fprintf(stream, "[%d] { ", i);
 
         if (!elit) {
-            printf("}\n");
+            fprintf(stream, "}\n");
             continue;
         }
 
         do {
-            printf("%s ", elit->key);
+            fprintf(stream, "%s(%d) ", elit->key, elit->value);
             elit = elit->prev;
         } while (elit);
 
-        printf("}\n");
+        fprintf(stream, "}\n");
     }
 }

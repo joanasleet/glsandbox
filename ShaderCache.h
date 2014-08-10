@@ -7,7 +7,6 @@
 #define NOT_CACHED 0
 
 typedef struct Element {
-
     const char* key;
     GLint value;
 
@@ -23,7 +22,6 @@ typedef struct Bucket {
 
 typedef struct Hash {
     Bucket buckets[BUCKETS];
-
 } Hash, ShaderCache, UniformCache;
 
 Hash* newCache();
@@ -35,7 +33,7 @@ int hash(const char* key);
 
 const char* getKey(const char* str, GLint num);
 
-void printCache(Hash* cache);
+void printCache(Hash* cache, FILE* stream);
 
 #endif	/* SHADERCACHE_H */
 

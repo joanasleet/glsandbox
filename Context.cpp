@@ -1,7 +1,9 @@
 #include "Context.h"
+#include "Camera.h"
+#include "Logger.h"
+#include "Engine.h"
 
-extern Context* context;
-extern Camera* cam;
+extern Engine* renderer;
 
 Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
     INFO("–––––––––––––––– Log Start ––––––––––––––––––");
@@ -19,6 +21,12 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
     INFO("GLFW initialized.");
 
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+    glfwWindowHint(GLFW_DEPTH_BITS, 32);
+    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+
+    //    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    //    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
         ERR("Failed to create main window.");
@@ -27,6 +35,7 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
     }
     glfwMakeContextCurrent(context->win);
     INFO("Main window created.");
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -47,26 +56,14 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
     return context;
 }
 
-void config() {
+void contextErrorCB(int code, const char* msg) {
+    ERR("In context - %s (Code %i)", msg, code);
+}
 
-    glEnable(GL_DEPTH_TEST);
-    
-    /*
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-     */
-
-    glClearColor(0.5, 0.5, 0.5, 1.0);
-    glfwSetInputMode(context->win, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-    glfwSetCursorEnterCallback(context->win, cursorEnterCB);
-    glfwSetScrollCallback(context->win, scrollCB);
-    glfwSetKeyCallback(context->win, keyCB);
-    glfwSetWindowSizeCallback(context->win, resizeCB);
-
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTexSlots);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+void resizeCB(GLFWwindow* win, int w, int h) {
+    renderer->glContext->xRes = w;
+    renderer->glContext->yRes = h;
+    glViewport(0, 0, w, h);
 }
 
 void fps() {
@@ -79,33 +76,18 @@ void fps() {
         prevTime = currTime;
         char title[20];
         sprintf(title, "OpenGL @ %.2f", (double) frames / diffTime);
-        glfwSetWindowTitle(context->win, title);
+        glfwSetWindowTitle(renderer->glContext->win, title);
         frames = 0;
     }
     ++frames;
 }
 
-void contextErrorCB(int code, const char* msg) {
-    ERR("In context - %s (Code %i)", msg, code);
+double elapsedTime() {
+
+    static double startTime = glfwGetTime();
+    return ( glfwGetTime() - startTime);
 }
 
-void resizeCB(GLFWwindow* win, int w, int h) {
-    context->xRes = w;
-    context->yRes = h;
-    glViewport(0, 0, w, h);
-}
-
-void printWatchLog() {
-    watchLog = fopen(WATCH_LOG_NAME, "a+");
-    if (!watchLog) {
-        ERR("Failed to open log <%s>", WATCH_LOG_NAME);
-        return;
-    }
-
-    fprintf(watchLog, "–––––––––––––– Watch Log ––––––––––––––\n");
-    fprintf(watchLog, "DIRECTION:\n\t%.1f  %.1f  %.1f\n", cam->dirX, cam->dirY, cam->dirZ);
-    fprintf(watchLog, "POSITION:\n\t%.1f  %.1f  %.1f\n", cam->xPos, cam->yPos, cam->zPos);
-    fprintf(watchLog, "SPEED:\n\t%.1f\n", cam->defaultSpeed);
-
-    fclose(watchLog);
+void resetTimer() {
+    glfwSetTime(0.0);
 }

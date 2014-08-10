@@ -4,9 +4,7 @@
 #include "common.h"
 #include "ShaderCache.h"
 
-extern GLenum SHADER_TYPE[];
-
-void addShader(const char* source, GLenum type, GLuint prog);
+void addShader(const char* source, GLenum type, GLuint prog, ShaderCache* cache);
 GLuint compileShader(const char* source, GLenum type);
 
 char* bufferFile(const char* path);

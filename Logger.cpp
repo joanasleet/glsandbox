@@ -1,7 +1,12 @@
 #include "Logger.h"
+#include "ShaderCache.h"
+
+extern ShaderCache* shaderCache;
+extern UniformCache* uniformCache;
 
 FILE* scrollLog;
 FILE* watchLog;
+FILE* cacheLog;
 
 GLenum GLattribIds[] = {
     GL_MAJOR_VERSION,
@@ -90,17 +95,42 @@ void closeLog() {
 }
 
 void printWatchLog(Camera* cam) {
-    watchLog = fopen(WATCH_LOG_NAME, "w");
+    watchLog = fopen(WATCH_LOG_NAME, "a+");
     if (!watchLog) {
         ERR("Failed to open log <%s>", WATCH_LOG_NAME);
         return;
     }
 
     fprintf(watchLog, "–––––––––––––– Watch Log ––––––––––––––\n");
-    fprintf(watchLog, "Cam direction:\t(%.1f, %.1f, %.1f)\n", cam->dirX, cam->dirY, cam->dirZ);
-    fprintf(watchLog, "Cam position:\t(%.1f, %.1f, %.1f)\n", cam->xPos, cam->yPos, cam->zPos);
+    fprintf(watchLog, "Cam direction:\n(%.1f, %.1f, %.1f)\n", cam->dirX, cam->dirY, cam->dirZ);
+    fprintf(watchLog, "Cam position:\n(%.1f, %.1f, %.1f)\n", cam->xPos, cam->yPos, cam->zPos);
+    fprintf(watchLog, "Cam speed:\n%.1f\n", cam->defaultSpeed);
 
     fclose(watchLog);
+}
+
+void printCacheLog(Hash* cache, const char* name) {
+    cacheLog = fopen(CACHE_LOG_NAME, "a+");
+    if (!cacheLog) {
+        ERR("Failed to open log <%s>", CACHE_LOG_NAME);
+        return;
+    }
+
+    fprintf(cacheLog, "––––––––– %s –––––––––\n", name);
+    printCache(cache, cacheLog);
+
+    fclose(cacheLog);
+}
+
+void resetLogs() {
+    watchLog = fopen(WATCH_LOG_NAME, "w");
+    if (watchLog) fclose(watchLog);
+
+    scrollLog = fopen(SCROLL_LOG_NAME, "w");
+    if (scrollLog) fclose(scrollLog);
+
+    cacheLog = fopen(CACHE_LOG_NAME, "w");
+    if (cacheLog) fclose(cacheLog);
 }
 
 const char* getErrorMessage() {
@@ -160,6 +190,4 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
     ERR("\n\tSource: %s %s\n\tId: %u\n\tSeverity: %s\n\tUserParam: %i\n\tMessage:\n%s",
             SOURCE[src_i], TYPE[type_i], id, SEVERITY_LVL[sev_i], *(int*) userParam,
             msg);
-
-
 }

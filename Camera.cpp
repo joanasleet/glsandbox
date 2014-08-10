@@ -1,7 +1,11 @@
 #include "Camera.h"
+#include "Context.h"
+#include "Logger.h"
+#include "Engine.h"
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
-extern Camera* cam;
-extern Context* context;
+extern Engine* renderer;
 
 Camera* createCamera(float x, float y, float z) {
     Camera* cam = (Camera*) malloc(sizeof (Camera));
@@ -25,6 +29,11 @@ Camera* createCamera(float x, float y, float z) {
     cam->defaultSpeed = DEFAULT_CAM_SPEED;
 
     cam->mouseGrab = false;
+    cam->wireframe = false;
+
+    cam->perspective = (glm::mat4*) malloc(sizeof (glm::mat4));
+    cam->orientation = (glm::mat4*) malloc(sizeof (glm::mat4));
+    cam->translation = (glm::mat4*) malloc(sizeof (glm::mat4));
 
     return cam;
 }
@@ -54,22 +63,20 @@ void update(Camera* cam) {
     glm::mat4 xRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
     glm::mat4 zRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
 
-    glm::mat4 translation = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
-    glm::mat4 orientation = yRota * xRota * zRota;
-    glm::mat4 perspective = glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
-    //glm::mat4 perspective = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE * 20.0f);
-
-    cam->perspective = &perspective;
-    cam->orientation = &orientation;
-    cam->translation = &translation;
+    *(cam->orientation) = yRota * xRota * zRota;
+    *(cam->translation) = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
+    *(cam->perspective) = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE * 20.0f);
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {
 
-    cam->rotaX += (context->xRes / 2.0f) - xpos;
-    cam->rotaY += (context->yRes / 2.0f) - ypos;
+    unsigned int xres = renderer->glContext->xRes;
+    unsigned int yres = renderer->glContext->yRes;
 
-    glfwSetCursorPos(win, (context->xRes / 2.0f), (context->yRes / 2.0f));
+    renderer->mainCam->rotaX += (xres / 2.0f) - xpos;
+    renderer->mainCam->rotaY += (yres / 2.0f) - ypos;
+
+    glfwSetCursorPos(win, (xres / 2.0f), (yres / 2.0f));
 }
 
 void cursorEnterCB(GLFWwindow* win, int enter) {
@@ -79,6 +86,8 @@ void cursorEnterCB(GLFWwindow* win, int enter) {
 }
 
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
+
+    Camera* cam = renderer->mainCam;
 
     if (cam->defaultSpeed > 1) {
         cam->defaultSpeed += 1 * yoffset;
@@ -91,10 +100,12 @@ void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
 
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
+    Camera* cam = renderer->mainCam;
+
     static GLfloat inTessLvl = 2.0f;
     static GLfloat outTessLvl = 2.0f;
 
-    static bool wireframe = true;
+    bool wireframe = cam->wireframe;
 
     switch (key) {
         case GLFW_KEY_W:
@@ -140,7 +151,7 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
         case GLFW_KEY_C:
 
             if (action == GLFW_PRESS && !cam->mouseGrab) {
-                glfwSetCursorPos(win, context->xRes / 2.0f, context->yRes / 2.0f);
+                glfwSetCursorPos(win, renderer->glContext->xRes / 2.0f, renderer->glContext->yRes / 2.0f);
                 glfwSetCursorPosCallback(win, cursorCB);
                 glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 cam->mouseGrab = true;
@@ -183,10 +194,10 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
             if (action == GLFW_PRESS && !wireframe) {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                wireframe = true;
+                cam->wireframe = true;
             } else if (action == GLFW_PRESS && wireframe) {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                wireframe = false;
+                cam->wireframe = false;
             }
             break;
         default:
@@ -197,8 +208,8 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
 void screenshot() {
 
-    unsigned int x = context->xRes;
-    unsigned int y = context->yRes;
+    unsigned int x = renderer->glContext->xRes;
+    unsigned int y = renderer->glContext->yRes;
 
     unsigned char* buffer = (unsigned char*) malloc(sizeof (unsigned char)*x * y * 3);
     glReadPixels(0, 0, x, y, GL_RGB, GL_UNSIGNED_BYTE, buffer);

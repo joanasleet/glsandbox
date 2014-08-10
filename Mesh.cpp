@@ -1,11 +1,12 @@
 #include "Mesh.h"
+#include "ShaderCache.h"
+#include "Camera.h"
+#include "Logger.h"
 
-extern ShaderCache* shaderCache;
-extern UniformCache* uniformCache;
+#include <string.h>
 
-extern GLenum SHADER_TYPE[];
-
-extern Camera* cam;
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 Mesh* newMesh(bool newVao) {
     Mesh* mesh = (Mesh*) malloc(sizeof (Mesh));
@@ -27,71 +28,42 @@ Mesh* newMesh(bool newVao) {
     return mesh;
 }
 
-void preload(Mesh* mesh) {
-
-    GLint prog = mesh->shaderProgram;
-    const char* shader;
-
-    /* cache shaders */
-    for (int i = 0; i < mesh->shadersLen; ++i) {
-        shader = mesh->shaders[i];
-
-        if (strlen(shader) > 0) {
-            addShader(shader, SHADER_TYPE[i], prog);
-        }
-    }
-
-    /* cache uniform locations */
-    GLint loc;
-    const char* str;
-    const char* key;
-
-    for (int i = 0; i < mesh->uniLen; ++i) {
-        str = mesh->uniforms[i];
-        loc = glGetUniformLocation(prog, str);
-        key = getKey(str, prog);
-        cache(uniformCache, key, loc);
-    }
-}
-
-void render(Mesh* mesh) {
-
-    GLint loc;
-    glUseProgram(mesh->shaderProgram);
-
-    for (int i = 0; i < mesh->uniLen; ++i) {
-        loc = get(uniformCache, getKey(mesh->uniforms[i], mesh->shaderProgram));
-        (*mesh->setUniformFunc[i])(loc);
-    }
-
-    glBindTexture(mesh->tex->target, mesh->tex->id);
-    glBindVertexArray(mesh->vaoId);
-    (*mesh->drawFunc)(mesh->mode, &mesh->first, mesh->count);
-}
-
 /* draw functions */
 void drawArrays(GLenum mode, GLint* first, GLsizei count) {
+    //INFO("Calling:\tdrawArrays(%d, %d, %d)", mode, *first, count);
     glDrawArrays(mode, *first, count);
 }
 
 void drawElements(GLenum mode, GLint* first, GLsizei count) {
+    //INFO("Calling:\tdrawElements(%d, %d, GL_UNSIGNED_INT, %d)", mode, count, *first);
     glDrawElements(mode, count, GL_UNSIGNED_INT, (GLvoid*) first);
 }
 
+/* helper */
+void printMatrix(float* m) {
+    printf("- - - - - - - - - - - - - -\n");
+    for (int i = 0; i < 4; ++i) {
+        printf("%.1f\t%.1f\t%.1f\t%.1f\n", m[i * 4], m[i * 4 + 1], m[i * 4 + 2], m[i * 4 + 3]);
+    }
+}
+
 /* uniform setter */
-void P(GLint loc) {
+void P(GLint loc, Camera* cam) {
+    //INFO("Calling P(%d)", loc);
     glm::mat4 P = *(cam->perspective);
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P));
 }
 
-void MV(GLint loc) {
+void MV(GLint loc, Camera* cam) {
+    //INFO("Calling MV(%d)", loc);
     glm::mat4 orientation = *(cam->orientation);
     glm::mat4 translation = *(cam->translation);
     glm::mat4 MV = orientation * translation;
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MV));
 }
 
-void MVP(GLint loc) {
+void MVP(GLint loc, Camera* cam) {
+    //INFO("Calling MVP(%d)", loc);
     glm::mat4 P = *(cam->perspective);
     glm::mat4 orientation = *(cam->orientation);
     glm::mat4 translation = *(cam->translation);
@@ -99,7 +71,8 @@ void MVP(GLint loc) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
 }
 
-void MVPnoTrans(GLint loc) {
+void MVPnoTrans(GLint loc, Camera* cam) {
+    //INFO("Calling MVPnoTrans(%d)", loc);
     glm::mat4 P = *(cam->perspective);
     glm::mat4 orientation = *(cam->orientation);
     glm::mat4 MVP = P * orientation;

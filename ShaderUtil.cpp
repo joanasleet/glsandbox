@@ -1,17 +1,7 @@
 #include "ShaderUtil.h"
+#include "Logger.h"
 
-GLenum SHADER_TYPE[] = {
-    GL_VERTEX_SHADER,
-    GL_FRAGMENT_SHADER,
-    GL_TESS_CONTROL_SHADER,
-    GL_TESS_EVALUATION_SHADER,
-    GL_GEOMETRY_SHADER,
-    GL_COMPUTE_SHADER
-};
-
-extern ShaderCache* shaderCache;
-
-void addShader(const char* srcFile, GLenum type, GLuint prog) {
+void addShader(const char* srcFile, GLenum type, GLuint prog, ShaderCache* shaderCache) {
 
     INFO("–");
     GLuint shaderId = get(shaderCache, srcFile);
