@@ -31,6 +31,10 @@ Hash* newCache() {
     return cache;
 }
 
+void freeCache(Hash* hash) {
+
+}
+
 GLint get(Hash* cache, const char* key) {
 
     int index = hash(key);

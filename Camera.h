@@ -4,10 +4,18 @@
 #include "common.h"
 #include <glm/glm.hpp>
 
+#define VIEW_RANGE infinite
+
+#if(VIEW_RANGE == infinite)
+#define PERSPECTIVE glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
+#else      
+#define PERSPECTIVE glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
+#endif
+
 #define FOV (45.0f)
 #define ASPECT_RATIO (4.0f / 3.0f)
 #define NEAR_PLANE (0.1f)
-#define FAR_PLANE (1000.0f)
+#define FAR_PLANE (10000.0f)
 
 #define TURN_SPEED 0.01f
 #define DEFAULT_CAM_SPEED 0.5f

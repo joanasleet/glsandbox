@@ -176,6 +176,28 @@ void enterLoop(Engine* renderer) {
 
 void terminate(Engine* renderer) {
 
+
+    Mesh* mesh;
+    Texture* tex;
+
+    for (unsigned int i = 0; i < renderer->nextMeshSlot; i++) {
+
+        mesh = renderer->meshes[i];
+        tex = mesh->tex;
+
+        glDeleteVertexArrays(1, &(mesh->vaoId));
+
+        //free(tex->data); // causes segfault for cubemaps
+        glDeleteTextures(1, &(tex->id));
+
+        glDeleteProgram(mesh->shaderProgram);
+
+        free(mesh);
+    }
+
+    freeCache(renderer->shaderCache);
+    freeCache(renderer->uniformCache);
+
     free(renderer->glContext);
     free(renderer->mainCam);
 

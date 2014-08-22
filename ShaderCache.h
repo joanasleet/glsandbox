@@ -25,6 +25,7 @@ typedef struct Hash {
 } Hash, ShaderCache, UniformCache;
 
 Hash* newCache();
+void freeCache(Hash* hash);
 
 GLint get(Hash* cache, const char* key);
 void cache(Hash* cache, const char* key, GLint value);

@@ -16,14 +16,14 @@ typedef struct Texture {
      * gpu texture slot */
     GLenum slot;
 
+    /* 
+     * light attributes */
+    GLfloat kAmb, kDiff, kSpec;
+
     /*
      * image attributes */
     int width, height;
     unsigned char* data, mipMaps;
-
-    /* 
-     * light attributes */
-    GLfloat kAmb, kDiff, kSpec;
 
 } Texture, Tex;
 
@@ -31,7 +31,7 @@ Texture* newTexture(const char* file, GLenum target = GL_TEXTURE_2D, bool genMip
 unsigned char* texData(const char* file, int* width = NULL, int* height = NULL);
 void bind(Texture* tex);
 
-Texture* cubeMap(const char* cubeFaces[], bool allSame = false, bool genMipMaps = true);
+Texture* cubeMap(const char* cubeFaces[], bool allSame = false, bool genMipMaps = false);
 
 #endif	/* TEXTURE_H */
 

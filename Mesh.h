@@ -26,6 +26,7 @@ typedef struct Mesh {
 } Mesh;
 
 Mesh* newMesh(bool newVao = false);
+void freeMesh(Mesh* mesh);
 
 /* draw functions */
 void drawArrays(GLenum mode, GLint* first, GLsizei count);

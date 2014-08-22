@@ -65,7 +65,7 @@ void update(Camera* cam) {
 
     *(cam->orientation) = yRota * xRota * zRota;
     *(cam->translation) = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
-    *(cam->perspective) = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE * 20.0f);
+    *(cam->perspective) = PERSPECTIVE;
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {

@@ -28,6 +28,14 @@ Mesh* newMesh(bool newVao) {
     return mesh;
 }
 
+void freeMesh(Mesh* mesh) {
+
+    //freeTexture(mesh->tex);
+    glDeleteVertexArrays(1, &(mesh->vaoId));
+    glDeleteProgram(mesh->shaderProgram);
+    free(mesh);
+}
+
 /* draw functions */
 void drawArrays(GLenum mode, GLint* first, GLsizei count) {
     //INFO("Calling:\tdrawArrays(%d, %d, %d)", mode, *first, count);
