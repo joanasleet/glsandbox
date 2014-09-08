@@ -49,6 +49,9 @@ Engine* init() {
 
     glEnable(GL_FRAMEBUFFER_SRGB);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     return renderer;
 }
 
@@ -136,12 +139,14 @@ void enterLoop(Engine* renderer) {
     exitIfNoMeshes(renderer);
     preloadMeshes(renderer);
 
+    // move to timer class
     double startTime, endTime;
     struct timespec msSleep, msRemaining;
     msSleep.tv_sec = 0;
     msSleep.tv_nsec = 16000000;
 
 #if (PRINT_CACHE_LOG)
+    // streamline logger class
     printCacheLog(renderer->shaderCache, "Shader Cache");
     printCacheLog(renderer->uniformCache, "Uniforms Cache");
 #endif
@@ -152,7 +157,9 @@ void enterLoop(Engine* renderer) {
     INFO("–––––––––– Rendering ––––––––––");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
+
 #if (PRINT_WATCH_LOG)
+        // streamline logger class
         printWatchLog(cam);
 #endif
         startTime = glfwGetTime();
@@ -168,6 +175,7 @@ void enterLoop(Engine* renderer) {
         glfwSwapBuffers(window);
         glfwPollEvents();
 
+        // encapsulate into timer class
         endTime = glfwGetTime();
         msSleep.tv_nsec += (long) ((startTime - endTime)*1000000000.0);
         nanosleep(&msSleep, &msRemaining);

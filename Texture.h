@@ -33,5 +33,7 @@ void bind(Texture* tex);
 
 Texture* cubeMap(const char* cubeFaces[], bool allSame = false, bool genMipMaps = false);
 
+Texture* nullTexture();
+
 #endif	/* TEXTURE_H */
 

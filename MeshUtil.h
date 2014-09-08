@@ -26,5 +26,7 @@ GLuint planeVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0
 
 /* terrain */
 GLuint terrainVAO(GLfloat xlength = 100.0f, GLfloat zlength = 100.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+
+GLuint overlayVAO();
 #endif	/* GLHELPER_H */
 

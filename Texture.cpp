@@ -4,6 +4,8 @@
 GLenum freeTexSlot = GL_TEXTURE0;
 int maxTexSlots;
 
+Texture* nullTex = NULL;
+
 Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
     Texture* tex = (Texture*) malloc(sizeof (Texture));
     if (!tex) {
@@ -116,4 +118,22 @@ Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
     }
 
     return tex;
+}
+
+Texture* nullTexture() {
+
+    if (nullTex) {
+        return nullTex;
+    }
+
+    nullTex = (Texture*) malloc(sizeof (Texture));
+    if (!nullTex) {
+        ERR("Failed to allocate null texture");
+        return NULL;
+    }
+
+    glGenTextures(1, &nullTex->id);
+    nullTex->target = GL_TEXTURE_2D;
+
+    return nullTex;
 }

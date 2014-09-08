@@ -47,7 +47,9 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
 
     if (GLEW_KHR_debug) {
         int param = -1;
-        glDebugMessageCallback(debugCB, &param);
+        const void* p = &param;
+  //      glDebugMessageCallback(debugCB, NULL);
+        //glDebugMessageCallback(debugCB);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     }
 
