@@ -27,6 +27,7 @@ typedef struct Engine {
 
 /* main work flow */
 Engine* init();
+void loadScene(Engine* renderer);
 void add(Mesh* mesh, Engine* renderer);
 void enterLoop(Engine* renderer);
 void terminate(Engine* renderer);
