@@ -7,11 +7,10 @@ void addShader(const char* srcFile, GLenum type, GLuint prog, ShaderCache* shade
     GLuint shaderId = get(shaderCache, srcFile);
 
     if (!shaderId) {
-        shaderId = compileShader(srcFile, type);
+        shaderId = compileShader(srcFile, glCreateShader(type));
         cache(shaderCache, srcFile, shaderId);
     }
 
-    char* logMsg;
     GLsizei logSize = 0;
 
     INFO("Adding shader <%s>(ID: %d) to program %d", srcFile, shaderId, prog);
@@ -19,24 +18,16 @@ void addShader(const char* srcFile, GLenum type, GLuint prog, ShaderCache* shade
     glLinkProgram(prog);
 
     glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logSize);
-    logMsg = (char*) malloc(sizeof (char) * logSize);
+    char logMsg[logSize];
     glGetProgramInfoLog(prog, logSize, &logSize, logMsg);
     if (logSize > 0) {
         ERR("%s", logMsg);
     }
-
-    free(logMsg);
 }
 
-GLuint compileShader(const char* srcFile, GLenum type) {
-
-    GLuint shaderId = glCreateShader(type);
+GLuint compileShader(const char* srcFile, GLuint shaderId) {
 
     char* shaderSrc = bufferFile(srcFile);
-
-    char* logMsg;
-    GLsizei logSize = 0;
-
 
     INFO("Compiling shader <%s>", srcFile);
     //INFO("\n%s", shaderSrc);
@@ -44,14 +35,13 @@ GLuint compileShader(const char* srcFile, GLenum type) {
     glCompileShader(shaderId);
     free(shaderSrc);
 
+    GLsizei logSize = 0;
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logSize);
-    logMsg = (char*) malloc(sizeof (char) * logSize);
+    char logMsg[logSize];
     glGetShaderInfoLog(shaderId, logSize, &logSize, logMsg);
     if (logSize > 0) {
         ERR("%s", logMsg);
     }
-    logSize = 0;
-    free(logMsg);
 
     return shaderId;
 }
