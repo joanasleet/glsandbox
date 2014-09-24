@@ -31,7 +31,11 @@
       <itemPath>tex_light.frag</itemPath>
       <itemPath>tex_light.vert</itemPath>
     </logicalFolder>
-    <logicalFolder name="f1" displayName="scripts" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="scripts" projectFiles="true">
+      <itemPath>scripts/VaoType.lua</itemPath>
+      <itemPath>scripts/loadScene.lua</itemPath>
+      <itemPath>scripts/scene.lua</itemPath>
+      <itemPath>scripts/script.lua</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -149,6 +153,14 @@
       </item>
       <item path="overlay.vert" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="scripts/VaoType.lua" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/loadScene.lua" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/scene.lua" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/script.lua" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="stb_image.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="stb_image.h" ex="false" tool="3" flavor2="0">
@@ -235,6 +247,14 @@
       <item path="overlay.frag" ex="false" tool="3" flavor2="0">
       </item>
       <item path="overlay.vert" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/VaoType.lua" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/loadScene.lua" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/scene.lua" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/script.lua" ex="false" tool="3" flavor2="0">
       </item>
       <item path="stb_image.c" ex="false" tool="0" flavor2="0">
       </item>

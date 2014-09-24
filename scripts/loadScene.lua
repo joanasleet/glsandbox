@@ -17,3 +17,5 @@ function unpackScene(s)
     
     return table.unpack(unpacked_scene)
 end
+
+return unpackScene(dofile("scene.lua"))
