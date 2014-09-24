@@ -177,7 +177,7 @@ char* getTime() {
 }
 
 void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
-        GLsizei length, const GLchar *msg, void* userParam) {
+        GLsizei length, const GLchar *msg, const void* userParam) {
 
     int src_i = source - 0x8246;
     int type_i = type - 0x824C;

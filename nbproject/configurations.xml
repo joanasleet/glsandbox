@@ -10,6 +10,8 @@
       <itemPath>Logger.h</itemPath>
       <itemPath>Mesh.h</itemPath>
       <itemPath>MeshUtil.h</itemPath>
+      <itemPath>SceneManager.h</itemPath>
+      <itemPath>Script.h</itemPath>
       <itemPath>ShaderCache.h</itemPath>
       <itemPath>ShaderUtil.h</itemPath>
       <itemPath>Texture.h</itemPath>
@@ -44,8 +46,10 @@
       <itemPath>Context.cpp</itemPath>
       <itemPath>Engine.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
+      <itemPath>LuaScript.cpp</itemPath>
       <itemPath>Mesh.cpp</itemPath>
       <itemPath>MeshUtil.cpp</itemPath>
+      <itemPath>SceneManager.cpp</itemPath>
       <itemPath>ShaderCache.cpp</itemPath>
       <itemPath>ShaderUtil.cpp</itemPath>
       <itemPath>Texture.cpp</itemPath>
@@ -94,6 +98,7 @@
           <linkerLibItems>
             <linkerOptionItem>`pkg-config --libs glfw3`</linkerOptionItem>
             <linkerOptionItem>`pkg-config --libs glew`</linkerOptionItem>
+            <linkerOptionItem>`pkg-config --libs lua`</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -113,6 +118,8 @@
       </item>
       <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="LuaScript.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="Mesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Mesh.h" ex="false" tool="3" flavor2="0">
@@ -120,6 +127,12 @@
       <item path="MeshUtil.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MeshUtil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SceneManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SceneManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Script.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ShaderCache.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -208,6 +221,8 @@
       </item>
       <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="LuaScript.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="Mesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Mesh.h" ex="false" tool="3" flavor2="0">
@@ -215,6 +230,12 @@
       <item path="MeshUtil.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MeshUtil.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SceneManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SceneManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Script.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ShaderCache.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -39,8 +39,10 @@ OBJECTFILES= \
 	${OBJECTDIR}/Context.o \
 	${OBJECTDIR}/Engine.o \
 	${OBJECTDIR}/Logger.o \
+	${OBJECTDIR}/LuaScript.o \
 	${OBJECTDIR}/Mesh.o \
 	${OBJECTDIR}/MeshUtil.o \
+	${OBJECTDIR}/SceneManager.o \
 	${OBJECTDIR}/ShaderCache.o \
 	${OBJECTDIR}/ShaderUtil.o \
 	${OBJECTDIR}/Texture.o \
@@ -92,6 +94,11 @@ ${OBJECTDIR}/Logger.o: Logger.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger.o Logger.cpp
 
+${OBJECTDIR}/LuaScript.o: LuaScript.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/LuaScript.o LuaScript.cpp
+
 ${OBJECTDIR}/Mesh.o: Mesh.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -101,6 +108,11 @@ ${OBJECTDIR}/MeshUtil.o: MeshUtil.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MeshUtil.o MeshUtil.cpp
+
+${OBJECTDIR}/SceneManager.o: SceneManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/SceneManager.o SceneManager.cpp
 
 ${OBJECTDIR}/ShaderCache.o: ShaderCache.cpp 
 	${MKDIR} -p ${OBJECTDIR}

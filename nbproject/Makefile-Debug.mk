@@ -39,8 +39,10 @@ OBJECTFILES= \
 	${OBJECTDIR}/Context.o \
 	${OBJECTDIR}/Engine.o \
 	${OBJECTDIR}/Logger.o \
+	${OBJECTDIR}/LuaScript.o \
 	${OBJECTDIR}/Mesh.o \
 	${OBJECTDIR}/MeshUtil.o \
+	${OBJECTDIR}/SceneManager.o \
 	${OBJECTDIR}/ShaderCache.o \
 	${OBJECTDIR}/ShaderUtil.o \
 	${OBJECTDIR}/Texture.o \
@@ -62,7 +64,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=`pkg-config --libs glfw3` `pkg-config --libs glew`  
+LDLIBSOPTIONS=`pkg-config --libs glfw3` `pkg-config --libs glew` `pkg-config --libs lua`  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -75,57 +77,67 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glsandbox: ${OBJECTFILES}
 ${OBJECTDIR}/Camera.o: Camera.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Camera.o Camera.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Camera.o Camera.cpp
 
 ${OBJECTDIR}/Context.o: Context.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Context.o Context.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Context.o Context.cpp
 
 ${OBJECTDIR}/Engine.o: Engine.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Engine.o Engine.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Engine.o Engine.cpp
 
 ${OBJECTDIR}/Logger.o: Logger.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger.o Logger.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger.o Logger.cpp
+
+${OBJECTDIR}/LuaScript.o: LuaScript.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/LuaScript.o LuaScript.cpp
 
 ${OBJECTDIR}/Mesh.o: Mesh.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mesh.o Mesh.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mesh.o Mesh.cpp
 
 ${OBJECTDIR}/MeshUtil.o: MeshUtil.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MeshUtil.o MeshUtil.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MeshUtil.o MeshUtil.cpp
+
+${OBJECTDIR}/SceneManager.o: SceneManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/SceneManager.o SceneManager.cpp
 
 ${OBJECTDIR}/ShaderCache.o: ShaderCache.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderCache.o ShaderCache.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderCache.o ShaderCache.cpp
 
 ${OBJECTDIR}/ShaderUtil.o: ShaderUtil.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderUtil.o ShaderUtil.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ShaderUtil.o ShaderUtil.cpp
 
 ${OBJECTDIR}/Texture.o: Texture.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Texture.o Texture.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Texture.o Texture.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/stb_image.o: stb_image.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stb_image.o stb_image.c
+	$(COMPILE.c) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stb_image.o stb_image.c
 
 # Subprojects
 .build-subprojects:

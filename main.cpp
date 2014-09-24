@@ -1,6 +1,6 @@
 #include "Engine.h"
-#include "MeshUtil.h"
-#include <lua.h>
+#include "SceneManager.h"
+
 
 using namespace std;
 
@@ -18,18 +18,26 @@ Engine* renderer = init();
 
 int main(int argc, char** argv) {
 
-    
-    
-    /* OVERLAY */
+    loadScene();
+   
+    enterLoop(renderer);
+
+    terminate(renderer);
+
+    return EXIT_SUCCESS;
+}
+
+/* SAMPLE MESH:
+ 
     Mesh* overlay = newMesh();
-    //const char* uniforms1[] = {"MVP"};
-    //void (*funcs1[])(GLint, Camera*) = {MVPnoTrans};
+    const char* uniforms1[] = {"MVP"};
+    void (*funcs1[])(GLint, Camera*) = {MVPnoTrans};
     const char* shaders2[] = {"overlay.vert", "overlay.frag"};
 
     overlay->vaoId = overlayVAO();
     overlay->tex = newTexture("fontsheet/font.png");
-    //overlay->uniforms = uniforms1;
-    //overlay->setUniformFunc = funcs1;
+    overlay->uniforms = uniforms1;
+    overlay->setUniformFunc = funcs1;
     overlay->uniLen = 0; // !!!
     overlay->shaders = shaders2;
     overlay->shadersLen = 2;
@@ -37,11 +45,5 @@ int main(int argc, char** argv) {
     overlay->mode = GL_QUADS;
     overlay->first = 0;
     overlay->count = 4;
-    add(overlay, renderer);
-
-    enterLoop(renderer);
-
-    terminate(renderer);
-
-    return EXIT_SUCCESS;
-}
+ 
+ */

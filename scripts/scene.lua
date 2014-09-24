@@ -1,4 +1,4 @@
-VaoType = require "VaoType"
+VaoType = require "scripts.VaoType"
 
 scene = {
     {
