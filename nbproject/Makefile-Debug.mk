@@ -52,8 +52,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-Wall
-CXXFLAGS=-Wall
+CCFLAGS=
+CXXFLAGS=
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -125,7 +125,7 @@ ${OBJECTDIR}/main.o: main.cpp
 ${OBJECTDIR}/stb_image.o: stb_image.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stb_image.o stb_image.c
+	$(COMPILE.c) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stb_image.o stb_image.c
 
 # Subprojects
 .build-subprojects:
