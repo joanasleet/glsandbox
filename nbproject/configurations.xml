@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>Camera.h</itemPath>
       <itemPath>Context.h</itemPath>
+      <itemPath>Debugger.h</itemPath>
       <itemPath>Engine.h</itemPath>
       <itemPath>Logger.h</itemPath>
       <itemPath>Mesh.h</itemPath>
@@ -110,6 +111,8 @@
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Debugger.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Engine.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Engine.h" ex="false" tool="3" flavor2="0">
@@ -212,6 +215,8 @@
       <item path="Context.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Debugger.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Engine.cpp" ex="false" tool="1" flavor2="0">
       </item>
