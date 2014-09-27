@@ -1,6 +1,6 @@
 #include "Engine.h"
 #include "SceneManager.h"
-
+#include "Debugger.h"
 
 using namespace std;
 
@@ -18,6 +18,11 @@ Engine* renderer = init();
 
 int main(int argc, char** argv) {
 
+    err("asd");
+    info("asd");
+    check(0, "Wtf");
+    checkerr();
+    
     loadScene();
    
     enterLoop(renderer);
