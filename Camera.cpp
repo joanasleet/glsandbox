@@ -1,7 +1,8 @@
 #include "Camera.h"
 #include "Context.h"
-#include "Logger.h"
+#include "Debugger.h"
 #include "Engine.h"
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -220,7 +221,8 @@ void screenshot() {
 
     FILE* target = fopen(name, "wb");
     if (!target) {
-        ERR("Failed writing screenshot to <%s>", name);
+        fprintf(stderr, "Failed to open file %s", name);
+        exit(EXIT_FAILURE);
     }
 
     int start_of_row;

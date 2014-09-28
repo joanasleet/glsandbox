@@ -1,4 +1,6 @@
 build/
 dist/
-*.log
 screenshots/
+*.log
+cachegrind.*
+callgrind.*

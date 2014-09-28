@@ -8,7 +8,6 @@
       <itemPath>Context.h</itemPath>
       <itemPath>Debugger.h</itemPath>
       <itemPath>Engine.h</itemPath>
-      <itemPath>Logger.h</itemPath>
       <itemPath>Mesh.h</itemPath>
       <itemPath>MeshUtil.h</itemPath>
       <itemPath>SceneManager.h</itemPath>
@@ -46,7 +45,6 @@
       <itemPath>Camera.cpp</itemPath>
       <itemPath>Context.cpp</itemPath>
       <itemPath>Engine.cpp</itemPath>
-      <itemPath>Logger.cpp</itemPath>
       <itemPath>LuaScript.cpp</itemPath>
       <itemPath>Mesh.cpp</itemPath>
       <itemPath>MeshUtil.cpp</itemPath>
@@ -116,10 +114,6 @@
       <item path="Engine.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Engine.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Logger.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="LuaScript.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -221,10 +215,6 @@
       <item path="Engine.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Engine.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Logger.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Logger.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="LuaScript.cpp" ex="false" tool="1" flavor2="0">
       </item>

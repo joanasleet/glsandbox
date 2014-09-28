@@ -1,49 +1,47 @@
 #include "Context.h"
 #include "Camera.h"
-#include "Logger.h"
+#include "Debugger.h"
 #include "Engine.h"
 
 extern Engine* renderer;
 
 Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
-    INFO("–––––––––––––––– Log Start ––––––––––––––––––");
+    info("–––––––––––––––– Log Start ––––––––––––––––––");
     Context* context = (Context*) malloc(sizeof (Context));
     context->xRes = xRes;
     context->yRes = yRes;
 
     glfwSetErrorCallback(contextErrorCB);
 
-    if (!glfwInit()) {
-        ERR("Failed to start GLFW.");
-        exit(EXIT_FAILURE);
-    }
+    guard(glfwInit());
 
-    INFO("GLFW initialized.");
+    info("GLFW initialized.");
 
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_DEPTH_BITS, 32);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
 
-    //    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    //    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
-        ERR("Failed to create main window.");
+        err("Failed to create main window.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+
     glfwMakeContextCurrent(context->win);
-    INFO("Main window created.");
+    info("Main window created.");
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        ERR("Failed to start GLEW.");
+        err("Failed to start GLEW.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    INFO("GLEW initialized.");
+    info("GLEW initialized.");
 
     if (GLEW_KHR_debug) {
         int param = -1;
@@ -55,7 +53,7 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
 }
 
 void contextErrorCB(int code, const char* msg) {
-    ERR("In context - %s (Code %i)", msg, code);
+    err("In context - %s (Code %i)", msg, code);
 }
 
 void resizeCB(GLFWwindow* win, int w, int h) {
@@ -81,11 +79,52 @@ void fps() {
 }
 
 double elapsedTime() {
-
     static double startTime = glfwGetTime();
     return ( glfwGetTime() - startTime);
 }
 
 void resetTimer() {
     glfwSetTime(0.0);
+}
+
+/* where to put this shit ? */
+const char* SEVERITY_LVL[] = {
+    "HIGH",
+    "MEDIUM",
+    "LOW",
+    "NOTE"
+};
+
+const char* SOURCE[] = {
+    "API",
+    "WINDOW SYSTEM",
+    "SHADER COMPILER",
+    "THIRD PARTY",
+    "APPLICATION",
+    "OTHER"
+};
+
+const char* TYPE[] = {
+    "ERROR",
+    "DEPRECATED BEHAVIOUR",
+    "UNDEFINED DEHAVIOUR",
+    "PORTABILITY",
+    "PERFORMANCE",
+    "OTHER"
+};
+
+void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
+        GLsizei length, const GLchar *msg, const void* userParam) {
+
+    int src_i = source - 0x8246;
+    int type_i = type - 0x824C;
+    int sev_i = severity - 0x9146;
+
+    if (severity == 0x826B) {
+        sev_i = 3;
+    }
+
+    err("\n\tSource: %s %s\n\tId: %u\n\tSeverity: %s\n\tUserParam: %i\n\tMessage:\n%s",
+            SOURCE[src_i], TYPE[type_i], id, SEVERITY_LVL[sev_i], *(int*) userParam,
+            msg);
 }

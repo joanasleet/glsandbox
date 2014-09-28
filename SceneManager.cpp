@@ -2,20 +2,17 @@
 
 #include "SceneManager.h"
 #include "Script.h"
-#include "Engine.h"
 
-extern Engine* renderer;
-
-void loadScene() {
+void loadScene(Engine* renderer) {
     if (!renderer) return;
-    
+
     initScript("scripts/loadScene.lua");
     exeScript();
     dumpResult();
-    
+
     termScript();
 }
 
-void reloadScene() {
+void reloadScene(Engine* renderer) {
 
 }

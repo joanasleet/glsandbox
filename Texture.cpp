@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "Logger.h"
+#include "Debugger.h"
 
 GLenum freeTexSlot = GL_TEXTURE0;
 int maxTexSlots;
@@ -9,7 +9,7 @@ Texture* nullTex = NULL;
 Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
     Texture* tex = (Texture*) malloc(sizeof (Texture));
     if (!tex) {
-        ERR("Failed to allocate texture <%s>", file);
+        err("Failed to allocate texture <%s>", file);
         return NULL;
     }
 
@@ -48,23 +48,23 @@ unsigned char* texData(const char* file, int* width, int* height) {
 
     if (width && height) {
         data = stbi_load(file, width, height, &texCompr, 4);
-        INFO("Texture <%s>: %i x %i (%i) ", file, *width, *height, texCompr);
+        info("Texture <%s>: %i x %i (%i) ", file, *width, *height, texCompr);
     } else if (width && !height) {
         int h;
         data = stbi_load(file, width, &h, &texCompr, 4);
-        INFO("Texture <%s>: %i x %i (%i) ", file, *width, h, texCompr);
+        info("Texture <%s>: %i x %i (%i) ", file, *width, h, texCompr);
     } else if (!width && height) {
         int w;
         data = stbi_load(file, &w, height, &texCompr, 4);
-        INFO("Texture <%s>: %i x %i (%i) ", file, w, *height, texCompr);
+        info("Texture <%s>: %i x %i (%i) ", file, w, *height, texCompr);
     } else {
         int w, h;
         data = stbi_load(file, &w, &h, &texCompr, 4);
-        INFO("Texture <%s>: %i x %i (%i) ", file, w, h, texCompr);
+        info("Texture <%s>: %i x %i (%i) ", file, w, h, texCompr);
     }
 
     if (!data) {
-        ERR("Failed to load texture <%s>", file);
+        err("Failed to load texture <%s>", file);
         return NULL;
     }
 
@@ -80,7 +80,7 @@ Texture* cubeMap(const char* cubeFaces[], bool allSame, bool genMipMaps) {
 
     Texture* tex = (Texture*) malloc(sizeof (Texture));
     if (!tex) {
-        ERR("Failed to allocate cube map texture");
+        err("Failed to allocate cube map texture");
         return NULL;
     }
 
@@ -128,7 +128,7 @@ Texture* nullTexture() {
 
     nullTex = (Texture*) malloc(sizeof (Texture));
     if (!nullTex) {
-        ERR("Failed to allocate null texture");
+        err("Failed to allocate null texture");
         return NULL;
     }
 

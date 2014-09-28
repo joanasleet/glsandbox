@@ -1,11 +1,11 @@
 #include "ShaderCache.h"
-#include "Logger.h"
+#include "Debugger.h"
 #include <string.h>
 
 Element* newElement(const char* key, GLint value) {
     Element* element = (Element*) malloc(sizeof (Element));
     if (!element) {
-        ERR("Failed to allocate Element");
+        err("Failed to allocate Element");
         return NULL;
     }
     element->key = key;
@@ -20,7 +20,7 @@ Element* newElement(const char* key, GLint value) {
 Hash* newCache() {
     Hash* cache = (Hash*) malloc(sizeof (Hash));
     if (!cache) {
-        ERR("Failed to allocate Cache");
+        err("Failed to allocate Cache");
         return NULL;
     }
 
@@ -44,7 +44,7 @@ GLint get(Hash* cache, const char* key) {
     Element* iterator = target.last;
 
     if (!iterator) {
-        INFO("Key: %s not cached", key);
+        info("Key: %s not cached", key);
         return NOT_CACHED;
     }
 
@@ -55,12 +55,12 @@ GLint get(Hash* cache, const char* key) {
         iterator = iterator->prev;
     } while (iterator);
 
-    INFO("Key: %s not cached", key);
+    info("Key: %s not cached", key);
     return NOT_CACHED;
 }
 
 void cache(Hash* cache, const char* key, GLint value) {
-    INFO("Caching (KEY: '%s', VALUE: %i)", key, value);
+    info("Caching (KEY: '%s', VALUE: %i)", key, value);
 
     int index = hash(key);
     Bucket target = cache->buckets[index];

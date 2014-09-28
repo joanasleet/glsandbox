@@ -38,7 +38,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/Camera.o \
 	${OBJECTDIR}/Context.o \
 	${OBJECTDIR}/Engine.o \
-	${OBJECTDIR}/Logger.o \
 	${OBJECTDIR}/LuaScript.o \
 	${OBJECTDIR}/Mesh.o \
 	${OBJECTDIR}/MeshUtil.o \
@@ -88,11 +87,6 @@ ${OBJECTDIR}/Engine.o: Engine.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Engine.o Engine.cpp
-
-${OBJECTDIR}/Logger.o: Logger.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger.o Logger.cpp
 
 ${OBJECTDIR}/LuaScript.o: LuaScript.cpp 
 	${MKDIR} -p ${OBJECTDIR}

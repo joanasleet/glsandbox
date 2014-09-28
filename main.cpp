@@ -4,6 +4,9 @@
 
 using namespace std;
 
+FILE* scrolllog;
+FILE* watchlog;
+
 Engine* renderer = init();
 
 /* progress TODO:
@@ -18,16 +21,16 @@ Engine* renderer = init();
 
 int main(int argc, char** argv) {
 
-    err("asd");
-    info("asd");
-    check(0, "Wtf");
-    checkerr();
-    
-    loadScene();
-   
+    clear_syserr();
+    clear_logs();
+
+    //loadScene();
+
     enterLoop(renderer);
+    check_syserr();
 
     terminate(renderer);
+    check_syserr();
 
     return EXIT_SUCCESS;
 }

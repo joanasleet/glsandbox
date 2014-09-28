@@ -1,7 +1,7 @@
 #include "Mesh.h"
 #include "ShaderCache.h"
 #include "Camera.h"
-#include "Logger.h"
+#include "Debugger.h"
 
 #include <string.h>
 
@@ -11,7 +11,7 @@
 Mesh* newMesh(bool newVao) {
     Mesh* mesh = (Mesh*) malloc(sizeof (Mesh));
     if (!mesh) {
-        ERR("Failed to allocate mesh");
+        err("Failed to allocate mesh");
         return NULL;
     }
 
@@ -22,7 +22,7 @@ Mesh* newMesh(bool newVao) {
 
     mesh->shaderProgram = glCreateProgram();
     if (!mesh->shaderProgram) {
-        ERR("Failed to create shader program");
+        err("Failed to create shader program");
     }
 
     return mesh;
@@ -38,12 +38,10 @@ void freeMesh(Mesh* mesh) {
 
 /* draw functions */
 void drawArrays(GLenum mode, GLint* first, GLsizei count) {
-    //INFO("Calling:\tdrawArrays(%d, %d, %d)", mode, *first, count);
     glDrawArrays(mode, *first, count);
 }
 
 void drawElements(GLenum mode, GLint* first, GLsizei count) {
-    //INFO("Calling:\tdrawElements(%d, %d, GL_UNSIGNED_INT, %d)", mode, count, *first);
     glDrawElements(mode, count, GL_UNSIGNED_INT, (GLvoid*) first);
 }
 

@@ -1,5 +1,5 @@
 #include "Engine.h"
-#include "Logger.h"
+#include "Debugger.h"
 #include "string.h"
 #include "ShaderUtil.h"
 
@@ -60,7 +60,7 @@ void add(Mesh* mesh, Engine* renderer) {
     unsigned int nextSlot = renderer->nextMeshSlot++;
 
     if (nextSlot >= MAX_MESH_COUNT) {
-        ERR("Max Mesh Count reached");
+        err("Max Mesh Count reached");
         return;
     }
     renderer->meshes[nextSlot] = mesh;
@@ -97,7 +97,6 @@ void render(Mesh* mesh, Engine* renderer) {
 
     GLint loc;
     glUseProgram(mesh->shaderProgram);
-    //INFO("Using program: %d", mesh->shaderProgram);
 
     for (int i = 0; i < mesh->uniLen; ++i) {
         loc = get(renderer->uniformCache, getKey(mesh->uniforms[i], mesh->shaderProgram));
@@ -105,22 +104,16 @@ void render(Mesh* mesh, Engine* renderer) {
     }
 
     glBindTexture(mesh->tex->target, mesh->tex->id);
-    //INFO("Binding texture: ID(%d)", mesh->tex->id);
     glBindVertexArray(mesh->vaoId);
-    //INFO("Binding VAO: ID(%d)", mesh->vaoId);
     (*mesh->drawFunc)(mesh->mode, &mesh->first, mesh->count);
-
 }
 
 void exitIfNoMeshes(Engine* renderer) {
-    if (!renderer->meshes[0]) {
-        INFO("No meshes registered. Aborting.");
-        exit(0);
-    }
+    guard(renderer->meshes[0]);
 }
 
 void preloadMeshes(Engine* renderer) {
-    INFO("–––––– Preloading meshes ––––––");
+    info("–––––– Preloading meshes ––––––");
     for (unsigned int i = 0; i < renderer->nextMeshSlot; ++i) {
         preload(renderer->meshes[i], renderer);
     }
@@ -134,8 +127,6 @@ void renderMeshes(Engine* renderer) {
 
 void enterLoop(Engine* renderer) {
 
-    resetLogs();
-
     exitIfNoMeshes(renderer);
     preloadMeshes(renderer);
 
@@ -145,23 +136,12 @@ void enterLoop(Engine* renderer) {
     msSleep.tv_sec = 0;
     msSleep.tv_nsec = 16000000;
 
-#if (PRINT_CACHE_LOG)
-    // streamline logger class
-    printCacheLog(renderer->shaderCache, "Shader Cache");
-    printCacheLog(renderer->uniformCache, "Uniforms Cache");
-#endif
-
     Camera* cam = renderer->mainCam;
     GLFWwindow* window = renderer->glContext->win;
 
-    INFO("–––––––––– Rendering ––––––––––");
+    info("–––––––––– Rendering ––––––––––");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
-
-#if (PRINT_WATCH_LOG)
-        // streamline logger class
-        printWatchLog(cam);
-#endif
         startTime = glfwGetTime();
         msSleep.tv_nsec = 16000000;
 
@@ -183,7 +163,6 @@ void enterLoop(Engine* renderer) {
 }
 
 void terminate(Engine* renderer) {
-
 
     Mesh* mesh;
     Texture* tex;
