@@ -5,19 +5,8 @@ scene = {
         name = "skybox",
         vaoType = VaoType.CUBEMAP,
         texture = "asd.png",
-        uniforms = {"A", "B", "C"}
-    },
-    {
-        name = "terrain",
-        vaoType = VaoType.PLANE,
-        texture = "asd.png",
-        uniforms = {"A", "B", "C"}
-    },
-    {
-        name = "cube",
-        vaoType = VaoType.CUBE,
-        texture = "asd.png",
-        uniforms = {"A", "B", "C"}
+        uniforms = {"A", "B", "C"},
+        shaders = {"overlay.vert", "overlay.frag"}
     }
 }
 

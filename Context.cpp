@@ -124,7 +124,6 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
         sev_i = 3;
     }
 
-    err("\n\tSource: %s %s\n\tId: %u\n\tSeverity: %s\n\tUserParam: %i\n\tMessage:\n%s",
-            SOURCE[src_i], TYPE[type_i], id, SEVERITY_LVL[sev_i], *(int*) userParam,
-            msg);
+    debug(stderr, "[%s %s %s] (Id: %u)\n\t%s\n",
+            SOURCE[src_i], TYPE[type_i], SEVERITY_LVL[sev_i], id, msg);
 }

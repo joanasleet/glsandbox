@@ -32,7 +32,17 @@ Hash* newCache() {
 }
 
 void freeCache(Hash* hash) {
-
+    Bucket b;
+    Element* it;
+    for (int i = 0; i < BUCKETS; i++) {
+        b = hash->buckets[i];
+        it = b.last;
+        do {
+            //free(it->key);
+            free(it);
+        } while((it = it->prev) != NULL);
+    }
+    free(hash);
 }
 
 GLint get(Hash* cache, const char* key) {

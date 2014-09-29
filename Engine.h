@@ -9,13 +9,9 @@
 
 #define CULL_FACES 0
 
-#define PRINT_WATCH_LOG 1
-#define PRINT_CACHE_LOG 1
-
-#define MAX_MESH_COUNT 10
-
 typedef struct Engine {
-    Mesh* meshes[MAX_MESH_COUNT];
+    Mesh** meshes;
+    unsigned int meshCount;
     unsigned int nextMeshSlot;
 
     Camera* mainCam;
@@ -27,7 +23,6 @@ typedef struct Engine {
 
 /* main work flow */
 Engine* init();
-void loadScene(Engine* renderer);
 void add(Mesh* mesh, Engine* renderer);
 void enterLoop(Engine* renderer);
 void terminate(Engine* renderer);

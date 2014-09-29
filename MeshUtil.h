@@ -15,6 +15,9 @@ GLuint name; \
 glGenBuffers(1, &name); \
 glBindBuffer(target, name); \
 
+/* vao factory */
+GLuint genVao(char type, GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+
 /* facing inside */
 GLuint cubeMapVAO(GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
 
@@ -25,7 +28,10 @@ GLuint cubeVAO(GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f
 GLuint planeVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
 
 /* terrain */
-GLuint terrainVAO(GLfloat xlength = 100.0f, GLfloat zlength = 100.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint terrainVAO(GLfloat xlength = 100.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+
+/* facing outside */
+GLuint sphereVAO(GLfloat radius = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
 
 GLuint overlayVAO();
 #endif	/* GLHELPER_H */

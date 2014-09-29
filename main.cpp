@@ -1,13 +1,17 @@
 #include "Engine.h"
 #include "SceneManager.h"
 #include "Debugger.h"
+#include "Script.h"
+
+#include <string.h>
+#include <limits.h>
 
 using namespace std;
 
 FILE* scrolllog;
 FILE* watchlog;
 
-Engine* renderer = init();
+Engine* renderer;
 
 /* progress TODO:
 - overlay with fonts
@@ -21,10 +25,47 @@ Engine* renderer = init();
 
 int main(int argc, char** argv) {
 
+    //    unsigned char n = 3;
+    //
+    //    const char** strings = (const char**) malloc(sizeof (const char*)*n);
+    //
+    //    strings[0] = "Test";
+    //    strings[1] = "Hello";
+    //    strings[2] = "World";
+    //
+    //    for (int i = 0; i < n; i++) {
+    //        info("%s", strings[i]);
+    //    }
+    //
+    //    const char* src = "copy successful!";
+    //    size_t s = strlen(src);
+    //    size_t s2 = sizeof (src);
+    //    info("SRC: %lu chars of size %lu", s, s2);
+    //    char* dest = (char*) malloc(sizeof (char)*(s + 1));
+    //    strcpy(dest, src);
+    //    info("%s -> %s", src, dest);
+    //    info("DEST: %lu chars of size %lu", strlen(dest), sizeof (dest));
+    //    info("%lu", sizeof (int));
+    //
+    //    for (int i = 0; i < 16; i++) {
+    //        info("(i=%d) %lu [%c]", i, sizeof (src[i]), src[i]);
+    //    }
+    //    
+    //    info("%d", CHAR_BIT);
+    //    info("%lu", sizeof("abc"));
+    //
+    //
+    //    free(strings);
+    //
+    //    return 0;
+
     clear_syserr();
     clear_logs();
 
-    //loadScene();
+    renderer = init();
+    loadScene(renderer);
+
+    return 0;
 
     enterLoop(renderer);
     check_syserr();

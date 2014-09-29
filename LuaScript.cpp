@@ -44,13 +44,14 @@ void exeScript() {
 }
 
 void dumpResult() {
+
     while (!lua_isnil(L, -1)) {
+
         if (lua_isnumber(L, -1)) {
             printf("Got number from script: %ld\n", lua_tointeger(L, -1));
         } else if (lua_isstring(L, -1)) {
-            printf("Got number from script: %s\n", lua_tostring(L, -1));
+            printf("Got string from script: %s\n", lua_tostring(L, -1));
         }
-
         lua_pop(L, 1);
     }
 }
@@ -59,13 +60,22 @@ int hasNext() {
     return !lua_isnil(L, -1);
 }
 
-double popNumber() {
+int popInt() {
+    if (!lua_isnil(L, -1) && lua_isnumber(L, -1)) {
+        int number = lua_tointeger(L, -1);
+        lua_pop(L, 1);
+        return number;
+    }
+    return -1;
+}
+
+double popFloat() {
     if (!lua_isnil(L, -1) && lua_isnumber(L, -1)) {
         double number = lua_tonumber(L, -1);
         lua_pop(L, 1);
         return number;
     }
-    return -1;
+    return -1.0;
 }
 
 const char* popString() {

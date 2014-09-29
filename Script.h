@@ -12,10 +12,14 @@ void initScript(const char* script);
 void argScript(char argType, void* value);
 
 void exeScript();
-void dumpResult();
 
+int popInt();
+double popFloat();
 double popNumber();
+
 const char* popString();
+
+void dumpResult();
 
 void termScript();
 

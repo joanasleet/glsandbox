@@ -26,6 +26,12 @@ function unpackScene(s)
     for i=1, #s do
         mesh = s[#s-i+1]
         
+        shaders = mesh.shaders
+        for i=1, #shaders do
+            table.insert(unpacked_scene, shaders[#shaders-i+1])
+        end
+        table.insert(unpacked_scene, #shaders)
+        
         uniforms = mesh.uniforms
         for i=1, #uniforms do
             table.insert(unpacked_scene, uniforms[#uniforms-i+1])

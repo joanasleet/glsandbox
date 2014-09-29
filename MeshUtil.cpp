@@ -1,4 +1,30 @@
 #include "MeshUtil.h"
+#include "Debugger.h"
+
+enum VaoType {
+    PLANE, CUBE, SPHERE, CUBEMAP, OVERLAY, TERRAIN
+};
+
+GLuint genVao(char type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+
+    switch (type) {
+        case PLANE:
+            return planeVAO(length, texRes, midX, midY, midZ);
+        case CUBE:
+            return cubeVAO(length, texRes, midX, midY, midZ);
+        case SPHERE:
+            return sphereVAO(length, texRes, midX, midY, midZ);
+        case CUBEMAP:
+            return cubeMapVAO(length, texRes, midX, midY, midZ);
+        case OVERLAY:
+            return overlayVAO();
+        case TERRAIN:
+            return terrainVAO(length, midX, midY, midZ);
+        default:
+            err("Unknown vao type: %d", type);
+            return 0;
+    }
+}
 
 GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
@@ -214,20 +240,19 @@ GLuint planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfl
     return vao;
 }
 
-GLuint terrainVAO(GLfloat xlength, GLfloat zlength, GLfloat midX, GLfloat midY, GLfloat midZ) {
+GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
 
-    GLfloat xl = xlength / 2.0f;
-    GLfloat zl = zlength / 2.0f;
+    GLfloat len = length / 2.0f;
 
     const GLfloat data[] = {
 
-        midX - xl, midY, midZ + zl, 1.0f,
-        midX - xl, midY, midZ - zl, 1.0f,
-        midX + xl, midY, midZ - zl, 1.0f,
-        midX + xl, midY, midZ + zl, 1.0f,
+        midX - len, midY, midZ + len, 1.0f,
+        midX - len, midY, midZ - len, 1.0f,
+        midX + len, midY, midZ - len, 1.0f,
+        midX + len, midY, midZ + len, 1.0f,
 
         0.0f, 0.0f,
         0.0f, 1.0f,
@@ -273,3 +298,10 @@ GLuint overlayVAO() {
     return vao;
 }
 
+GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
+
+    return vao;
+}

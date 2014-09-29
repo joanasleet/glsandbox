@@ -32,10 +32,21 @@ extern FILE* watchlog;
 #define checkm(exp, hint) do { if(!(exp)) { err("Check failed: (%s) %s", #exp, hint); } } while(0)
 #define check(exp) checkm(exp, "")
 
+/* ################### GUARDS #########################
+ * Guards control code flow by evaluating an expression.
+ * If true, code will proceed. Otherwise, an action
+ * specific to the guard is performed.
+ * #################################################### */
+
 /*
- * Does not allow control to proceed if 'exp' fails.
+ * Exits upon failed expression.
  */
-#define guard(exp) do { if(!(exp)) { err("Guard failed: (%s)", #exp); exit(EXIT_FAILURE); } } while(0)
+#define guard(exp) do { if(!(exp)) { err("[Guard] Assertion failed: (%s)", #exp); exit(EXIT_FAILURE); } } while(0)
+
+/*
+ * Returns upon failed expression.
+ */
+#define return_guard(exp, ...) do { if(!(exp)) { err("[Guard] Assertion failed: (%s)", #exp); return __VA_ARGS__ ; } } while(0)
 
 /*
  * Resets system-set errors.

@@ -3,6 +3,8 @@
 #include "string.h"
 #include "ShaderUtil.h"
 
+#define SCENE_LOADER "scripts/loadScene.lua"
+
 GLenum SHADER_TYPE[] = {
     GL_VERTEX_SHADER,
     GL_FRAGMENT_SHADER,
@@ -17,10 +19,6 @@ Engine* init() {
     Engine* renderer = (Engine*) malloc(sizeof (Engine));
 
     renderer->nextMeshSlot = 0;
-
-    for (int i = 0; i < MAX_MESH_COUNT; ++i) {
-        renderer->meshes[i] = NULL;
-    }
 
     renderer->glContext = newContext();
     renderer->mainCam = createCamera();
@@ -59,7 +57,7 @@ void add(Mesh* mesh, Engine* renderer) {
 
     unsigned int nextSlot = renderer->nextMeshSlot++;
 
-    if (nextSlot >= MAX_MESH_COUNT) {
+    if (nextSlot >= renderer->meshCount) {
         err("Max Mesh Count reached");
         return;
     }

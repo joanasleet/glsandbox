@@ -82,7 +82,7 @@ void cursorCB(GLFWwindow* win, double xpos, double ypos) {
 
 void cursorEnterCB(GLFWwindow* win, int enter) {
     if (enter == GL_TRUE) {
-
+        
     }
 }
 
