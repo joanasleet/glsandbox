@@ -27,16 +27,24 @@ function unpackScene(s)
         mesh = s[#s-i+1]
         
         shaders = mesh.shaders
-        for i=1, #shaders do
-            table.insert(unpacked_scene, shaders[#shaders-i+1])
+        count = #shaders
+        for i=1, count do
+            table.insert(unpacked_scene, shaders[count-i+1])
         end
-        table.insert(unpacked_scene, #shaders)
+        table.insert(unpacked_scene, count)
+        
+        uniVarFuncs = mesh.uniVarFuncs
+        count = #uniVarFuncs
+        for i=1, count do
+            table.insert(unpacked_scene, uniVarFuncs[count-i+1])
+        end
         
         uniforms = mesh.uniforms
-        for i=1, #uniforms do
-            table.insert(unpacked_scene, uniforms[#uniforms-i+1])
+        count = #uniforms
+        for i=1, count do
+            table.insert(unpacked_scene, uniforms[count-i+1])
         end
-        table.insert(unpacked_scene, #uniforms)
+        table.insert(unpacked_scene, count)
         
         table.insert(unpacked_scene, mesh.texture)
         table.insert(unpacked_scene, mesh.vaoType)

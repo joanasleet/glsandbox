@@ -5,68 +5,89 @@
 #include "SceneManager.h"
 #include "Script.h"
 
-void loadScene(Engine* renderer) {
-    if (!renderer) return;
+#define SCENE_LOADER "scripts/loadScene.lua"
 
-    initScript("scripts/loadScene.lua");
+void loadScene(Engine* renderer) {
+    return_guard(renderer);
+
+    initScript(SCENE_LOADER);
     exeScript();
-    
-    unsigned int meshCount = (unsigned int) popInt();
+
+    uint32 meshCount = (uint32) popInt();
+
+    info("Found meshes: %d", meshCount);
+    return_guard(meshCount);
 
     Mesh** meshes = (Mesh**) malloc(sizeof (Mesh*) * meshCount);
 
     Mesh* mesh;
-    for (unsigned int j = 0; j < meshCount; j++) {
+    for (uint32 j = 0; j < meshCount; j++) {
         mesh = newMesh();
 
         /* mesh name */
         info("Adding mesh: %s", popString());
 
         /* vao type */
-        mesh->vaoId = genVao((unsigned int) popInt());
+        uint32 vaoType = (uint32) popInt();
+        mesh->vaoId = genVao((VaoType) vaoType);
 
         /* texture */
-        mesh->tex = newTexture(popString());
+
+        /* TODO
+         * check for multiple texture maps */
+
+        const char* diffMap = popString();
+        Material* mat = newMaterial();
+        mat->diffuseMap = newTexture(diffMap);
+        mesh->mats = mat;
 
         /* uniform count */
-        unsigned char uniformCount = (unsigned char) popInt();
+        uint8 uniformCount = (uint8) popInt();
         mesh->uniLen = uniformCount;
+
         /* uniforms */
         mesh->uniforms = (const char**) malloc(sizeof (const char*)*uniformCount);
 
         const char* src;
         char* dest;
-        for (unsigned char i = 0; i < uniformCount; i++) {
+        for (uint8 i = 0; i < uniformCount; i++) {
 
             /* i-th uniform variable */
             src = popString();
 
             dest = (char*) malloc(sizeof (char)*(strlen(src) + 1));
             mesh->uniforms[i] = (const char*) strcpy(dest, src);
-            info("Copied string from Lua: %s", mesh->uniforms[i]);
+            info("Uniform variable: %s", mesh->uniforms[i]);
         }
 
+        /* uniforms setter functions */
+        UniformVarFunc *uniVarFuncs = (UniformVarFunc*) malloc(sizeof (UniformVarFunc) * uniformCount);
+        for (uint8 i = 0; i < uniformCount; i++) {
+            uniVarFuncs[i] = uniVarFuncLUT[popInt()];
+        }
+        mesh->setUniformFunc = uniVarFuncs;
 
         /* shader count */
-        unsigned char shaderCount = (unsigned char) popInt();
+        uint8 shaderCount = (uint8) popInt();
         mesh->shadersLen = shaderCount;
+
         /* shaders */
         mesh->shaders = (const char**) malloc(sizeof (const char*)*shaderCount);
 
-        for (unsigned char i = 0; i < shaderCount; i++) {
+        for (uint8 i = 0; i < shaderCount; i++) {
 
             /* i-th shader */
             src = popString();
 
             dest = (char*) malloc(sizeof (char)*(strlen(src) + 1));
             mesh->shaders[i] = (const char*) strcpy(dest, src);
-            info("Copied string from Lua: %s", mesh->shaders[i]);
+            info("Shader: %s", mesh->shaders[i]);
         }
 
         mesh->drawFunc = drawArrays;
         mesh->first = 0;
-        mesh->count = 24; // should be a lookup
-        mesh->mode = GL_QUADS; // should be a lookup
+        mesh->count = VertexCount[vaoType];
+        mesh->mode = DrawMode[vaoType];
 
         meshes[j] = mesh;
     }
@@ -78,5 +99,15 @@ void loadScene(Engine* renderer) {
 }
 
 void reloadScene(Engine* renderer) {
-    if (!renderer) return;
+    return_guard(renderer);
+
+    info("# # # # # Reloading scene # # # # #");
+    freeMeshes(renderer);
+    clearCache(renderer->shaderCache);
+    clearCache(renderer->uniformCache);
+    deallocStores();
+
+    loadScene(renderer);
+    preloadMeshes(renderer);
+    info("# # # # # Scene reloaded # # # # #");
 }

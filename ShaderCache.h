@@ -16,25 +16,26 @@ typedef struct Element {
 
 Element* newElement(const char* key, GLint value);
 
-typedef struct Bucket {
+typedef struct {
     Element* last;
 } Bucket;
 
-typedef struct Hash {
+typedef struct {
     Bucket buckets[BUCKETS];
-} Hash, ShaderCache, UniformCache;
+} Cache;
 
-Hash* newCache();
-void freeCache(Hash* hash);
+Cache* newCache();
+void freeCache(Cache* hash);
+void clearCache(Cache* hash);
 
-GLint get(Hash* cache, const char* key);
-void cache(Hash* cache, const char* key, GLint value);
+GLint get(Cache* cache, const char* key);
+void cache(Cache* cache, const char* key, GLint value);
 
 int hash(const char* key);
 
 const char* getKey(const char* str, GLint num);
 
-void printCache(Hash* cache, FILE* stream);
+void printCache(Cache* cache, FILE* stream);
 
 #endif	/* SHADERCACHE_H */
 

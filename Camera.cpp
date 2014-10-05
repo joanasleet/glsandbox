@@ -3,6 +3,8 @@
 #include "Debugger.h"
 #include "Engine.h"
 
+#include "SceneManager.h"
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -82,7 +84,7 @@ void cursorCB(GLFWwindow* win, double xpos, double ypos) {
 
 void cursorEnterCB(GLFWwindow* win, int enter) {
     if (enter == GL_TRUE) {
-        
+
     }
 }
 
@@ -199,6 +201,12 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
             } else if (action == GLFW_PRESS && wireframe) {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                 cam->wireframe = false;
+            }
+            break;
+        case GLFW_KEY_R:
+
+            if (action == GLFW_PRESS) {
+                reloadScene(renderer);
             }
             break;
         default:

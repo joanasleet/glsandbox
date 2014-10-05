@@ -1,7 +1,8 @@
 #include "ShaderUtil.h"
 #include "Debugger.h"
+#include "Deallocator.h"
 
-void addShader(const char* srcFile, GLenum type, GLuint prog, ShaderCache* shaderCache) {
+void addShader(const char* srcFile, GLenum type, GLuint prog, Cache* shaderCache) {
 
     info("–");
     GLuint shaderId = get(shaderCache, srcFile);
@@ -9,6 +10,7 @@ void addShader(const char* srcFile, GLenum type, GLuint prog, ShaderCache* shade
     if (!shaderId) {
         shaderId = compileShader(srcFile, glCreateShader(type));
         cache(shaderCache, srcFile, shaderId);
+        storeShader(shaderId);
     }
 
     GLsizei logSize = 0;
@@ -30,7 +32,7 @@ GLuint compileShader(const char* srcFile, GLuint shaderId) {
     char* shaderSrc = bufferFile(srcFile);
 
     info("Compiling shader <%s>", srcFile);
-    
+
     glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);
     glCompileShader(shaderId);
     free(shaderSrc);

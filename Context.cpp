@@ -13,7 +13,7 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
 
     glfwSetErrorCallback(contextErrorCB);
 
-    guard(glfwInit());
+    exit_guard(glfwInit());
 
     info("GLFW initialized.");
 
@@ -53,7 +53,7 @@ Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
 }
 
 void contextErrorCB(int code, const char* msg) {
-    err("In context - %s (Code %i)", msg, code);
+    err("[CONTEXT] %s (Code %i)", msg, code);
 }
 
 void resizeCB(GLFWwindow* win, int w, int h) {
@@ -124,6 +124,7 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
         sev_i = 3;
     }
 
-    debug(stderr, "[%s %s %s] (Id: %u)\n\t%s\n",
+    debug(stderr, "[%s %s %s] (Id: %u)\n- .%s\n",
             SOURCE[src_i], TYPE[type_i], SEVERITY_LVL[sev_i], id, msg);
+    fflush(stderr);
 }

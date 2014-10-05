@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/Camera.o \
 	${OBJECTDIR}/Context.o \
+	${OBJECTDIR}/Deallocator.o \
 	${OBJECTDIR}/Engine.o \
 	${OBJECTDIR}/LuaScript.o \
 	${OBJECTDIR}/Mesh.o \
@@ -82,6 +83,11 @@ ${OBJECTDIR}/Context.o: Context.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Context.o Context.cpp
+
+${OBJECTDIR}/Deallocator.o: Deallocator.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall `pkg-config --cflags glfw3` `pkg-config --cflags glew` `pkg-config --cflags lua`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Deallocator.o Deallocator.cpp
 
 ${OBJECTDIR}/Engine.o: Engine.cpp 
 	${MKDIR} -p ${OBJECTDIR}

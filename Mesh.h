@@ -5,27 +5,39 @@
 #include "Texture.h"
 #include "Camera.h"
 
-typedef struct Mesh {
+typedef enum {
+    Perspective,
+    ModelView,
+    ModelViewPerspective,
+    ModelViewPerspectiveNoTrans
+} UniVarFuncType;
+
+typedef void (*UniformVarFunc)(GLint, Camera*);
+typedef void (*DrawFunc)(GLenum, GLint*, GLsizei);
+
+typedef struct {
     GLuint vaoId;
 
-    Texture* tex;
-
-    const char** uniforms;
-    void (**setUniformFunc)(GLint, Camera*);
-    unsigned char uniLen;
+    const char* *uniforms;
+    UniformVarFunc *setUniformFunc;
+    uint8 uniLen;
 
     GLuint shaderProgram;
-    const char** shaders;
-    unsigned char shadersLen;
+    const char* *shaders;
+    uint8 shadersLen;
 
-    void (*drawFunc)(GLenum mode, GLint* first, GLsizei count);
+    DrawFunc drawFunc;
     GLenum mode;
     GLint first;
     GLsizei count;
 
+    Material* mats;
+
 } Mesh;
 
-Mesh* newMesh(bool newVao = false);
+extern UniformVarFunc uniVarFuncLUT[];
+
+Mesh* newMesh();
 void freeMesh(Mesh* mesh);
 
 /* draw functions */
@@ -37,7 +49,6 @@ void P(GLint loc, Camera* cam);
 void MV(GLint loc, Camera* cam);
 void MVP(GLint loc, Camera* cam);
 void MVPnoTrans(GLint loc, Camera* cam);
-
 
 #endif	/* MESH_H */
 

@@ -2,10 +2,9 @@
 #include "Debugger.h"
 #include "string.h"
 #include "ShaderUtil.h"
+#include "Deallocator.h"
 
-#define SCENE_LOADER "scripts/loadScene.lua"
-
-GLenum SHADER_TYPE[] = {
+GLenum ShaderType[] = {
     GL_VERTEX_SHADER,
     GL_FRAGMENT_SHADER,
     GL_TESS_CONTROL_SHADER,
@@ -17,8 +16,6 @@ GLenum SHADER_TYPE[] = {
 Engine* init() {
 
     Engine* renderer = (Engine*) malloc(sizeof (Engine));
-
-    renderer->nextMeshSlot = 0;
 
     renderer->glContext = newContext();
     renderer->mainCam = createCamera();
@@ -43,7 +40,7 @@ Engine* init() {
     glfwSetKeyCallback(window, keyCB);
     glfwSetWindowSizeCallback(window, resizeCB);
 
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTexSlots);
+    //glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTexSlots);
 
     glEnable(GL_FRAMEBUFFER_SRGB);
 
@@ -54,14 +51,7 @@ Engine* init() {
 }
 
 void add(Mesh* mesh, Engine* renderer) {
-
-    unsigned int nextSlot = renderer->nextMeshSlot++;
-
-    if (nextSlot >= renderer->meshCount) {
-        err("Max Mesh Count reached");
-        return;
-    }
-    renderer->meshes[nextSlot] = mesh;
+    // replaced by loadScene()
 }
 
 void preload(Mesh* mesh, Engine* renderer) {
@@ -74,7 +64,7 @@ void preload(Mesh* mesh, Engine* renderer) {
         shader = mesh->shaders[i];
 
         if (strlen(shader) > 0) {
-            addShader(shader, SHADER_TYPE[i], prog, renderer->shaderCache);
+            addShader(shader, ShaderType[i], prog, renderer->shaderCache);
         }
     }
 
@@ -96,29 +86,54 @@ void render(Mesh* mesh, Engine* renderer) {
     GLint loc;
     glUseProgram(mesh->shaderProgram);
 
+    char* tempstr;
+
     for (int i = 0; i < mesh->uniLen; ++i) {
-        loc = get(renderer->uniformCache, getKey(mesh->uniforms[i], mesh->shaderProgram));
+        tempstr = (char*) getKey(mesh->uniforms[i], mesh->shaderProgram);
+        loc = get(renderer->uniformCache, tempstr);
+        free(tempstr);
         (*mesh->setUniformFunc[i])(loc, renderer->mainCam);
     }
 
-    glBindTexture(mesh->tex->target, mesh->tex->id);
+    Material* mat = mesh->mats;
+
+    /*
+     * at least bind diffuse map */
+    Texture* diff = mat->diffuseMap;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(diff->target, diff->id);
+
+    /*
+     * ambient and specular are optional */
+    Texture* amb = mat->ambientMap;
+    if (amb) {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(amb->target, amb->id);
+    }
+
+    Texture* spec = mat->specularMap;
+    if (spec) {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(spec->target, spec->id);
+    }
+
     glBindVertexArray(mesh->vaoId);
     (*mesh->drawFunc)(mesh->mode, &mesh->first, mesh->count);
 }
 
 void exitIfNoMeshes(Engine* renderer) {
-    guard(renderer->meshes[0]);
+    exit_guard(renderer->meshes[0]);
 }
 
 void preloadMeshes(Engine* renderer) {
     info("–––––– Preloading meshes ––––––");
-    for (unsigned int i = 0; i < renderer->nextMeshSlot; ++i) {
+    for (unsigned int i = 0; i < renderer->meshCount; ++i) {
         preload(renderer->meshes[i], renderer);
     }
 }
 
 void renderMeshes(Engine* renderer) {
-    for (unsigned int i = 0; i < renderer->nextMeshSlot; ++i) {
+    for (unsigned int i = 0; i < renderer->meshCount; ++i) {
         render(renderer->meshes[i], renderer);
     }
 }
@@ -139,6 +154,9 @@ void enterLoop(Engine* renderer) {
 
     info("–––––––––– Rendering ––––––––––");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+
+        //printCache(renderer->uniformCache, stdout);
+        //printStores();
 
         startTime = glfwGetTime();
         msSleep.tv_nsec = 16000000;
@@ -162,29 +180,43 @@ void enterLoop(Engine* renderer) {
 
 void terminate(Engine* renderer) {
 
-    Mesh* mesh;
-    Texture* tex;
-
-    for (unsigned int i = 0; i < renderer->nextMeshSlot; i++) {
-
-        mesh = renderer->meshes[i];
-        tex = mesh->tex;
-
-        glDeleteVertexArrays(1, &(mesh->vaoId));
-
-        //free(tex->data); // causes segfault for cubemaps
-        glDeleteTextures(1, &(tex->id));
-
-        glDeleteProgram(mesh->shaderProgram);
-
-        free(mesh);
-    }
-
     freeCache(renderer->shaderCache);
+    renderer->shaderCache = NULL;
     freeCache(renderer->uniformCache);
+    renderer->uniformCache = NULL;
+
+    freeMeshes(renderer);
 
     free(renderer->glContext);
+    renderer->glContext = NULL;
+
+    free(renderer->mainCam->perspective);
+    free(renderer->mainCam->translation);
+    free(renderer->mainCam->orientation);
+
+    renderer->mainCam->perspective = NULL;
+    renderer->mainCam->translation = NULL;
+    renderer->mainCam->orientation = NULL;
+
     free(renderer->mainCam);
+    renderer->mainCam = NULL;
+
+    deallocStores();
+
+    free(renderer);
+    renderer = NULL;
 
     glfwTerminate();
+}
+
+void freeMeshes(Engine* renderer) {
+
+    Mesh* freeMe;
+    for (uint32 i = 0; i < renderer->meshCount; i++) {
+        freeMe = renderer->meshes[i];
+        freeMesh(freeMe);
+        renderer->meshes[i] = NULL;
+    }
+    free(renderer->meshes);
+    renderer->meshes = NULL;
 }

@@ -16,11 +16,9 @@ void fps();
 void resizeCB(GLFWwindow* win, int w, int h);
 void contextErrorCB(int code, const char* msg);
 void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
-            GLsizei length, const GLchar *msg, const void* userParam);
+        GLsizei length, const GLchar *msg, const void* userParam);
 
-
-// should be part of the engine
-
+// TODO: should be part of the some other module
 double elapsedTime();
 void resetTimer();
 

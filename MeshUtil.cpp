@@ -1,11 +1,16 @@
 #include "MeshUtil.h"
 #include "Debugger.h"
+#include "Deallocator.h"
 
-enum VaoType {
-    PLANE, CUBE, SPHERE, CUBEMAP, OVERLAY, TERRAIN
+GLuint DrawMode[] = {
+    GL_QUADS, GL_QUADS, GL_PATCHES, GL_QUADS, GL_QUADS, GL_PATCHES
 };
 
-GLuint genVao(char type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+GLsizei VertexCount[] = {
+    4, 24, 24, 24, 4, 4
+};
+
+GLuint genVao(VaoType type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
     switch (type) {
         case PLANE:
@@ -302,6 +307,8 @@ GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLf
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
+
+
 
     return vao;
 }

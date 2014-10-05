@@ -2,6 +2,7 @@
 #define	GLHELPER_H
 
 #include "common.h"
+#include "Deallocator.h"
 
 #define BUFFER_OFFSET(offset) ((void *) (offset))
 
@@ -14,15 +15,28 @@ glBindVertexArray(name); \
 GLuint name; \
 glGenBuffers(1, &name); \
 glBindBuffer(target, name); \
+storeVbo(name); \
+
+
+/* 
+ * Indices into LUT for draw parameters */
+typedef enum {
+    PLANE, CUBE, SPHERE, CUBEMAP, OVERLAY, TERRAIN
+} VaoType;
+
+/* 
+ * LUT for draw parameters */
+extern GLuint DrawMode[];
+extern GLsizei VertexCount[];
 
 /* vao factory */
-GLuint genVao(char type, GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint genVao(VaoType type, GLfloat length = 100000.0f, GLfloat texRes = 1000.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
 
 /* facing inside */
-GLuint cubeMapVAO(GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint cubeMapVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
 
 /* facing outside */
-GLuint cubeVAO(GLfloat length = 1.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint cubeVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
 
 /* facing up */
 GLuint planeVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);

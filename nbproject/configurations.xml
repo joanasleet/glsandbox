@@ -5,7 +5,9 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>Camera.h</itemPath>
+      <itemPath>Config.h</itemPath>
       <itemPath>Context.h</itemPath>
+      <itemPath>Deallocator.h</itemPath>
       <itemPath>Debugger.h</itemPath>
       <itemPath>Engine.h</itemPath>
       <itemPath>Mesh.h</itemPath>
@@ -44,6 +46,7 @@
                    projectFiles="true">
       <itemPath>Camera.cpp</itemPath>
       <itemPath>Context.cpp</itemPath>
+      <itemPath>Deallocator.cpp</itemPath>
       <itemPath>Engine.cpp</itemPath>
       <itemPath>LuaScript.cpp</itemPath>
       <itemPath>Mesh.cpp</itemPath>
@@ -105,9 +108,15 @@
       </item>
       <item path="Camera.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Config.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Context.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Deallocator.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Deallocator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Debugger.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -206,9 +215,15 @@
       </item>
       <item path="Camera.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Config.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Context.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Context.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Deallocator.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Deallocator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Debugger.h" ex="false" tool="3" flavor2="0">
       </item>

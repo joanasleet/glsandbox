@@ -5,35 +5,35 @@
 
 #define ANISOTROPIC_LVL 4.0f
 
-extern GLenum freeTexSlot; // managed by context
-extern int maxTexSlots;
+//extern GLenum freeTexSlot; // managed by context
+extern int32 maxTexSlots;
 
-typedef struct Texture {
+typedef struct {
     GLuint id;
     GLenum target;
 
-    /*
-     * gpu texture slot */
-    GLenum slot;
+    int32 width;
+    int32 height;
 
-    /* 
-     * light attributes */
-    GLfloat kAmb, kDiff, kSpec;
+    uint8* data;
 
-    /*
-     * image attributes */
-    int width, height;
-    unsigned char* data, mipMaps;
-
-} Texture, Tex;
+} Texture;
 
 Texture* newTexture(const char* file, GLenum target = GL_TEXTURE_2D, bool genMipMaps = true);
-unsigned char* texData(const char* file, int* width = NULL, int* height = NULL);
-void bind(Texture* tex);
+uint8* getData(const char* file, int* width = NULL, int* height = NULL);
+void freeTexture(Texture*);
 
-Texture* cubeMap(const char* cubeFaces[], bool allSame = false, bool genMipMaps = false);
-
+Texture* cubeTexture(const char* *cubeFaces, bool allSame = false, bool genMipMaps = false);
 Texture* nullTexture();
+
+typedef struct {
+    Texture* diffuseMap;
+    Texture* ambientMap;
+    Texture* specularMap;
+} Material;
+
+Material* newMaterial();
+void freeMaterial(Material*);
 
 #endif	/* TEXTURE_H */
 

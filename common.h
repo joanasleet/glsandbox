@@ -1,32 +1,44 @@
 #ifndef COMMON_H
 #define	COMMON_H
 
-#include <cstdlib>
+#include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
-#include <ctime>
-#include <cstdarg>
+#include <stdarg.h>
 
-// GLEW
+#include <math.h>
+#include <time.h>
+
+#include "stb_image.h"
+
+/* GLEW */
 #include <GL/glew.h>
 
-// GLFW
+/* GLFW */
 #ifndef GLFW_DLL
 #define GLFW_DLL
 #endif
 #include <GLFW/glfw3.h>
 
-// Error Handling
-#define LOG_TO_FILE
-
-// stb_image header only
-#include "stb_image.h"
-
-// openGL Math
 #define GLM_FORCE_RADIANS
 
 #define ABS(x) ((x > 0) ? x : -x)
 #define MAX(a,b) ((a<b) ? b : a)
+
+/* 
+ * unsigned number types */
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef unsigned int uint32;
+typedef unsigned long uint64;
+
+/* 
+ * signed number types */
+typedef signed char int8;
+typedef short int16;
+typedef int int32;
+typedef long int64;
+
+
 
 #endif	/* COMMON_H */
 

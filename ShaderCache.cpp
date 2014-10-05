@@ -1,13 +1,15 @@
 #include "ShaderCache.h"
 #include "Debugger.h"
+#include "Deallocator.h"
 #include <string.h>
 
 Element* newElement(const char* key, GLint value) {
     Element* element = (Element*) malloc(sizeof (Element));
-    if (!element) {
+    return_guard(element, NULL);
+    /*if (!element) {
         err("Failed to allocate Element");
         return NULL;
-    }
+    }*/
     element->key = key;
     element->value = value;
 
@@ -17,12 +19,14 @@ Element* newElement(const char* key, GLint value) {
     return element;
 }
 
-Hash* newCache() {
-    Hash* cache = (Hash*) malloc(sizeof (Hash));
-    if (!cache) {
+Cache* newCache() {
+    Cache* cache = (Cache*) malloc(sizeof (Cache));
+
+    return_guard(cache, NULL);
+    /*if (!cache) {
         err("Failed to allocate Cache");
         return NULL;
-    }
+    }*/
 
     for (int i = 0; i < BUCKETS; ++i) {
         cache->buckets[i].last = NULL;
@@ -31,21 +35,33 @@ Hash* newCache() {
     return cache;
 }
 
-void freeCache(Hash* hash) {
-    Bucket b;
-    Element* it;
-    for (int i = 0; i < BUCKETS; i++) {
-        b = hash->buckets[i];
-        it = b.last;
-        do {
-            //free(it->key);
-            free(it);
-        } while((it = it->prev) != NULL);
-    }
+void freeCache(Cache* hash) {
+    clearCache(hash);
     free(hash);
 }
 
-GLint get(Hash* cache, const char* key) {
+void clearCache(Cache* hash) {
+    Bucket b;
+    Element* it;
+    Element* freeMe;
+    for (int i = 0; i < BUCKETS; i++) {
+
+        b = hash->buckets[i];
+        it = b.last;
+
+        while (it) {
+            if (it->key) free((char*) it->key); // possible issue
+            it->key = NULL;
+            freeMe = it;
+            it = it->prev;
+            free(freeMe);
+        }
+
+        hash->buckets[i].last = NULL;
+    }
+}
+
+GLint get(Cache* cache, const char* key) {
 
     int index = hash(key);
 
@@ -69,7 +85,7 @@ GLint get(Hash* cache, const char* key) {
     return NOT_CACHED;
 }
 
-void cache(Hash* cache, const char* key, GLint value) {
+void cache(Cache* cache, const char* key, GLint value) {
     info("Caching (KEY: '%s', VALUE: %i)", key, value);
 
     int index = hash(key);
@@ -99,6 +115,7 @@ int hash(const char* key) {
     return hash % BUCKETS;
 }
 
+/* shit's leaking */
 const char* getKey(const char* str, GLint num) {
     int len = strlen(str);
     int digits = floor(log10(abs(num))) + 1;
@@ -109,7 +126,7 @@ const char* getKey(const char* str, GLint num) {
     return rkey;
 }
 
-void printCache(Hash* cache, FILE* stream) {
+void printCache(Cache* cache, FILE* stream) {
 
     Bucket bit;
     Element* elit;

@@ -4,7 +4,7 @@
 #include "common.h"
 #include "ShaderCache.h"
 
-void addShader(const char* source, GLenum type, GLuint prog, ShaderCache* cache);
+void addShader(const char* source, GLenum type, GLuint prog, Cache* cache);
 GLuint compileShader(const char* source, GLuint shaderId);
 
 char* bufferFile(const char* path);
