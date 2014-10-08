@@ -10,7 +10,7 @@ typedef struct Context {
     GLFWwindow* win;
 } Context;
 
-Context* newContext(unsigned int xRes = 1024, unsigned int yRes = 768, const char* title = "OpenGL");
+Context* newContext(unsigned int xRes = 1280, unsigned int yRes = 720, const char* title = "OpenGL");
 
 void fps();
 void resizeCB(GLFWwindow* win, int w, int h);

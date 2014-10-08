@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include <iostream>
+
 extern Engine* renderer;
 
 Camera* createCamera(float x, float y, float z) {
@@ -207,6 +209,12 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
             if (action == GLFW_PRESS) {
                 reloadScene(renderer);
+            }
+            break;
+        case GLFW_KEY_M:
+
+            if (action == GLFW_PRESS) {
+
             }
             break;
         default:

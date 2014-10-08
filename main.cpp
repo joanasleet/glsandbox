@@ -25,14 +25,11 @@ Engine* renderer;
 
 int main(int argc, char** argv) {
 
-
     clear_syserr();
     clear_logs();
 
     renderer = init();
     loadScene(renderer);
-
-    //return 0;
 
     enterLoop(renderer);
     check_syserr();
