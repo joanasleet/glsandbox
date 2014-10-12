@@ -36,9 +36,7 @@ void main() {
     dot_prod = max(dot_prod, 0.0);
         
     vec3 Id = Ld * Kd * dot_prod;
-   
-    
-    
+     
     
     // specular intensity
 

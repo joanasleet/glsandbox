@@ -45,28 +45,58 @@ Camera* createCamera(float x, float y, float z) {
 
 void update(Camera* cam) {
 
+    // float rotaCamX[3], rotaCamY[3], rotaCamZ[3];
+    // setQuat(rotaCamX, cam->rotaX*TURN_SPEED, 1, 0, 0);
+    // setQuat(rotaCamY, cam->rotaY*TURN_SPEED, 0, 1, 0);
+    // setQuat(rotaCamZ, cam->rotaZ*TURN_SPEED, 0, 0, 1);
+    
     // Camera Direction + Movement
     glm::mat4 yRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaY * TURN_SPEED, glm::vec3(1, 0, 0));
     glm::mat4 xRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
     glm::mat4 zRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
 
+    // float rotaCamXYZ[4];
+    // multQ(rotaCamX, rotaCamY, rotaCamXYZ);
+    // multQ(rotaCamXYZ, rotaCamZ, rotaCamXYZ);
+    // float rotaMat[16];
+    // rotationQ(rotaMat, rotaCamXYZ);
     glm::mat4 rotation = xRotaB * yRotaB * zRotaB;
 
+    // float forwardVec[] = {0, 0, -1, 0};
+    // float strafeVec[] = {1, 0, 0, 0};
+    // multMatVec(rotaMat, forwardVec, cam->forward);
+    // multMatVec(rotaMat, strafeVec, strafeVec);
+    
     glm::vec4 camDir = rotation * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
     glm::vec4 strafe = rotation * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 
+    // wuerde wegfallen;
     cam->dirX = camDir.x;
     cam->dirY = camDir.y;
     cam->dirZ = camDir.z;
 
+    //float forwardSpeed = cam->speed[2];
+    //float strafeSpeed = cam->speed[0];
+    //cam->position[0] += cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed;
+    //cam->position[1] += cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1];
+    //cam->position[2] += cam->forward[2] * forwardSpeed + strafeVev[2] * strafeSpeed;
+    
     cam->xPos += camDir.x * cam->zspeed + strafe.x * cam->xspeed;
     cam->yPos += camDir.y * cam->zspeed + strafe.y * cam->xspeed + cam->yspeed;
     cam->zPos += camDir.z * cam->zspeed + strafe.z * cam->xspeed;
 
-    // Perspective + ModelView
+    // reverse quat rotation
+    //rotaCamXYZ[1] *= -1.0f;
+    //rotaCamXYZ[2] *= -1.0f;
+    //rotaCamXYZ[3] *= -1.0f;
+        
     glm::mat4 yRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaY * TURN_SPEED, glm::vec3(1, 0, 0));
     glm::mat4 xRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
     glm::mat4 zRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
+    
+    //rotationQ(cam->orientation, rotaCamXYZ);
+    //translation(cam->translation, -cam->xPos, -cam->yPos, -cam->zPos); // faellt spaeter weg
+    //perspective(cam->perspective, NEAR_PLANE, FOV, APECT_RATIO);
 
     *(cam->orientation) = yRota * xRota * zRota;
     *(cam->translation) = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
@@ -119,6 +149,8 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
                 cam->zspeed = cam->defaultSpeed;
             } else if (action == GLFW_RELEASE) {
                 cam->zspeed = 0.0f;
+            } else {
+                cam->zspeed = cam->defaultSpeed;
             }
             break;
         case GLFW_KEY_A:
@@ -214,7 +246,8 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
         case GLFW_KEY_M:
 
             if (action == GLFW_PRESS) {
-
+                glm::mat4 m = glm::rotate<float>(glm::mat4(), 90.0, glm::vec3(0, 1, 0));
+                std::cout << glm::to_string(m) << std::endl;
             }
             break;
         default:

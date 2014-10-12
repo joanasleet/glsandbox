@@ -1,6 +1,7 @@
-build/
-dist/
+main
+bin/
 screenshots/
 *.log
 cachegrind.*
 callgrind.*
+
