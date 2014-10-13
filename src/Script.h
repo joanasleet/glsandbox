@@ -8,7 +8,7 @@
 #define ARG_TABLE 3
 
 void initScript(const char* script);
-void argScript(int8 argType, void* value);
+void argScript(uint8 argType, void* value);
 void exeScript();
 
 int32 popInt();

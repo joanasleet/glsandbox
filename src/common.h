@@ -6,9 +6,6 @@
 #include <stdarg.h>
 
 #include <math.h>
-#include <time.h>
-
-#include "stb_image.h"
 
 /* GLEW */
 #include <GL/glew.h>
@@ -19,10 +16,11 @@
 #endif
 #include <GLFW/glfw3.h>
 
-#define GLM_FORCE_RADIANS
-
 #define ABS(x) ((x > 0) ? x : -x)
 #define MAX(a,b) ((a<b) ? b : a)
+
+#define TRUE 1
+#define FALSE 0
 
 /* 
  * unsigned number types */
@@ -37,8 +35,6 @@ typedef signed char int8;
 typedef short int16;
 typedef int int32;
 typedef long int64;
-
-
 
 #endif	/* COMMON_H */
 

@@ -5,111 +5,79 @@
 
 #include "SceneManager.h"
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
-#include <iostream>
+#include <time.h>
 
 extern Engine* renderer;
 
 Camera* createCamera(float x, float y, float z) {
     Camera* cam = (Camera*) malloc(sizeof (Camera));
 
-    cam->rotaX = 0.0f;
-    cam->rotaY = 0.0f;
-    cam->rotaZ = 0.0f;
+    exit_guard(cam);
 
-    cam->dirX = 0.0f;
-    cam->dirY = 0.0f;
-    cam->dirZ = -1.0f;
+    cam->angles = vec3New(0, 0, 0);
 
-    cam->xPos = x;
-    cam->yPos = y;
-    cam->zPos = z;
+    cam->position = vec3New(x, y, z);
+    cam->forward = vec4New(0, 0, -1, 0);
 
-    cam->xspeed = 0.0f;
-    cam->yspeed = 0.0f;
-    cam->zspeed = 0.0f;
+    cam->speed = vec3New(0, 0, 0);
 
     cam->defaultSpeed = DEFAULT_CAM_SPEED;
 
-    cam->mouseGrab = false;
-    cam->wireframe = false;
+    cam->mouseGrab = 0;
+    cam->wireframe = 0;
 
-    cam->perspective = (glm::mat4*) malloc(sizeof (glm::mat4));
-    cam->orientation = (glm::mat4*) malloc(sizeof (glm::mat4));
-    cam->translation = (glm::mat4*) malloc(sizeof (glm::mat4));
+    cam->perspective = mat4New();
+    cam->orientation = mat4New();
+    cam->translation = mat4New();
 
     return cam;
 }
 
 void update(Camera* cam) {
 
-    // float rotaCamX[3], rotaCamY[3], rotaCamZ[3];
-    // setQuat(rotaCamX, cam->rotaX*TURN_SPEED, 1, 0, 0);
-    // setQuat(rotaCamY, cam->rotaY*TURN_SPEED, 0, 1, 0);
-    // setQuat(rotaCamZ, cam->rotaZ*TURN_SPEED, 0, 0, 1);
-    
-    // Camera Direction + Movement
-    glm::mat4 yRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaY * TURN_SPEED, glm::vec3(1, 0, 0));
-    glm::mat4 xRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
-    glm::mat4 zRotaB = glm::rotate<float>(glm::mat4(1.0), cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
+    float rotaCamX[4], rotaCamY[4], rotaCamZ[4];
+    setQuat(rotaCamY, cam->angles[1] * TURN_SPEED, 1, 0, 0);
+    setQuat(rotaCamX, cam->angles[0] * TURN_SPEED, 0, 1, 0);
+    setQuat(rotaCamZ, cam->angles[2] * TURN_SPEED, 0, 0, 1);
 
-    // float rotaCamXYZ[4];
-    // multQ(rotaCamX, rotaCamY, rotaCamXYZ);
-    // multQ(rotaCamXYZ, rotaCamZ, rotaCamXYZ);
-    // float rotaMat[16];
-    // rotationQ(rotaMat, rotaCamXYZ);
-    glm::mat4 rotation = xRotaB * yRotaB * zRotaB;
+    float rotaCamXYZ[4];
+    multQ(rotaCamX, rotaCamY, rotaCamXYZ);
+    multQ(rotaCamXYZ, rotaCamZ, rotaCamXYZ);
+    float rotaMat[16];
+    rotateQ(rotaMat, rotaCamXYZ);
 
-    // float forwardVec[] = {0, 0, -1, 0};
-    // float strafeVec[] = {1, 0, 0, 0};
-    // multMatVec(rotaMat, forwardVec, cam->forward);
-    // multMatVec(rotaMat, strafeVec, strafeVec);
-    
-    glm::vec4 camDir = rotation * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
-    glm::vec4 strafe = rotation * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    float forwardVec[] = {0, 0, -1, 0};
+    float strafeVec[] = {1, 0, 0, 0};
+    multMatVec(rotaMat, forwardVec, cam->forward);
+    multMatVec(rotaMat, strafeVec, strafeVec);
 
-    // wuerde wegfallen;
-    cam->dirX = camDir.x;
-    cam->dirY = camDir.y;
-    cam->dirZ = camDir.z;
+    float forwardSpeed = cam->speed[2];
+    float strafeSpeed = cam->speed[0];
+    cam->position[0] += cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed;
+    cam->position[1] += cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1];
+    cam->position[2] += cam->forward[2] * forwardSpeed + strafeVec[2] * strafeSpeed;
 
-    //float forwardSpeed = cam->speed[2];
-    //float strafeSpeed = cam->speed[0];
-    //cam->position[0] += cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed;
-    //cam->position[1] += cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1];
-    //cam->position[2] += cam->forward[2] * forwardSpeed + strafeVev[2] * strafeSpeed;
-    
-    cam->xPos += camDir.x * cam->zspeed + strafe.x * cam->xspeed;
-    cam->yPos += camDir.y * cam->zspeed + strafe.y * cam->xspeed + cam->yspeed;
-    cam->zPos += camDir.z * cam->zspeed + strafe.z * cam->xspeed;
+    watch("Angles: (%f,\t%f,\t%f)\n", cam->angles[0], cam->angles[1], cam->angles[2]);
+    watch("Position: (%f,\t%f,\t%f)\n", cam->position[0], cam->position[1], cam->position[2]);
+    watch("\n");
 
     // reverse quat rotation
-    //rotaCamXYZ[1] *= -1.0f;
-    //rotaCamXYZ[2] *= -1.0f;
-    //rotaCamXYZ[3] *= -1.0f;
-        
-    glm::mat4 yRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaY * TURN_SPEED, glm::vec3(1, 0, 0));
-    glm::mat4 xRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaX * TURN_SPEED, glm::vec3(0, 1, 0));
-    glm::mat4 zRota = glm::rotate<float>(glm::mat4(1.0f), -cam->rotaZ * TURN_SPEED, glm::vec3(0, 0, 1));
-    
-    //rotationQ(cam->orientation, rotaCamXYZ);
-    //translation(cam->translation, -cam->xPos, -cam->yPos, -cam->zPos); // faellt spaeter weg
-    //perspective(cam->perspective, NEAR_PLANE, FOV, APECT_RATIO);
+    rotaCamXYZ[1] *= -1.0f;
+    rotaCamXYZ[2] *= -1.0f;
+    rotaCamXYZ[3] *= -1.0f;
 
-    *(cam->orientation) = yRota * xRota * zRota;
-    *(cam->translation) = glm::translate<float>(glm::mat4(1.0f), glm::vec3(-cam->xPos, -cam->yPos, -cam->zPos));
-    *(cam->perspective) = PERSPECTIVE;
+    rotateQ(cam->orientation, rotaCamXYZ);
+    translate(cam->translation, -cam->position[0], -cam->position[1], -cam->position[2]); // faellt spaeter weg
+    perspective(cam->perspective, 1, 10000, FOV, ASPECT_RATIO);
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {
 
-    unsigned int xres = renderer->glContext->xRes;
-    unsigned int yres = renderer->glContext->yRes;
+    uint32 xres = renderer->glContext->xRes;
+    uint32 yres = renderer->glContext->yRes;
 
-    renderer->mainCam->rotaX += (xres / 2.0f) - xpos;
-    renderer->mainCam->rotaY += (yres / 2.0f) - ypos;
+    renderer->mainCam->angles[0] += (xres / 2.0f) - xpos;
+    renderer->mainCam->angles[1] += (yres / 2.0f) - ypos;
 
     glfwSetCursorPos(win, (xres / 2.0f), (yres / 2.0f));
 }
@@ -137,52 +105,47 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
 
     Camera* cam = renderer->mainCam;
 
-    static GLfloat inTessLvl = 2.0f;
-    static GLfloat outTessLvl = 2.0f;
-
-    bool wireframe = cam->wireframe;
-
     switch (key) {
         case GLFW_KEY_W:
 
             if (action == GLFW_PRESS) {
-                cam->zspeed = cam->defaultSpeed;
+                cam->speed[2] = cam->defaultSpeed;
             } else if (action == GLFW_RELEASE) {
-                cam->zspeed = 0.0f;
+                cam->speed[2] = 0.0f;
             } else {
-                cam->zspeed = cam->defaultSpeed;
+                cam->speed[2] = cam->defaultSpeed;
             }
             break;
         case GLFW_KEY_A:
 
             if (action == GLFW_PRESS) {
-                cam->xspeed = -cam->defaultSpeed;
+                cam->speed[0] = -cam->defaultSpeed;
             } else if (action == GLFW_RELEASE) {
-                cam->xspeed = 0.0f;
+                cam->speed[0] = 0.0f;
             }
             break;
         case GLFW_KEY_S:
 
             if (action == GLFW_PRESS) {
-                cam->zspeed = -cam->defaultSpeed;
+                cam->speed[2] = -cam->defaultSpeed;
             } else if (action == GLFW_RELEASE) {
-                cam->zspeed = 0.0f;
+                cam->speed[2] = 0.0f;
             }
             break;
         case GLFW_KEY_D:
 
             if (action == GLFW_PRESS) {
-                cam->xspeed = cam->defaultSpeed;
+                cam->speed[0] = cam->defaultSpeed;
             } else if (action == GLFW_RELEASE) {
-                cam->xspeed = 0.0f;
+                cam->speed[0] = 0.0f;
             }
             break;
         case GLFW_KEY_SPACE:
 
             if (action == GLFW_PRESS) {
-                cam->yspeed = cam->defaultSpeed;
+                cam->speed[1] = cam->defaultSpeed;
             } else if (action == GLFW_RELEASE) {
-                cam->yspeed = 0.0f;
+                cam->speed[1] = 0.0f;
             }
             break;
         case GLFW_KEY_C:
@@ -191,11 +154,11 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
                 glfwSetCursorPos(win, renderer->glContext->xRes / 2.0f, renderer->glContext->yRes / 2.0f);
                 glfwSetCursorPosCallback(win, cursorCB);
                 glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                cam->mouseGrab = true;
+                cam->mouseGrab = 1;
             } else if (action == GLFW_PRESS && cam->mouseGrab) {
                 glfwSetCursorPosCallback(win, NULL);
                 glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                cam->mouseGrab = false;
+                cam->mouseGrab = 0;
             }
             break;
         case GLFW_KEY_V:
@@ -206,35 +169,31 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
         case GLFW_KEY_UP:
             if (action == GLFW_PRESS) {
                 glUseProgram(1);
-                glUniform1f(glGetUniformLocation(1, "tessLevelInner"), ++inTessLvl);
             }
             break;
         case GLFW_KEY_DOWN:
             if (action == GLFW_PRESS) {
                 glUseProgram(1);
-                glUniform1f(glGetUniformLocation(1, "tessLevelInner"), --inTessLvl);
             }
             break;
         case GLFW_KEY_LEFT:
             if (action == GLFW_PRESS) {
                 glUseProgram(1);
-                glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), --outTessLvl);
             }
             break;
         case GLFW_KEY_RIGHT:
             if (action == GLFW_PRESS) {
                 glUseProgram(1);
-                glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), ++outTessLvl);
             }
             break;
         case GLFW_KEY_F:
 
-            if (action == GLFW_PRESS && !wireframe) {
+            if (action == GLFW_PRESS && !cam->wireframe) {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                cam->wireframe = true;
-            } else if (action == GLFW_PRESS && wireframe) {
+                cam->wireframe = 1;
+            } else if (action == GLFW_PRESS && cam->wireframe) {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                cam->wireframe = false;
+                cam->wireframe = 0;
             }
             break;
         case GLFW_KEY_R:
@@ -246,8 +205,7 @@ void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {
         case GLFW_KEY_M:
 
             if (action == GLFW_PRESS) {
-                glm::mat4 m = glm::rotate<float>(glm::mat4(), 90.0, glm::vec3(0, 1, 0));
-                std::cout << glm::to_string(m) << std::endl;
+
             }
             break;
         default:

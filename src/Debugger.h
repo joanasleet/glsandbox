@@ -12,9 +12,9 @@ extern FILE* scrolllog;
 extern FILE* watchlog;
 
 #ifdef NODEBUG
-#define debug(target, frmt, ...)
+#define debug(target, ...)
 #else
-#define debug(target, frmt, ...) fprintf(target, frmt, ##__VA_ARGS__)
+#define debug(target, ...) (fprintf(target, ##__VA_ARGS__))
 #endif
 
 #define err_str() (strerror(errno))
@@ -54,6 +54,9 @@ extern FILE* watchlog;
 /*
  * Checks for a system error and prints its error message. */
 #define check_syserr() do { check(!shit_happend(), err_str()); clear_syserr(); } while(0)
+
+#define info_call(f) do { info(#f); f; } while(0)
+
 
 /*
  * Prints formatted info string to the scrolling log. */

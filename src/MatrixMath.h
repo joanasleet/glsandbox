@@ -19,8 +19,8 @@ typedef float* mat4;
 
 /* [ vector ] */
 
-vec3 vec3New();
-vec4 vec4New();
+vec3 vec3New(float x, float y, float z);
+vec4 vec4New(float x, float y, float z, float w);
 
 /* [ matrix ] */
 

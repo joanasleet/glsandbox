@@ -8,7 +8,7 @@ scene = {
         texture = "textures/tiles.png",
         uniforms = {"P", "MV"},
         uniVarFuncs = {UniVarFuncType.Perspective, UniVarFuncType.ModelView},
-        shaders = {"tex_light.vert", "tex_light.frag"}
+        shaders = {"shaders/tex_light.vert", "shaders/tex_light.frag"}
     },
     {
         name = "overlay",
@@ -16,7 +16,7 @@ scene = {
         texture = "fontsheet/font.png",
         uniforms = {},
         uniVarFuncs = {},
-        shaders = {"overlay.vert", "overlay.frag"}
+        shaders = {"shaders/overlay.vert", "shaders/overlay.frag"}
     }
 }
 

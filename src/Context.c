@@ -5,7 +5,7 @@
 
 extern Engine* renderer;
 
-Context* newContext(unsigned int xRes, unsigned int yRes, const char* title) {
+Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
     info("–––––––––––––––– Log Start ––––––––––––––––––");
     Context* context = (Context*) malloc(sizeof (Context));
     context->xRes = xRes;
@@ -63,11 +63,12 @@ void resizeCB(GLFWwindow* win, int w, int h) {
 }
 
 void fps() {
-    static double prevTime = glfwGetTime();
-    double currTime = glfwGetTime();
-    double diffTime = currTime - prevTime;
+    static double prevTime = 0;
     static int frames = 0;
 
+    double currTime = glfwGetTime();
+    double diffTime = currTime - prevTime;
+    
     if (diffTime > 0.5) {
         prevTime = currTime;
         char title[20];
@@ -78,14 +79,15 @@ void fps() {
     ++frames;
 }
 
+/*
 double elapsedTime() {
     static double startTime = glfwGetTime();
-    return ( glfwGetTime() - startTime);
+    return (glfwGetTime() - startTime);
 }
 
 void resetTimer() {
     glfwSetTime(0.0);
-}
+} */
 
 /* where to put this shit ? */
 const char* SEVERITY_LVL[] = {

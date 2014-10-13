@@ -1,10 +1,8 @@
 #include "Script.h"
 
-extern "C" {
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
-}
 
 lua_State *L;
 
@@ -19,7 +17,7 @@ void initScript(const char* script) {
     }
 }
 
-void argScript(char argType, void* value) {
+void argScript(uint8 argType, void* value) {
     switch (argType) {
         case ARG_NUMBER:
             printf("Passing Number %f\n", *(double*) value);

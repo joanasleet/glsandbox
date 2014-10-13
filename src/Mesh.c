@@ -5,9 +5,6 @@
 
 #include <string.h>
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
 UniformVarFunc uniVarFuncLUT[] = {
     P, MV, MVP, MVPnoTrans
 };
@@ -16,27 +13,17 @@ Mesh* newMesh() {
     Mesh* mesh = (Mesh*) malloc(sizeof (Mesh));
 
     return_guard(mesh, NULL);
-    /*if (!mesh) {
-        err("Failed to allocate mesh");
-        return NULL;
-    }*/
 
     mesh->shaderProgram = glCreateProgram();
     check(mesh->shaderProgram, "Failed to create shader program");
-    /*if (!mesh->shaderProgram) {
-        err("Failed to create shader program");
-    }*/
 
     return mesh;
 }
-
-// TODO: implement freeMesh
 
 void freeMesh(Mesh* mesh) {
 
     glDeleteVertexArrays(1, &(mesh->vaoId));
     glDeleteProgram(mesh->shaderProgram);
-
 
     for (int i = 0; i < mesh->shadersLen; i++) {
         // already freed by freeCache()
@@ -71,38 +58,45 @@ void drawElements(GLenum mode, GLint* first, GLsizei count) {
     glDrawElements(mode, count, GL_UNSIGNED_INT, (GLvoid*) first);
 }
 
-/* helper */
-void printMatrix(float* m) {
-    printf("- - - - - - - - - - - - - -\n");
-    for (int i = 0; i < 4; ++i) {
-        printf("%.1f\t%.1f\t%.1f\t%.1f\n", m[i * 4], m[i * 4 + 1], m[i * 4 + 2], m[i * 4 + 3]);
-    }
-}
-
 /* uniform setter */
 void P(GLint loc, Camera* cam) {
-    glm::mat4 P = *(cam->perspective);
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(P));
+    
+    printMat(cam->perspective);
+
+    glUniformMatrix4fv(loc, 1, GL_FALSE, cam->perspective);
 }
 
 void MV(GLint loc, Camera* cam) {
-    glm::mat4 orientation = *(cam->orientation);
-    glm::mat4 translation = *(cam->translation);
-    glm::mat4 MV = orientation * translation;
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MV));
+    mat4 orientation = cam->orientation;
+    mat4 translation = cam->translation;
+
+    float MV[16];
+    mult(orientation, translation, MV);
+
+    printMat(orientation);
+    printMat(translation);
+    printMat(MV);
+
+    glUniformMatrix4fv(loc, 1, GL_FALSE, MV);
 }
 
 void MVP(GLint loc, Camera* cam) {
-    glm::mat4 P = *(cam->perspective);
-    glm::mat4 orientation = *(cam->orientation);
-    glm::mat4 translation = *(cam->translation);
-    glm::mat4 MVP = P * orientation * translation;
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
+    mat4 P = cam->perspective;
+    mat4 orientation = cam->orientation;
+    mat4 translation = cam->translation;
+
+    float MVP[16];
+    mult(P, orientation, MVP);
+    mult(MVP, translation, MVP);
+    glUniformMatrix4fv(loc, 1, GL_FALSE, MVP);
 }
 
 void MVPnoTrans(GLint loc, Camera* cam) {
-    glm::mat4 P = *(cam->perspective);
-    glm::mat4 orientation = *(cam->orientation);
-    glm::mat4 MVP = P * orientation;
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(MVP));
+
+    mat4 P = cam->perspective;
+    mat4 orientation = cam->orientation;
+
+    float MVP[16];
+    mult(P, orientation, MVP);
+    glUniformMatrix4fv(loc, 1, GL_FALSE, MVP);
 }

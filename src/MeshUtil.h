@@ -30,22 +30,22 @@ extern GLuint DrawMode[];
 extern GLsizei VertexCount[];
 
 /* vao factory */
-GLuint genVao(VaoType type, GLfloat length = 100000.0f, GLfloat texRes = 1000.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint genVao(VaoType type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
 
 /* facing inside */
-GLuint cubeMapVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
 
 /* facing outside */
-GLuint cubeVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
 
 /* facing up */
-GLuint planeVAO(GLfloat length = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
 
 /* terrain */
-GLuint terrainVAO(GLfloat xlength = 100.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint terrainVAO(GLfloat xlength, GLfloat midX, GLfloat midY, GLfloat midZ);
 
 /* facing outside */
-GLuint sphereVAO(GLfloat radius = 100.0f, GLfloat texRes = 1.0f, GLfloat midX = 0.0f, GLfloat midY = 0.0f, GLfloat midZ = 0.0f);
+GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
 
 GLuint overlayVAO();
 #endif	/* GLHELPER_H */

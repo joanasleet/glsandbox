@@ -1,12 +1,19 @@
 #include "MatrixMath.h"
 
-vec3 vec3New() {
+vec3 vec3New(float x, float y, float z) {
     vec3 vector = (vec3) malloc(sizeof(float)*3);
+    vector[0] = x;
+    vector[1] = y;
+    vector[2] = z;
     return vector;
 }
 
-vec4 vec4New() {
+vec4 vec4New(float x, float y, float z, float w) {
     vec4 vector = (vec4) malloc(sizeof(float)*4);
+    vector[0] = x;
+    vector[1] = y;
+    vector[2] = z;
+    vector[3] = w;
     return vector;
 }
 

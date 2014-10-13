@@ -4,12 +4,6 @@
 #include "Script.h"
 #include "MatrixMath.h"
 
-#include <string.h>
-
-#include <limits.h>
-
-using namespace std;
-
 FILE* scrolllog;
 FILE* watchlog;
 
@@ -26,12 +20,11 @@ Engine* renderer;
 
 int main(int argc, char** argv) {
 
-    float M[16];
-    translate(M, 1, -2, 33.2865f);
-    printMat(M);
-    
-    
-    return 0;
+    //float M[16];
+    //translate(M, 1, -2, 33.2865f);
+    //printMat(M);
+       
+    //return 0;
     
     clear_syserr();
     clear_logs();

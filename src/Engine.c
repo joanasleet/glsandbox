@@ -4,6 +4,12 @@
 #include "ShaderUtil.h"
 #include "Deallocator.h"
 
+
+//#include <time.h>
+//#include <sys/time.h>
+
+#include <unistd.h>
+
 GLenum ShaderType[] = {
     GL_VERTEX_SHADER,
     GL_FRAGMENT_SHADER,
@@ -18,7 +24,7 @@ Engine* init() {
     Engine* renderer = (Engine*) malloc(sizeof (Engine));
 
     renderer->glContext = newContext();
-    renderer->mainCam = createCamera();
+    renderer->mainCam = newCam();
 
     renderer->shaderCache = newCache();
     renderer->uniformCache = newCache();
@@ -48,10 +54,6 @@ Engine* init() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return renderer;
-}
-
-void add(Mesh* mesh, Engine* renderer) {
-    // replaced by loadScene()
 }
 
 void preload(Mesh* mesh, Engine* renderer) {
@@ -133,21 +135,23 @@ void preloadMeshes(Engine* renderer) {
 }
 
 void renderMeshes(Engine* renderer) {
+    
     for (unsigned int i = 0; i < renderer->meshCount; ++i) {
         render(renderer->meshes[i], renderer);
     }
+    
 }
 
 void enterLoop(Engine* renderer) {
+
+    exit_guard(renderer);
 
     exitIfNoMeshes(renderer);
     preloadMeshes(renderer);
 
     // move to timer class
-    double startTime, endTime;
-    struct timespec msSleep, msRemaining;
-    msSleep.tv_sec = 0;
-    msSleep.tv_nsec = 16000000;
+    //double startTime, endTime;
+    useconds_t usec = 16000;
 
     Camera* cam = renderer->mainCam;
     GLFWwindow* window = renderer->glContext->win;
@@ -158,54 +162,49 @@ void enterLoop(Engine* renderer) {
         //printCache(renderer->uniformCache, stdout);
         //printStores();
 
-        startTime = glfwGetTime();
-        msSleep.tv_nsec = 16000000;
+        //startTime = glfwGetTime();
+        //usec = 16000;
 
         fps();
         update(cam);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         renderMeshes(renderer);
+        
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         // encapsulate into timer class
-        endTime = glfwGetTime();
-        msSleep.tv_nsec += (long) ((startTime - endTime)*1000000000.0);
-        nanosleep(&msSleep, &msRemaining);
+        //endTime = glfwGetTime();
+        //usec += (long) ((startTime - endTime)*1000000.0);
+        usleep(usec);
     }
 }
 
 void terminate(Engine* renderer) {
 
     freeCache(renderer->shaderCache);
-    renderer->shaderCache = NULL;
     freeCache(renderer->uniformCache);
-    renderer->uniformCache = NULL;
-
+    
     freeMeshes(renderer);
 
     free(renderer->glContext);
-    renderer->glContext = NULL;
-
+    
     free(renderer->mainCam->perspective);
     free(renderer->mainCam->translation);
     free(renderer->mainCam->orientation);
 
-    renderer->mainCam->perspective = NULL;
-    renderer->mainCam->translation = NULL;
-    renderer->mainCam->orientation = NULL;
-
+    free(renderer->mainCam->angles);
+    free(renderer->mainCam->forward);
+    free(renderer->mainCam->speed);
+    free(renderer->mainCam->position);
+            
     free(renderer->mainCam);
-    renderer->mainCam = NULL;
-
+    
     deallocStores();
 
     free(renderer);
-    renderer = NULL;
-
+    
     glfwTerminate();
 }
 

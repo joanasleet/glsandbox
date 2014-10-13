@@ -10,8 +10,8 @@ typedef struct Element {
     const char* key;
     GLint value;
 
-    Element* next;
-    Element* prev;
+    struct Element* next;
+    struct Element* prev;
 } Element;
 
 Element* newElement(const char* key, GLint value);

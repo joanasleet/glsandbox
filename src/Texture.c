@@ -2,6 +2,8 @@
 #include "Debugger.h"
 #include "Deallocator.h"
 
+#include "stb_image.h"
+
 Texture* nullTex = NULL;
 
 Material* newMaterial() {
@@ -21,10 +23,9 @@ void freeMaterial(Material* mat) {
     freeTexture(mat->ambientMap);
     freeTexture(mat->specularMap);
     free(mat);
-    mat = NULL;
 }
 
-Texture* newTexture(const char* file, GLenum target, bool genMipMaps) {
+Texture* createTexture(const char* file, GLenum target, uint8 genMipMaps) {
     Texture* texture = (Texture*) malloc(sizeof (Texture));
     return_guard(texture, NULL);
 
@@ -88,14 +89,11 @@ void freeTexture(Texture* tex) {
     glDeleteTextures(1, &(tex->id));
     free(tex->data);
     free(tex);
-    tex = NULL;
 }
 
 Texture* nullTexture() {
 
-    if (nullTex) {
-        return nullTex;
-    }
+    if (nullTex) return nullTex;
 
     nullTex = (Texture*) malloc(sizeof (Texture));
     return_guard(nullTex, NULL);
@@ -110,7 +108,7 @@ Texture* nullTexture() {
     return nullTex;
 }
 
-Texture* cubeTexture(const char* *cubeFaces, bool allSame, bool genMipMaps) {
+Texture* cubeTexture(const char* *cubeFaces, uint8 allSame, uint8 genMipMaps) {
 
     Texture* texture = (Texture*) malloc(sizeof (Texture));
     return_guard(texture, NULL);

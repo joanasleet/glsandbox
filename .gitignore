@@ -1,7 +1,8 @@
 main
 bin/
 screenshots/
+nbproject/
 *.log
 cachegrind.*
 callgrind.*
-
+*.sublime-workspace

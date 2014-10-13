@@ -5,6 +5,8 @@
 
 #define ANISOTROPIC_LVL 4.0f
 
+#define newTex(file) createTexture(file, GL_TEXTURE_2D, TRUE)
+
 //extern GLenum freeTexSlot; // managed by context
 extern int32 maxTexSlots;
 
@@ -19,11 +21,11 @@ typedef struct {
 
 } Texture;
 
-Texture* newTexture(const char* file, GLenum target = GL_TEXTURE_2D, bool genMipMaps = true);
-uint8* getData(const char* file, int* width = NULL, int* height = NULL);
+Texture* createTexture(const char* file, GLenum target, uint8 genMipMaps);
+uint8* getData(const char* file, int* width, int* height);
 void freeTexture(Texture*);
 
-Texture* cubeTexture(const char* *cubeFaces, bool allSame = false, bool genMipMaps = false);
+Texture* cubeTexture(const char* *cubeFaces, uint8 allSame, uint8 genMipMaps);
 Texture* nullTexture();
 
 typedef struct {

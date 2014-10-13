@@ -2,53 +2,39 @@
 #define	CAMERA_H
 
 #include "common.h"
-#include <glm/glm.hpp>
 
-#define VIEW_RANGE infinite
+#include "MatrixMath.h"
 
-#if(VIEW_RANGE == infinite)
-#define PERSPECTIVE glm::infinitePerspective(FOV, ASPECT_RATIO, NEAR_PLANE);
-#else      
-#define PERSPECTIVE glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
-#endif
-
-#define FOV (45.0f)
-#define ASPECT_RATIO (4.0f / 3.0f)
+#define FOV (60.0f)
+#define ASPECT_RATIO (16.0f / 9.0f)
 #define NEAR_PLANE (0.1f)
 #define FAR_PLANE (10000.0f)
 
 #define TURN_SPEED 0.01f
 #define DEFAULT_CAM_SPEED 0.5f
 
-typedef struct Camera {
-    float dirX;
-    float dirY;
-    float dirZ;
+#define newCam() (createCamera(0, 10, 0))
 
-    double rotaX;
-    double rotaY;
-    double rotaZ;
+typedef struct {
 
-    float xPos;
-    float yPos;
-    float zPos;
+    vec3 speed;
+    vec4 forward;
+    vec3 position;
 
-    float xspeed;
-    float yspeed;
-    float zspeed;
-
+    // do i even need dis ?
     float defaultSpeed;
 
-    bool mouseGrab;
-    bool wireframe;
-
-    glm::mat4* perspective;
-    glm::mat4* orientation;
-    glm::mat4* translation;
+    uint8 mouseGrab;
+    uint8 wireframe;
+    
+    vec3 angles;
+    mat4 orientation;
+    mat4 translation;
+    mat4 perspective;
 
 } Camera;
 
-Camera* createCamera(float x = 0.0f, float y = 0.0f, float z = 0.0f);
+Camera* createCamera(float x, float y, float z);
 void update(Camera* cam);
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos);

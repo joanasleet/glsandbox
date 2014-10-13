@@ -4,6 +4,7 @@
 #include "Debugger.h"
 #include "SceneManager.h"
 #include "Script.h"
+//#include "Texture.h"
 
 #define SCENE_LOADER "scripts/loadScene.lua"
 
@@ -29,7 +30,7 @@ void loadScene(Engine* renderer) {
 
         /* vao type */
         uint32 vaoType = (uint32) popInt();
-        mesh->vaoId = genVao((VaoType) vaoType);
+        mesh->vaoId = genVao((VaoType) vaoType, 100000.0f, 100.0f, 0.0f, 0.0f, 0.0f);
 
         /* texture */
 
@@ -38,7 +39,7 @@ void loadScene(Engine* renderer) {
 
         const char* diffMap = popString();
         Material* mat = newMaterial();
-        mat->diffuseMap = newTexture(diffMap);
+        mat->diffuseMap = newTex(diffMap);
         mesh->mats = mat;
 
         /* uniform count */

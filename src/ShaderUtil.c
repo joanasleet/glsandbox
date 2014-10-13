@@ -2,6 +2,8 @@
 #include "Debugger.h"
 #include "Deallocator.h"
 
+#include <stdio.h>
+
 void addShader(const char* srcFile, GLenum type, GLuint prog, Cache* shaderCache) {
 
     info("–");
@@ -58,8 +60,9 @@ char* bufferFile(const char* path) {
         exit(EXIT_FAILURE);
     }
 
-    fseeko(file, 0L, SEEK_END);
-    long int size = ftello(file);
+    exit_guard(fseek(file, 0L, SEEK_END) == 0);
+    long int size = ftell(file);
+    exit_guard(size != -1);
     fclose(file);
 
     file = fopen(path, "r");

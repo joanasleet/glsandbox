@@ -21,7 +21,6 @@ typedef struct Engine {
 /*
  *  primary API */
 Engine* init();
-void add(Mesh* mesh, Engine* renderer);
 void enterLoop(Engine* renderer);
 void terminate(Engine* renderer);
 void freeMeshes(Engine* renderer);
