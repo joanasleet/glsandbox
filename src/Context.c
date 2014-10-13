@@ -6,7 +6,7 @@
 extern Engine* renderer;
 
 Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
-    info("–––––––––––––––– Log Start ––––––––––––––––––");
+    info("%s","–––––––––––––––– Log Start ––––––––––––––––––");
     Context* context = (Context*) malloc(sizeof (Context));
     context->xRes = xRes;
     context->yRes = yRes;
@@ -15,7 +15,7 @@ Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
 
     exit_guard(glfwInit());
 
-    info("GLFW initialized.");
+    info("%s","GLFW initialized.");
 
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_DEPTH_BITS, 32);
@@ -26,22 +26,22 @@ Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
 
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
-        err("Failed to create main window.");
+        err("%s","Failed to create main window.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 
     glfwMakeContextCurrent(context->win);
-    info("Main window created.");
+    info("%s","Main window created.");
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        err("Failed to start GLEW.");
+        err("%s","Failed to start GLEW.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    info("GLEW initialized.");
+    info("%s","GLEW initialized.");
 
     if (GLEW_KHR_debug) {
         int param = -1;

@@ -94,7 +94,7 @@ void perspective(mat4 target, float near, float far, float fov, float ratio) {
     float e00 = 1/tanf(RAD(fov/2.0f));
     float e11 = ratio * e00;
     float e22 = -1.0f * (far+near)/z_d;
-    float e32 = 2 * near * far/z_d;
+    float e32 = -2.0f * near * far/z_d;
     
     /* already transposed to column-major */
     float data[] = {
@@ -115,7 +115,7 @@ void perspectiveInf(mat4 target, float near, float fov, float ratio) {
     float e00 = 1/tanf(RAD(fov/2.0f));
     float e11 = ratio * e00;
     float e22 = -1.0f; 
-    float e32 = 2*near;
+    float e32 = -2.0f*near;
     
     /* already transposed to column-major */
     float data[] = {

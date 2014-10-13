@@ -61,23 +61,24 @@ void drawElements(GLenum mode, GLint* first, GLsizei count) {
 /* uniform setter */
 void P(GLint loc, Camera* cam) {
     
-    printMat(cam->perspective);
+    //printMat(cam->perspective);
 
     glUniformMatrix4fv(loc, 1, GL_FALSE, cam->perspective);
 }
 
 void MV(GLint loc, Camera* cam) {
+
     mat4 orientation = cam->orientation;
     mat4 translation = cam->translation;
 
-    float MV[16];
-    mult(orientation, translation, MV);
+    GLfloat MVmat[16];
+    mult(orientation, translation, MVmat);
 
-    printMat(orientation);
-    printMat(translation);
-    printMat(MV);
+    //printMat(orientation);
+    //printMat(translation);
+    //printMat(MVmat);
 
-    glUniformMatrix4fv(loc, 1, GL_FALSE, MV);
+    glUniformMatrix4fv(loc, 1, GL_FALSE, MVmat);
 }
 
 void MVP(GLint loc, Camera* cam) {

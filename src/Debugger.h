@@ -20,6 +20,8 @@ extern FILE* watchlog;
 #define err_str() (strerror(errno))
 #define shit_happend() (errno != 0 ? 1 : 0)
 
+#define RVOID
+
 /*
  * Prints formatted INFO and ERROR messages. */
 #define info(msg, ...) debug(stdout, "[INFO] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__)

@@ -12,7 +12,7 @@ int nextBufferSlot = 0;
 void* buffers[MAX_DEALLOCATEES];
 
 void storeBuffer(void* buffer) {
-    return_guard(nextBufferSlot < MAX_DEALLOCATEES);
+    return_guard(nextBufferSlot < MAX_DEALLOCATEES, RVOID);
     buffers[nextBufferSlot++] = buffer;
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -61,15 +61,15 @@ void deallocStores() {
 }
 
 void printStores() {
-    watch("[ Dealloc Stores ]\n");
-    watch("buffers { ");
+    watch("%s", "[ Dealloc Stores ]\n");
+    watch("%s", "buffers { ");
     for (int i = 0; i < nextBufferSlot; ++i) {
         watch("%p ", buffers[i]);
     }
-    watch("}\n");
-    watch("vbos { ");
+    watch("%s", "}\n");
+    watch("%s", "vbos { ");
     for (int i = 0; i < nextVboSlot; ++i) {
         watch("%d ", vbos[i]);
     }
-    watch("}\n\n");
+    watch("%s", "}\n\n");
 }

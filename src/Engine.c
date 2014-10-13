@@ -128,7 +128,7 @@ void exitIfNoMeshes(Engine* renderer) {
 }
 
 void preloadMeshes(Engine* renderer) {
-    info("–––––– Preloading meshes ––––––");
+    info("%s", "–––––– Preloading meshes ––––––");
     for (unsigned int i = 0; i < renderer->meshCount; ++i) {
         preload(renderer->meshes[i], renderer);
     }
@@ -156,7 +156,7 @@ void enterLoop(Engine* renderer) {
     Camera* cam = renderer->mainCam;
     GLFWwindow* window = renderer->glContext->win;
 
-    info("–––––––––– Rendering ––––––––––");
+    info("%s", "–––––––––– Rendering ––––––––––");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
         //printCache(renderer->uniformCache, stdout);

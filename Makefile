@@ -3,7 +3,7 @@ TARGET	=	main
 SRC 	=	src
 CC		=	gcc
 STD 	=	gnu99
-CFLAGS	=	-Wall -pedantic -std=$(STD) -g -I$(SRC)
+CFLAGS	=	-Wall -Werror -pedantic -std=$(STD) -g -I$(SRC)
 LIBS	=	-lm -lGLEW -lGL -lglfw -llua
 
 BIN		=	bin
@@ -21,12 +21,14 @@ $(BIN):
 $(BIN)/%.o: $(SRC)/%.c
 	@echo " "
 	@echo "["$^"]"
-	$(CC) $(CFLAGS) $(LIBS) -c $? -o $@
-
+	$(CC) $(CFLAGS) $(LIBS) -c $< -o $@
+	@if [ $$? != 0 ]; then rm $@; fi
+	
 $(BIN)/%.o: $(SRC)/%.h
 	@echo " "
 	@echo "["$^"]"
 	$(CC) $(CFLAGS) $(LIBS) -c $? -o $@
+	@if [ $$? != 0 ]; then rm $@; fi
 
 $(TARGET): $(OBJECTS)
 	@echo " "

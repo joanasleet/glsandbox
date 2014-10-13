@@ -9,7 +9,7 @@
 #define SCENE_LOADER "scripts/loadScene.lua"
 
 void loadScene(Engine* renderer) {
-    return_guard(renderer);
+    return_guard(renderer, RVOID);
 
     initScript(SCENE_LOADER);
     exeScript();
@@ -17,7 +17,7 @@ void loadScene(Engine* renderer) {
     uint32 meshCount = (uint32) popInt();
 
     info("Found meshes: %d", meshCount);
-    return_guard(meshCount);
+    return_guard(meshCount, RVOID);
 
     Mesh** meshes = (Mesh**) malloc(sizeof (Mesh*) * meshCount);
 
@@ -30,7 +30,7 @@ void loadScene(Engine* renderer) {
 
         /* vao type */
         uint32 vaoType = (uint32) popInt();
-        mesh->vaoId = genVao((VaoType) vaoType, 100000.0f, 100.0f, 0.0f, 0.0f, 0.0f);
+        mesh->vaoId = genVao((VaoType) vaoType, 100000.0f, 1000.0f, 0.0f, 0.0f, 0.0f);
 
         /* texture */
 
@@ -100,9 +100,9 @@ void loadScene(Engine* renderer) {
 }
 
 void reloadScene(Engine* renderer) {
-    return_guard(renderer);
+    return_guard(renderer, RVOID);
 
-    info("# # # # # Reloading scene # # # # #");
+    info("%s", "# # # # # Reloading scene # # # # #");
     freeMeshes(renderer);
     clearCache(renderer->shaderCache);
     clearCache(renderer->uniformCache);
@@ -110,5 +110,5 @@ void reloadScene(Engine* renderer) {
 
     loadScene(renderer);
     preloadMeshes(renderer);
-    info("# # # # # Scene reloaded # # # # #");
+    info("%s", "# # # # # Scene reloaded # # # # #");
 }

@@ -9,6 +9,8 @@
 
 extern Engine* renderer;
 
+float fovx = 60.0f;
+
 Camera* createCamera(float x, float y, float z) {
     Camera* cam = (Camera*) malloc(sizeof (Camera));
 
@@ -40,27 +42,32 @@ void update(Camera* cam) {
     setQuat(rotaCamX, cam->angles[0] * TURN_SPEED, 0, 1, 0);
     setQuat(rotaCamZ, cam->angles[2] * TURN_SPEED, 0, 0, 1);
 
+    float rotaCamXY[4];
+    multQ(rotaCamX, rotaCamY, rotaCamXY);
     float rotaCamXYZ[4];
-    multQ(rotaCamX, rotaCamY, rotaCamXYZ);
-    multQ(rotaCamXYZ, rotaCamZ, rotaCamXYZ);
+    multQ(rotaCamXY, rotaCamZ, rotaCamXYZ);
     float rotaMat[16];
     rotateQ(rotaMat, rotaCamXYZ);
 
     float forwardVec[] = {0, 0, -1, 0};
-    float strafeVec[] = {1, 0, 0, 0};
+    float rightVec[] = {1, 0, 0, 0};
+    float strafeVec[4];
     multMatVec(rotaMat, forwardVec, cam->forward);
-    multMatVec(rotaMat, strafeVec, strafeVec);
+    multMatVec(rotaMat, rightVec, strafeVec);
+
+    watch("forward: (%.2f,\t%.2f,\t%.2f,\t%.2f)\n", cam->forward[0], cam->forward[1], cam->forward[2], cam->forward[3]);
+    watch("strafe: (%.2f,\t%.2f,\t%.2f,\t%.2f)\n", strafeVec[0], strafeVec[1], strafeVec[2], strafeVec[3]);
+    watch("Angles: (%.2f,\t%.2f,\t%.2f)\n", cam->angles[0], cam->angles[1], cam->angles[2]);
+    watch("Position: (%.2f,\t%.2f,\t%.2f)\n", cam->position[0], cam->position[1], cam->position[2]);
+    watch("%s\n"," ");
 
     float forwardSpeed = cam->speed[2];
     float strafeSpeed = cam->speed[0];
     cam->position[0] += cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed;
     cam->position[1] += cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1];
     cam->position[2] += cam->forward[2] * forwardSpeed + strafeVec[2] * strafeSpeed;
-
-    watch("Angles: (%f,\t%f,\t%f)\n", cam->angles[0], cam->angles[1], cam->angles[2]);
-    watch("Position: (%f,\t%f,\t%f)\n", cam->position[0], cam->position[1], cam->position[2]);
-    watch("\n");
-
+   
+ 
     // reverse quat rotation
     rotaCamXYZ[1] *= -1.0f;
     rotaCamXYZ[2] *= -1.0f;
@@ -68,7 +75,7 @@ void update(Camera* cam) {
 
     rotateQ(cam->orientation, rotaCamXYZ);
     translate(cam->translation, -cam->position[0], -cam->position[1], -cam->position[2]); // faellt spaeter weg
-    perspective(cam->perspective, 1, 10000, FOV, ASPECT_RATIO);
+    perspectiveInf(cam->perspective, 1.0f, fovx, ASPECT_RATIO);
 }
 
 void cursorCB(GLFWwindow* win, double xpos, double ypos) {
@@ -90,6 +97,7 @@ void cursorEnterCB(GLFWwindow* win, int enter) {
 
 void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
 
+    /*
     Camera* cam = renderer->mainCam;
 
     if (cam->defaultSpeed > 1) {
@@ -99,6 +107,11 @@ void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
     }
 
     cam->defaultSpeed = MAX(cam->defaultSpeed, 0.1);
+    */
+    
+
+    fovx += -1.0f * yoffset;
+    
 }
 
 void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods) {

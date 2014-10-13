@@ -6,7 +6,7 @@
 
 void addShader(const char* srcFile, GLenum type, GLuint prog, Cache* shaderCache) {
 
-    info("–");
+    info("%s","---");
     GLuint shaderId = get(shaderCache, srcFile);
 
     if (!shaderId) {

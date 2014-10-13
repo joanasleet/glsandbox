@@ -10,8 +10,8 @@
 #define NEAR_PLANE (0.1f)
 #define FAR_PLANE (10000.0f)
 
-#define TURN_SPEED 0.01f
-#define DEFAULT_CAM_SPEED 0.5f
+#define TURN_SPEED (0.1f)
+#define DEFAULT_CAM_SPEED (0.5f)
 
 #define newCam() (createCamera(0, 10, 0))
 
