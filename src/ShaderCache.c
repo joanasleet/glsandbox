@@ -6,10 +6,7 @@
 Element* newElement(const char* key, GLint value) {
     Element* element = (Element*) malloc(sizeof (Element));
     return_guard(element, NULL);
-    /*if (!element) {
-        err("Failed to allocate Element");
-        return NULL;
-    }*/
+    
     element->key = key;
     element->value = value;
 
@@ -23,11 +20,7 @@ Cache* newCache() {
     Cache* cache = (Cache*) malloc(sizeof (Cache));
 
     return_guard(cache, NULL);
-    /*if (!cache) {
-        err("Failed to allocate Cache");
-        return NULL;
-    }*/
-
+    
     for (int i = 0; i < BUCKETS; ++i) {
         cache->buckets[i].last = NULL;
     }

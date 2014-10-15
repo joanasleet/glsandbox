@@ -4,7 +4,7 @@
 #include "Debugger.h"
 #include "SceneManager.h"
 #include "Script.h"
-//#include "Texture.h"
+#include "Texture.h"
 
 #define SCENE_LOADER "scripts/loadScene.lua"
 
@@ -28,9 +28,12 @@ void loadScene(Engine* renderer) {
         /* mesh name */
         info("Adding mesh: %s", popString());
 
+
         /* vao type */
         uint32 vaoType = (uint32) popInt();
         mesh->vaoId = genVao((VaoType) vaoType, 100000.0f, 1000.0f, 0.0f, 0.0f, 0.0f);
+
+        // TODO: read vao params from scene
 
         /* texture */
 

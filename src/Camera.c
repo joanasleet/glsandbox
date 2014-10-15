@@ -55,24 +55,14 @@ void update(Camera* cam) {
     multMatVec(rotaMat, forwardVec, cam->forward);
     multMatVec(rotaMat, rightVec, strafeVec);
 
-    watch("forward: (%.2f,\t%.2f,\t%.2f,\t%.2f)\n", cam->forward[0], cam->forward[1], cam->forward[2], cam->forward[3]);
-    watch("strafe: (%.2f,\t%.2f,\t%.2f,\t%.2f)\n", strafeVec[0], strafeVec[1], strafeVec[2], strafeVec[3]);
-    watch("Angles: (%.2f,\t%.2f,\t%.2f)\n", cam->angles[0], cam->angles[1], cam->angles[2]);
-    watch("Position: (%.2f,\t%.2f,\t%.2f)\n", cam->position[0], cam->position[1], cam->position[2]);
-    watch("%s\n"," ");
-
     float forwardSpeed = cam->speed[2];
     float strafeSpeed = cam->speed[0];
     cam->position[0] += cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed;
     cam->position[1] += cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1];
     cam->position[2] += cam->forward[2] * forwardSpeed + strafeVec[2] * strafeSpeed;
-   
- 
-    // reverse quat rotation
-    rotaCamXYZ[1] *= -1.0f;
-    rotaCamXYZ[2] *= -1.0f;
-    rotaCamXYZ[3] *= -1.0f;
-
+  
+    invertQ(rotaCamXYZ);
+    
     rotateQ(cam->orientation, rotaCamXYZ);
     translate(cam->translation, -cam->position[0], -cam->position[1], -cam->position[2]); // faellt spaeter weg
     perspectiveInf(cam->perspective, 1.0f, fovx, ASPECT_RATIO);
@@ -110,7 +100,7 @@ void scrollCB(GLFWwindow* win, double xoffset, double yoffset) {
     */
     
 
-    fovx += -1.0f * yoffset;
+    fovx += -2.0f * yoffset;
     
 }
 

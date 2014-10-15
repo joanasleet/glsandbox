@@ -25,4 +25,3 @@ double elapsedTime();
 void resetTimer();
 
 #endif	/* CONTEXT_H */
-

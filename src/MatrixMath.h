@@ -45,6 +45,7 @@ quat quatNew();
 void setQuat(quat q, float angle, float x, float y, float z);
 void multQ(quat q, quat r, quat target);
 void normQ(quat q);
+void invertQ(quat q);
 
 int isUnitQ(quat q);
 

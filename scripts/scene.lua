@@ -5,7 +5,7 @@ scene = {
     {
         name = "ground",
         vaoType = VaoType.PLANE,
-        texture = "textures/tiles.png",
+        texture = "textures/concrete.jpg",
         uniforms = {"P", "MV"},
         uniVarFuncs = {UniVarFuncType.Perspective, UniVarFuncType.ModelView},
         shaders = {"shaders/tex_light.vert", "shaders/tex_light.frag"}

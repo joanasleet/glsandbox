@@ -17,10 +17,10 @@ extern FILE* watchlog;
 #define debug(target, ...) (fprintf(target, ##__VA_ARGS__))
 #endif
 
+#define RVOID
+
 #define err_str() (strerror(errno))
 #define shit_happend() (errno != 0 ? 1 : 0)
-
-#define RVOID
 
 /*
  * Prints formatted INFO and ERROR messages. */
@@ -57,6 +57,8 @@ extern FILE* watchlog;
  * Checks for a system error and prints its error message. */
 #define check_syserr() do { check(!shit_happend(), err_str()); clear_syserr(); } while(0)
 
+/*
+ * Prints and calls function */
 #define info_call(f) do { info(#f); f; } while(0)
 
 

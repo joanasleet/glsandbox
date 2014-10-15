@@ -21,22 +21,22 @@ vec4 vec4New(float x, float y, float z, float w) {
  * # # # # # # # # # # #  Matrix # # # # # # # # # # # # # 
  * # # # # # # # # # # # # # # # # # # # # # # # # # # # # */
 
-mat4 mat4New() {
- 
+ mat4 mat4New() {
+
     mat4 matrix = (mat4) malloc(sizeof (float)*16);
 
     return matrix;
 }
 
 void add(mat4 A, mat4 B, mat4 target) {
-    
+
     for (int i = 0; i < 16; ++i) {
         target[i] = A[i] + B[i];
     }
 }
 
 void sub(mat4 A, mat4 B, mat4 target) {
-    
+
     for (int i = 0; i < 16; ++i) {
         target[i] = A[i] - B[i];
     }
@@ -99,9 +99,9 @@ void perspective(mat4 target, float near, float far, float fov, float ratio) {
     /* already transposed to column-major */
     float data[] = {
         e00,   0,   0,     0,
-          0, e11,   0,     0,
-          0,   0, e22, -1.0f,
-          0,   0, e32,     0
+        0, e11,   0,     0,
+        0,   0, e22, -1.0f,
+        0,   0, e32,     0
     };
 
     _setData(target, data);
@@ -111,7 +111,7 @@ void perspectiveInf(mat4 target, float near, float fov, float ratio) {
 
     /* here, e22 and e32 are derived from taking the
      * limit of original e22 and e32 to infinity */
-    
+
     float e00 = 1/tanf(RAD(fov/2.0f));
     float e11 = ratio * e00;
     float e22 = -1.0f; 
@@ -120,9 +120,9 @@ void perspectiveInf(mat4 target, float near, float fov, float ratio) {
     /* already transposed to column-major */
     float data[] = {
         e00,   0,   0,     0,
-          0, e11,   0,     0,
-          0,   0, e22, -1.0f,
-          0,   0, e32,     0
+        0, e11,   0,     0,
+        0,   0, e22, -1.0f,
+        0,   0, e32,     0
     };
 
     _setData(target, data);
@@ -138,6 +138,8 @@ void rotate(mat4 target, float angle, float x, float y, float z) {
 
 void rotateQ(mat4 target, quat q) {
 
+    normQ(q);
+
     float xx = q[1]*q[1];
     float yy = q[2]*q[2];
     float zz = q[3]*q[3];
@@ -152,9 +154,9 @@ void rotateQ(mat4 target, quat q) {
     /* again, transposed */
     float data[] = {
         1-2.0f*(yy+zz),   2.0f*(xy+wz),   2.0f*(xz-wy), 0,
-          2.0f*(xy-wz), 1-2.0f*(xx+zz),   2.0f*(yz+wx), 0,
-          2.0f*(xz+wy),   2.0f*(yz-wx), 1-2.0f*(xx+yy), 0,
-                0,         0,         0, 1
+        2.0f*(xy-wz), 1-2.0f*(xx+zz),   2.0f*(yz+wx), 0,
+        2.0f*(xz+wy),   2.0f*(yz-wx), 1-2.0f*(xx+yy), 0,
+        0,         0,         0, 1
     };
 
     _setData(target, data);
@@ -166,7 +168,7 @@ void rotateQ(mat4 target, quat q) {
  * # # # # # # # # # # # Quaternions # # # # # # # # # # # 
  * # # # # # # # # # # # # # # # # # # # # # # # # # # # # */
 
-quat quatNew() {
+ quat quatNew() {
 
     float* versor = (float*) malloc(sizeof(float)*4);
 
@@ -201,10 +203,21 @@ void normQ(quat q) {
 
     float norm = sqrtf(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
 
+    /* return if of unit length */
+    if( (norm -1.0f) < 0.000001f ) return; 
+
     q[0] /= norm;
     q[1] /= norm;
     q[2] /= norm;
     q[3] /= norm;
+}
+
+void invertQ(quat q) {
+
+    /* invert axis only */
+    q[1] *= -1.0f;
+    q[2] *= -1.0f;
+    q[3] *= -1.0f;
 }
 
 /* private helper */
