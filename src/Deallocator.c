@@ -51,13 +51,16 @@ void deallocStores() {
         }
         free(freeMe);
     }
+    nextBufferSlot = 0;
 
     glDeleteBuffers(nextVboSlot, vbos);
+    nextVboSlot = 0;
 
     for (int i = 0; i < nextShaderSlot; i++) {
         glDeleteShader(shaders[i]);
     }
-
+    nextShaderSlot = 0;
+    
 }
 
 void printStores() {

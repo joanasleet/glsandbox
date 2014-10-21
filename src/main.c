@@ -20,12 +20,6 @@ Engine* renderer;
 
 int main(int argc, char** argv) {
 
-    //float M[16];
-    //translate(M, 1, -2, 33.2865f);
-    //printMat(M);
-       
-    //return 0;
-    
     clear_syserr();
     clear_logs();
 
@@ -33,10 +27,10 @@ int main(int argc, char** argv) {
     loadScene(renderer);
 
     enterLoop(renderer);
-    check_syserr();
+    //check_syserr();
 
     terminate(renderer);
-    check_syserr();
+    //check_syserr();
 
     return EXIT_SUCCESS;
 }

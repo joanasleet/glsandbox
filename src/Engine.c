@@ -4,7 +4,6 @@
 #include "ShaderUtil.h"
 #include "Deallocator.h"
 
-
 //#include <time.h>
 //#include <sys/time.h>
 
@@ -23,7 +22,7 @@ Engine* init() {
 
     Engine* renderer = (Engine*) malloc(sizeof (Engine));
 
-    renderer->glContext = newContext();
+    renderer->context = newContext();
     renderer->mainCam = newCam();
 
     renderer->shaderCache = newCache();
@@ -36,7 +35,7 @@ Engine* init() {
     glCullFace(GL_BACK);
 #endif
 
-    GLFWwindow* window = renderer->glContext->win;
+    GLFWwindow* window = renderer->context->win;
 
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -139,7 +138,6 @@ void renderMeshes(Engine* renderer) {
     for (unsigned int i = 0; i < renderer->meshCount; ++i) {
         render(renderer->meshes[i], renderer);
     }
-    
 }
 
 void enterLoop(Engine* renderer) {
@@ -154,7 +152,7 @@ void enterLoop(Engine* renderer) {
     useconds_t usec = 16000;
 
     Camera* cam = renderer->mainCam;
-    GLFWwindow* window = renderer->glContext->win;
+    GLFWwindow* window = renderer->context->win;
 
     info("%s", "–––––––––– Rendering ––––––––––");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
@@ -188,7 +186,7 @@ void terminate(Engine* renderer) {
     
     freeMeshes(renderer);
 
-    free(renderer->glContext);
+    free(renderer->context);
     
     free(renderer->mainCam->perspective);
     free(renderer->mainCam->translation);

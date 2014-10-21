@@ -57,8 +57,8 @@ void contextErrorCB(int code, const char* msg) {
 }
 
 void resizeCB(GLFWwindow* win, int w, int h) {
-    renderer->glContext->xRes = w;
-    renderer->glContext->yRes = h;
+    renderer->context->xRes = w;
+    renderer->context->yRes = h;
     glViewport(0, 0, w, h);
 }
 
@@ -73,7 +73,7 @@ void fps() {
         prevTime = currTime;
         char title[20];
         sprintf(title, "OpenGL @ %.2f", (double) frames / diffTime);
-        glfwSetWindowTitle(renderer->glContext->win, title);
+        glfwSetWindowTitle(renderer->context->win, title);
         frames = 0;
     }
     ++frames;

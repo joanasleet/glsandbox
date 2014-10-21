@@ -61,7 +61,6 @@ extern FILE* watchlog;
  * Prints and calls function */
 #define info_call(f) do { info(#f); f; } while(0)
 
-
 /*
  * Prints formatted info string to the scrolling log. */
 #define log_info(msg, ...) \

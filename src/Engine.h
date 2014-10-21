@@ -12,7 +12,7 @@ typedef struct Engine {
     uint32 meshCount;
 
     Camera* mainCam;
-    Context* glContext;
+    Context* context;
 
     Cache* shaderCache;
     Cache* uniformCache;

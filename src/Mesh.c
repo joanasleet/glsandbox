@@ -86,10 +86,15 @@ void MVP(GLint loc, Camera* cam) {
     mat4 orientation = cam->orientation;
     mat4 translation = cam->translation;
 
-    float MVP[16];
-    mult(P, orientation, MVP);
-    mult(MVP, translation, MVP);
-    glUniformMatrix4fv(loc, 1, GL_FALSE, MVP);
+    GLfloat VPmat[16];
+    mult(P, orientation, VPmat);
+
+    GLfloat MVPmat[16];
+    mult(VPmat, translation, MVPmat);
+
+    //printMat(MVPmat);
+
+    glUniformMatrix4fv(loc, 1, GL_FALSE, MVPmat);
 }
 
 void MVPnoTrans(GLint loc, Camera* cam) {

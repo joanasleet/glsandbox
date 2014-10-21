@@ -13,7 +13,7 @@
 #define TURN_SPEED (0.1f)
 #define DEFAULT_CAM_SPEED (0.5f)
 
-#define newCam() (createCamera(0, 10, 0))
+#define newCam() (createCamera(0, 0, 0))
 
 typedef struct {
 
@@ -27,10 +27,20 @@ typedef struct {
     uint8 mouseGrab;
     uint8 wireframe;
     
+
+    // replaces orientation
     vec3 angles;
+    // no need to store this
     mat4 orientation;
+
+    // can be derived from position
     mat4 translation;
+
+    // update on init and callback
     mat4 perspective;
+    // use:
+    //float fov;
+    //float aspectRatio;
 
 } Camera;
 
