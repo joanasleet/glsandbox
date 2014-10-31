@@ -194,17 +194,14 @@ void multQ(quat q, quat r, quat target) {
     target[3] = r[0]*q[3] - r[1]*q[2] + r[2]*q[1] + r[3]*q[0];
 }
 
-int isUnitQ(quat q) {
-    float norm = sqrtf(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
-    return (norm - 1.0f) < 0.000001f;
-}
-
 void normQ(quat q) {
 
-    float norm = sqrtf(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
+    float norm = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
 
     /* return if of unit length */
-    if( (norm -1.0f) < 0.000001f ) return; 
+    if( (norm-1.0f) < 0.00001f ) return; 
+
+    norm = sqrtf(norm);
 
     q[0] /= norm;
     q[1] /= norm;

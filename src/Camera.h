@@ -39,8 +39,8 @@ typedef struct {
     // update on init and callback
     mat4 perspective;
     // use:
-    //float fov;
-    //float aspectRatio;
+    float fov;
+    float aspectRatio;
 
 } Camera;
 

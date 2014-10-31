@@ -18,6 +18,10 @@ Engine* renderer;
 - simple terrain
  */
 
+void func(float f) {
+    printf("%f\n", f);
+}
+
 int main(int argc, char** argv) {
 
     clear_syserr();
@@ -27,10 +31,8 @@ int main(int argc, char** argv) {
     loadScene(renderer);
 
     enterLoop(renderer);
-    //check_syserr();
-
+    
     terminate(renderer);
-    //check_syserr();
 
     return EXIT_SUCCESS;
 }

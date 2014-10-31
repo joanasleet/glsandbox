@@ -1,4 +1,4 @@
-VaoType = require "scripts.VaoType"
+MeshType = require "scripts.MeshType"
 UniVarFuncType = require "scripts.UniVarFuncType"
 
 --[[
@@ -23,13 +23,27 @@ scene = {
 ]]
 
 scene = {
-    {
-        name = "sphere",
-        vaoType = VaoType.SPHERE,
-        texture = "textures/brick.png",
-        uniforms = {"MVP"},
-        uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
-        shaders = {"shaders/debug.vert", "shaders/debug.frag"}
+
+    camera = {
+        fov = 60,
+        aspectRatio = 16/9,
+        position = {0, 10, 500}
+    },
+
+    objects = {
+        {
+            name = "sphere",
+            mesh = {
+                type = MeshType.PLANE,
+                size = 1000,
+                texres = 1,
+                position = {0, -50, -500}
+            },
+            material = {"textures/brick.png"},
+            uniforms = {"MVP"},
+            uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
+            shaders = {"shaders/debug.vert", "shaders/debug.frag"}
+        }
     }
 }
 

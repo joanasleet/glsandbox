@@ -47,8 +47,6 @@ void multQ(quat q, quat r, quat target);
 void normQ(quat q);
 void invertQ(quat q);
 
-int isUnitQ(quat q);
-
 /* private helper */
 void _setData(mat4 target, float* data);
 void _printM(mat4 A, const char* name);

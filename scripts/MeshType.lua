@@ -1,6 +1,4 @@
--- VaoType module
-
-local VaoType = {
+local MeshType = {
     PLANE = 0,
     CUBE = 1,
     SPHERE = 2,
@@ -9,4 +7,4 @@ local VaoType = {
     TERRAIN = 5
 }
 
-return VaoType
+return MeshType

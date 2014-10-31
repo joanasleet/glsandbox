@@ -14,11 +14,19 @@ void loadScene(Engine* renderer) {
     initScript(SCENE_LOADER);
     exeScript();
 
+    // camera
+    renderer->mainCam->fov = (float) popFloat();
+    renderer->mainCam->aspectRatio = (float) popFloat();
+    renderer->mainCam->position[0] = popFloat();
+    renderer->mainCam->position[1] = popFloat();
+    renderer->mainCam->position[2] = popFloat();
+
     uint32 meshCount = (uint32) popInt();
 
     info("Found meshes: %d", meshCount);
     return_guard(meshCount, RVOID);
 
+    // objects
     Mesh** meshes = (Mesh**) malloc(sizeof (Mesh*) * meshCount);
 
     Mesh* mesh;
@@ -31,18 +39,54 @@ void loadScene(Engine* renderer) {
 
         /* vao type */
         uint32 vaoType = (uint32) popInt();
-        mesh->vaoId = genVao((VaoType) vaoType, 100000.0f, 1000.0f, 0.0f, 0.0f, 0.0f);
 
-        // TODO: read vao params from scene
+        float size = popFloat();
+        float texres = popFloat();
+        float midX = popFloat();
+        float midY = popFloat();
+        float midZ = popFloat();
+        mesh->vaoId = genVao((VaoType) vaoType, size, texres, midX, midY, midZ);
 
         /* texture */
-
-        /* TODO
-         * check for multiple texture maps */
-
-        const char* diffMap = popString();
+        
+        int32 texCount = popInt();
+               
         Material* mat = newMaterial();
-        mat->diffuseMap = newTex(diffMap);
+
+        switch (texCount) {
+            case 1:
+                mat->diffuseMap = newTex(popString());
+                break;
+            case 2:
+                mat->diffuseMap = newTex(popString());
+                mat->specularMap = newTex(popString());
+                break;
+            case 3:
+                mat->diffuseMap = newTex(popString());
+                mat->specularMap = newTex(popString());
+                mat->normalMap = newTex(popString());
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                {
+                    const char* faces[6];
+                    faces[0] = popString();
+                    faces[1] = popString();
+                    faces[2] = popString();
+                    faces[3] = popString();
+                    faces[4] = popString();
+                    faces[5] = popString();
+
+                    mat->diffuseMap = cubeTexture((const char**) faces, 0, 0);
+                }
+                break;
+            default:
+                break;
+        }
+
         mesh->mats = mat;
 
         /* uniform count */

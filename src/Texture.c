@@ -11,8 +11,8 @@ Material* newMaterial() {
     return_guard(material, NULL);
 
     material->diffuseMap = NULL;
-    material->ambientMap = NULL;
     material->specularMap = NULL;
+    material->normalMap = NULL;
 
     return material;
 }
@@ -20,8 +20,8 @@ Material* newMaterial() {
 void freeMaterial(Material* mat) {
 
     freeTexture(mat->diffuseMap);
-    freeTexture(mat->ambientMap);
     freeTexture(mat->specularMap);
+    freeTexture(mat->normalMap);
     free(mat);
 }
 

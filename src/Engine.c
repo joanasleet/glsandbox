@@ -105,17 +105,17 @@ void render(Mesh* mesh, Engine* renderer) {
     glBindTexture(diff->target, diff->id);
 
     /*
-     * ambient and specular are optional */
-    Texture* amb = mat->ambientMap;
-    if (amb) {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(amb->target, amb->id);
-    }
-
+     * normal and specular are optional */
     Texture* spec = mat->specularMap;
     if (spec) {
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(spec->target, spec->id);
+    }
+
+    Texture* normals = mat->normalMap;
+    if (normals) {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(normals->target, normals->id);
     }
 
     glBindVertexArray(mesh->vaoId);

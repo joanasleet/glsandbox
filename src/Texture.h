@@ -30,8 +30,8 @@ Texture* nullTexture();
 
 typedef struct {
     Texture* diffuseMap;
-    Texture* ambientMap;
     Texture* specularMap;
+    Texture* normalMap;
 } Material;
 
 Material* newMaterial();
