@@ -13,8 +13,6 @@
 #define TURN_SPEED (0.1f)
 #define DEFAULT_CAM_SPEED (0.5f)
 
-#define newCam() (createCamera(0, 0, 0))
-
 typedef struct {
 
     vec3 speed;
@@ -44,14 +42,8 @@ typedef struct {
 
 } Camera;
 
-Camera* createCamera(float x, float y, float z);
+Camera* newCamera(float x, float y, float z);
 void update(Camera* cam);
-
-void cursorCB(GLFWwindow* win, double xpos, double ypos);
-void cursorEnterCB(GLFWwindow* win, int enter);
-void scrollCB(GLFWwindow* win, double xoffset, double yoffset);
-void keyCB(GLFWwindow* win, int key, int scancode, int action, int mods);
-
 void screenshot();
 
 #endif	/* CAMERA_H */

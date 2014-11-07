@@ -3,11 +3,9 @@
 #include "Camera.h"
 #include "Debugger.h"
 
-#include <string.h>
+#include "LookupManager.h"
 
-UniformVarFunc uniVarFuncLUT[] = {
-    P, MV, MVP, MVPnoTrans
-};
+#include <string.h>
 
 Mesh* newMesh() {
     Mesh* mesh = (Mesh*) malloc(sizeof (Mesh));

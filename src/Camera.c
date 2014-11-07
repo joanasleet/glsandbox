@@ -9,9 +9,7 @@
 
 extern Engine* renderer;
 
-float fovx = 60.0f;
-
-Camera* createCamera(float x, float y, float z) {
+Camera* newCamera(float x, float y, float z) {
     Camera* cam = (Camera*) malloc(sizeof (Camera));
 
     exit_guard(cam);
@@ -65,7 +63,7 @@ void update(Camera* cam) {
     
     rotateQ(cam->orientation, rotaCamXYZ);
     translate(cam->translation, -cam->position[0], -cam->position[1], -cam->position[2]); // faellt spaeter weg
-    perspectiveInf(cam->perspective, 1.0f, fovx, ASPECT_RATIO);
+    perspectiveInf(cam->perspective, 1.0f, cam->fov, cam->aspectRatio);
 }
 
 void screenshot() {

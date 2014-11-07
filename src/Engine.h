@@ -32,6 +32,4 @@ void preloadMeshes(Engine* renderer);
 void render(Mesh* mesh, Engine* renderer);
 void renderMeshes(Engine* renderer);
 
-
 #endif	/* ENGINE_H */
-

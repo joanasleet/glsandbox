@@ -6,6 +6,8 @@
 #include "Script.h"
 #include "Texture.h"
 
+#include "LookupManager.h"
+
 #define SCENE_LOADER "scripts/loadScene.lua"
 
 void loadScene(Engine* renderer) {
@@ -17,9 +19,9 @@ void loadScene(Engine* renderer) {
     // camera
     renderer->mainCam->fov = (float) popFloat();
     renderer->mainCam->aspectRatio = (float) popFloat();
-    renderer->mainCam->position[0] = popFloat();
-    renderer->mainCam->position[1] = popFloat();
-    renderer->mainCam->position[2] = popFloat();
+    renderer->mainCam->position[0] = (float) popFloat();
+    renderer->mainCam->position[1] = (float) popFloat();
+    renderer->mainCam->position[2] = (float) popFloat();
 
     uint32 meshCount = (uint32) popInt();
 
@@ -36,7 +38,6 @@ void loadScene(Engine* renderer) {
         /* mesh name */
         info("Adding mesh: %s", popString());
 
-
         /* vao type */
         uint32 vaoType = (uint32) popInt();
 
@@ -45,46 +46,45 @@ void loadScene(Engine* renderer) {
         float midX = popFloat();
         float midY = popFloat();
         float midZ = popFloat();
-        mesh->vaoId = genVao((VaoType) vaoType, size, texres, midX, midY, midZ);
+        mesh->vaoId = genVao(vaoType, size, texres, midX, midY, midZ);
 
         /* texture */
-        
         int32 texCount = popInt();
-               
+        
         Material* mat = newMaterial();
 
         switch (texCount) {
             case 1:
-                mat->diffuseMap = newTex(popString());
-                break;
+            mat->diffuseMap = newTex(popString());
+            break;
             case 2:
-                mat->diffuseMap = newTex(popString());
-                mat->specularMap = newTex(popString());
-                break;
+            mat->diffuseMap = newTex(popString());
+            mat->specularMap = newTex(popString());
+            break;
             case 3:
-                mat->diffuseMap = newTex(popString());
-                mat->specularMap = newTex(popString());
-                mat->normalMap = newTex(popString());
-                break;
+            mat->diffuseMap = newTex(popString());
+            mat->specularMap = newTex(popString());
+            mat->normalMap = newTex(popString());
+            break;
             case 4:
-                break;
+            break;
             case 5:
-                break;
+            break;
             case 6:
-                {
-                    const char* faces[6];
-                    faces[0] = popString();
-                    faces[1] = popString();
-                    faces[2] = popString();
-                    faces[3] = popString();
-                    faces[4] = popString();
-                    faces[5] = popString();
+            {
+                const char* faces[6];
+                faces[0] = popString();
+                faces[1] = popString();
+                faces[2] = popString();
+                faces[3] = popString();
+                faces[4] = popString();
+                faces[5] = popString();
 
-                    mat->diffuseMap = cubeTexture((const char**) faces, 0, 0);
-                }
-                break;
+                mat->diffuseMap = cubeTexture((const char**) faces, 0, 0);
+            }
+            break;
             default:
-                break;
+            break;
         }
 
         mesh->mats = mat;
@@ -111,7 +111,7 @@ void loadScene(Engine* renderer) {
         /* uniforms setter functions */
         UniformVarFunc *uniVarFuncs = (UniformVarFunc*) malloc(sizeof (UniformVarFunc) * uniformCount);
         for (uint8 i = 0; i < uniformCount; i++) {
-            uniVarFuncs[i] = uniVarFuncLUT[popInt()];
+            uniVarFuncs[i] = UniVarFuncs[popInt()];
         }
         mesh->setUniformFunc = uniVarFuncs;
 

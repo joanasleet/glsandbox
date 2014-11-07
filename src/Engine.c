@@ -1,29 +1,20 @@
 #include "Engine.h"
 #include "Debugger.h"
-#include "string.h"
 #include "ShaderUtil.h"
 #include "Deallocator.h"
+#include "InputManager.h"
+#include "LookupManager.h"
 
-//#include <time.h>
-//#include <sys/time.h>
-
+#include <string.h>
 #include <unistd.h>
 
-GLenum ShaderType[] = {
-    GL_VERTEX_SHADER,
-    GL_FRAGMENT_SHADER,
-    GL_TESS_CONTROL_SHADER,
-    GL_TESS_EVALUATION_SHADER,
-    GL_GEOMETRY_SHADER,
-    GL_COMPUTE_SHADER
-};
 
 Engine* init() {
 
     Engine* renderer = (Engine*) malloc(sizeof (Engine));
 
     renderer->context = newContext();
-    renderer->mainCam = newCam();
+    renderer->mainCam = newCamera(0.0f, 0.0f, 0.0f);
 
     renderer->shaderCache = newCache();
     renderer->uniformCache = newCache();

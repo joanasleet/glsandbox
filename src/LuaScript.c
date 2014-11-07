@@ -58,6 +58,7 @@ int hasNext() {
     return !lua_isnil(L, -1);
 }
 
+// TODO: sane fallback return values
 int popInt() {
     if (!lua_isnil(L, -1) && lua_isnumber(L, -1)) {
         int number = lua_tointeger(L, -1);

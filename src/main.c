@@ -18,10 +18,6 @@ Engine* renderer;
 - simple terrain
  */
 
-void func(float f) {
-    printf("%f\n", f);
-}
-
 int main(int argc, char** argv) {
 
     clear_syserr();

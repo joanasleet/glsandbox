@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <time.h>
 
 #define SCROLL_LOG_NAME "scroll.log"
 #define WATCH_LOG_NAME "watch.log"
@@ -101,6 +102,19 @@ do { \
     watchlog = fopen(WATCH_LOG_NAME, "w"); \
     check(watchlog, "Failed to open " WATCH_LOG_NAME); \
     fclose(watchlog); \
+} while(0) \
+
+/*
+ * Measures execution time of func */
+#define MEASURE(func) \
+do { \
+    clock_t start, end; \
+    double dt; \
+    start = clock(); \
+    func; \
+    end = clock(); \
+    dt = (double)(end-start) / CLOCKS_PER_SEC; \
+    printf("%s took %f sec.\n", #func, dt); \
 } while(0) \
 
 #endif	/* DEBUGGER_H */

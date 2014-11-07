@@ -5,13 +5,6 @@
 #include "Texture.h"
 #include "Camera.h"
 
-typedef enum {
-    Perspective,
-    ModelView,
-    ModelViewPerspective,
-    ModelViewPerspectiveNoTrans
-} UniVarFuncType;
-
 typedef void (*UniformVarFunc)(GLint, Camera*);
 typedef void (*DrawFunc)(GLenum, GLint*, GLsizei);
 
@@ -34,8 +27,6 @@ typedef struct {
     Material* mats;
 
 } Mesh;
-
-extern UniformVarFunc uniVarFuncLUT[];
 
 Mesh* newMesh();
 void freeMesh(Mesh* mesh);

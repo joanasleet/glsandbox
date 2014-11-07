@@ -1,4 +1,5 @@
 MeshType = require "scripts.MeshType"
+UniVarFuncType = require "scripts.UniVarFuncType"
 
 function unpackScene(s)
     local unpacked_scene = {}
@@ -133,4 +134,6 @@ function unpackScene(s)
     return table.unpack(unpacked_scene)
 end
 
-return unpackScene(dofile("scripts/scene.lua"))
+dofile("scripts/scene.lua") -- provides scene variable into this scope
+
+return unpackScene(scene)

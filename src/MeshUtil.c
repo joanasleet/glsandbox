@@ -1,16 +1,11 @@
 #include "MeshUtil.h"
 #include "Debugger.h"
 #include "Deallocator.h"
+#include "LookupManager.h"
 
-GLuint DrawMode[] = {
-    GL_QUADS, GL_QUADS, GL_TRIANGLE_FAN, GL_QUADS, GL_QUADS, GL_PATCHES
-};
+#include "string.h"
 
-GLsizei VertexCount[] = {
-    4, 24, 8004, 24, 4, 4
-};
-
-GLuint genVao(VaoType type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
+GLuint genVao(uint32 type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ) {
 
     switch (type) {
         case PLANE:
@@ -147,7 +142,7 @@ GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLf
     data[3] = 1.0f;
 
     for (int i = 4; i <= hsize; i += 4) {
-        
+
         y = sqrtf( abs(radius*radius - x*x) );
         //fprintf(stderr, "[x = %f]\t[y = %f]\n", x, y);
 
@@ -166,7 +161,7 @@ GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLf
         x += xstep;
     }
 
-      
+
     glBufferData(GL_ARRAY_BUFFER, size*sizeof(GLfloat), data, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -355,6 +350,49 @@ GLuint overlayVAO() {
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*16));
     glEnableVertexAttribArray(1);
+
+    return vao;
+}
+
+GLuint staticTextVAO(const char* text, GLfloat size, uint32 row, uint32 maxrows) {
+    int strl = strlen(text);
+
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
+
+    uint32 vertices = 4*4*strl;
+    GLfloat data[vertices];
+    GLfloat xstep = 2.0f / (float) strl;
+    GLfloat ystep = 2.0f/ (float) maxrows;
+    GLfloat rowf = (float) row * 2.0f/ (float) maxrows;
+    
+    info("Generating %d quads for text \"%s\"", strl, text);
+    for (int i = 0; i < strl; i+=4) {
+        data[i] = -1.0f + xstep*i; // x
+        data[i+1] = rowf; // y
+        data[i+2] = 0.0f;
+        data[i+3] = 1.0f;
+
+        data[i] = -1.0f + xstep*(i+1); // x
+        data[i+1] = rowf; // y
+        data[i+2] = 0.0f;
+        data[i+3] = 1.0f;
+
+        data[i] = -1.0f + xstep*(i+1); // x
+        data[i+1] = rowf + ystep; // y
+        data[i+2] = 0.0f;
+        data[i+3] = 1.0f;
+
+        data[i] = -1.0f + xstep*i; // x
+        data[i+1] = rowf + ystep; // y
+        data[i+2] = 0.0f;
+        data[i+3] = 1.0f;
+    }
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices, data, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
 
     return vao;
 }

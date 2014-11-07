@@ -50,7 +50,7 @@ GLuint compileShader(const char* srcFile, GLuint shaderId) {
     return shaderId;
 }
 
-char* bufferFile(const char* path) {
+char* bufferFile_old(const char* path) {
 
     char* fileContent = NULL;
     FILE* file = fopen(path, "r");
@@ -89,3 +89,28 @@ char* bufferFile(const char* path) {
     return fileContent;
 }
 
+char* bufferFile(const char* path) {
+
+    FILE* file = fopen(path, "rb");
+    exit_guard(file);
+    exit_guard(fseek(file, 0L, SEEK_END) == 0);
+    long int size = ftell(file);
+    fclose(file);
+
+    file = fopen(path,"r");
+    
+    char* fileContent;
+
+    if (file && (size > 0)) {
+        fileContent = (char*) malloc(sizeof (char) * (size+1));
+        fread(fileContent, sizeof(char), size, file);
+        fileContent[size] = '\0';
+    } else {
+        fclose(file);
+        err("File <%s> missing or empty.", path);
+        exit(EXIT_SUCCESS);
+    }
+
+    fclose(file);
+    return fileContent;
+}

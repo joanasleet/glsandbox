@@ -3,6 +3,8 @@
 #include "Debugger.h"
 #include "Engine.h"
 
+#include "LookupManager.h"
+
 extern Engine* renderer;
 
 Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
@@ -79,42 +81,6 @@ void fps() {
     ++frames;
 }
 
-/*
-double elapsedTime() {
-    static double startTime = glfwGetTime();
-    return (glfwGetTime() - startTime);
-}
-
-void resetTimer() {
-    glfwSetTime(0.0);
-} */
-
-/* where to put this shit ? */
-const char* SEVERITY_LVL[] = {
-    "HIGH",
-    "MEDIUM",
-    "LOW",
-    "NOTE"
-};
-
-const char* SOURCE[] = {
-    "API",
-    "WINDOW SYSTEM",
-    "SHADER COMPILER",
-    "THIRD PARTY",
-    "APPLICATION",
-    "OTHER"
-};
-
-const char* TYPE[] = {
-    "ERROR",
-    "DEPRECATED BEHAVIOUR",
-    "UNDEFINED DEHAVIOUR",
-    "PORTABILITY",
-    "PERFORMANCE",
-    "OTHER"
-};
-
 void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
         GLsizei length, const GLchar *msg, const void* userParam) {
 
@@ -127,6 +93,6 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
     }
 
     debug(stderr, "[%s %s %s] (Id: %u)\n- .%s\n",
-            SOURCE[src_i], TYPE[type_i], SEVERITY_LVL[sev_i], id, msg);
+            ERR_SOURCE[src_i], ERR_TYPE[type_i], ERR_SEVERITY[sev_i], id, msg);
     fflush(stderr);
 }
