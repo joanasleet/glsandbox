@@ -46,7 +46,7 @@ scene = {
             material = {"fontsheet/font.png"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
-            shaders = {"shaders/overlay.vert", "shaders/overlay.frag"}
+            shaders = {"shaders/debug.vert", "shaders/debug.frag"}
         }
     }
 }

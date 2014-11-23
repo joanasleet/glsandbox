@@ -49,7 +49,7 @@ GLuint DrawMode[] = {
 };
 
 GLsizei VertexCount[] = {
-    4, 24, 8004, 24, 4, 4
+    4, 24, 8004, 24, 40, 4
 };
 
 // VaoType defined in header

@@ -18,26 +18,26 @@ glBindBuffer(target, name); \
 storeVbo(name); \
 
 /* vao factory */
-GLuint genVao(uint32 type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
+GLuint genVao(uint32 type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
 /* facing inside */
-GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
+GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
 /* facing outside */
-GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
+GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
 /* facing up */
-GLuint planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
+GLuint planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
 /* terrain */
-GLuint terrainVAO(GLfloat xlength, GLfloat midX, GLfloat midY, GLfloat midZ);
+GLuint terrainVAO(GLfloat xlength, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
 /* facing outside */
-GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ);
+GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
-GLuint overlayVAO();
+GLuint staticTextVAO(const char* text, GLfloat size, GLfloat x, GLfloat y, int32* vertcount);
 
-GLuint staticTextVAO(const char* text, GLfloat size, uint32 row, uint32 maxrows);
+GLuint overlayVAO(int32* vertcount);
 
 #endif	/* GLHELPER_H */
 

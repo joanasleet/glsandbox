@@ -46,7 +46,7 @@ void loadScene(Engine* renderer) {
         float midX = popFloat();
         float midY = popFloat();
         float midZ = popFloat();
-        mesh->vaoId = genVao(vaoType, size, texres, midX, midY, midZ);
+        mesh->vaoId = genVao(vaoType, size, texres, midX, midY, midZ, &(mesh->count));
 
         /* texture */
         int32 texCount = popInt();
@@ -134,7 +134,7 @@ void loadScene(Engine* renderer) {
 
         mesh->drawFunc = drawArrays;
         mesh->first = 0;
-        mesh->count = VertexCount[vaoType];
+        //mesh->count = VertexCount[vaoType]; // replaced by vertcount pointer
         mesh->mode = DrawMode[vaoType];
 
         meshes[j] = mesh;

@@ -4,10 +4,13 @@
 #include "Script.h"
 #include "MatrixMath.h"
 
-FILE* scrolllog;
-FILE* watchlog;
+#include <unistd.h>
+#include <string.h>
 
-Engine* renderer;
+FILE *scrolllog;
+FILE *watchlog;
+
+Engine *renderer;
 
 /* progress TODO:
 - overlay with fonts
@@ -18,7 +21,9 @@ Engine* renderer;
 - simple terrain
  */
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
+
+   
 
     clear_syserr();
     clear_logs();
@@ -27,7 +32,7 @@ int main(int argc, char** argv) {
     loadScene(renderer);
 
     enterLoop(renderer);
-    
+
     terminate(renderer);
 
     return EXIT_SUCCESS;

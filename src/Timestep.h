@@ -1,9 +1,12 @@
 #ifndef TIMESTEP_H
 #define	TIMESTEP_H
 
-#include "common.h"
+#define MILLI_SEC 1000000L
 
-// TODO
+void startTimer();
+long stopTimer();
+
+void wait(long nanosec);
 
 #endif
 
