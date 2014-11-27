@@ -36,17 +36,29 @@ scene = {
 
     objects = {
         {
-            name = "overlay",
+            name = "test",
             mesh = {
                 type = MeshType.OVERLAY,
                 size = 1000,
                 texres = 1,
                 position = {0, 0, 0}
             },
-            material = {"fontsheet/font.png"},
+            material = {"textures/brick.png"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
             shaders = {"shaders/debug.vert", "shaders/debug.frag"}
+        },
+        {
+            mesh = {
+                type = MeshType.PLANE,
+                size = 1000,
+                texres = 100,
+                position = {0, 0, 0}
+            },
+            material = {"textures/tiles.png"},
+            uniforms = {"MVP"},
+            uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
+            shaders = {"shaders/base.vert", "shaders/tex.frag"}
         }
     }
 }

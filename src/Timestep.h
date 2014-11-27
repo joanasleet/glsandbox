@@ -4,7 +4,7 @@
 #define MILLI_SEC 1000000L
 
 void startTimer();
-long stopTimer();
+double elapsedTime();
 
 void wait(long nanosec);
 

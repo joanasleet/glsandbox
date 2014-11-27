@@ -18,7 +18,7 @@ GLuint genVao(uint32 type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat
     case CUBE:
         return cubeVAO(length, texRes, midX, midY, midZ, vertcount);
     case SPHERE:
-        return sphereVAO(length, texRes, midX, midY, midZ, vertcount);
+        return circleVAO(length, texRes, midX, midY, midZ, vertcount);
     case CUBEMAP:
         return cubeMapVAO(length, texRes, midX, midY, midZ, vertcount);
     case OVERLAY:
@@ -128,7 +128,7 @@ GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GL
     return vao;
 }
 
-GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount) {
+GLuint circleVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -345,7 +345,7 @@ GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, int3
 
 GLuint overlayVAO(int32* vertcount) {
 
-    return staticTextVAO("Hello OpenGL", 30, -1, 1, vertcount);
+    // return staticTextVAO("Hello OpenGL", 30, -1, 1, vertcount);
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);

@@ -1,17 +1,16 @@
 #include "Engine.h"
 #include "Debugger.h"
+#include "Timestep.h"
 #include "ShaderUtil.h"
 #include "Deallocator.h"
 #include "InputManager.h"
 #include "LookupManager.h"
 
 #include <string.h>
-#include <unistd.h>
 
+Engine *init() {
 
-Engine* init() {
-
-    Engine* renderer = (Engine*) malloc(sizeof (Engine));
+    Engine *renderer = (Engine *) malloc(sizeof (Engine));
 
     renderer->context = newContext();
     renderer->mainCam = newCamera(0.0f, 0.0f, 0.0f);
@@ -26,7 +25,7 @@ Engine* init() {
     glCullFace(GL_BACK);
 #endif
 
-    GLFWwindow* window = renderer->context->win;
+    GLFWwindow *window = renderer->context->win;
 
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -46,10 +45,10 @@ Engine* init() {
     return renderer;
 }
 
-void preload(Mesh* mesh, Engine* renderer) {
+void preload(Mesh *mesh, Engine *renderer) {
 
     GLint prog = mesh->shaderProgram;
-    const char* shader;
+    const char *shader;
 
     /* cache shaders */
     for (int i = 0; i < mesh->shadersLen; ++i) {
@@ -62,8 +61,8 @@ void preload(Mesh* mesh, Engine* renderer) {
 
     /* cache uniform locations */
     GLint loc;
-    const char* str;
-    const char* key;
+    const char *str;
+    const char *key;
 
     for (int i = 0; i < mesh->uniLen; ++i) {
         str = mesh->uniforms[i];
@@ -73,37 +72,37 @@ void preload(Mesh* mesh, Engine* renderer) {
     }
 }
 
-void render(Mesh* mesh, Engine* renderer) {
+void render(Mesh *mesh, Engine *renderer) {
 
     GLint loc;
     glUseProgram(mesh->shaderProgram);
 
-    char* tempstr;
+    char *tempstr;
 
     for (int i = 0; i < mesh->uniLen; ++i) {
-        tempstr = (char*) getKey(mesh->uniforms[i], mesh->shaderProgram);
+        tempstr = (char *) getKey(mesh->uniforms[i], mesh->shaderProgram);
         loc = get(renderer->uniformCache, tempstr);
         free(tempstr);
         (*mesh->setUniformFunc[i])(loc, renderer->mainCam);
     }
 
-    Material* mat = mesh->mats;
+    Material *mat = mesh->mats;
 
     /*
      * at least bind diffuse map */
-    Texture* diff = mat->diffuseMap;
+    Texture *diff = mat->diffuseMap;
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(diff->target, diff->id);
 
     /*
      * normal and specular are optional */
-    Texture* spec = mat->specularMap;
+    Texture *spec = mat->specularMap;
     if (spec) {
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(spec->target, spec->id);
     }
 
-    Texture* normals = mat->normalMap;
+    Texture *normals = mat->normalMap;
     if (normals) {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(normals->target, normals->id);
@@ -113,72 +112,63 @@ void render(Mesh* mesh, Engine* renderer) {
     (*mesh->drawFunc)(mesh->mode, &mesh->first, mesh->count);
 }
 
-void exitIfNoMeshes(Engine* renderer) {
+void exitIfNoMeshes(Engine *renderer) {
     exit_guard(renderer->meshes[0]);
 }
 
-void preloadMeshes(Engine* renderer) {
+void preloadMeshes(Engine *renderer) {
     info("%s", "–––––– Preloading meshes ––––––");
     for (unsigned int i = 0; i < renderer->meshCount; ++i) {
         preload(renderer->meshes[i], renderer);
     }
 }
 
-void renderMeshes(Engine* renderer) {
-    
+void renderMeshes(Engine *renderer) {
+
     for (unsigned int i = 0; i < renderer->meshCount; ++i) {
         render(renderer->meshes[i], renderer);
     }
 }
 
-void enterLoop(Engine* renderer) {
+void enterLoop(Engine *renderer) {
 
     exit_guard(renderer);
 
     exitIfNoMeshes(renderer);
     preloadMeshes(renderer);
 
-    // move to timer class
-    //double startTime, endTime;
-    useconds_t usec = 16000;
+    Camera *cam = renderer->mainCam;
+    GLFWwindow *window = renderer->context->win;
 
-    Camera* cam = renderer->mainCam;
-    GLFWwindow* window = renderer->context->win;
+    double dt;
+    startTimer();
 
     info("%s", "–––––––––– Rendering ––––––––––");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
-        //printCache(renderer->uniformCache, stdout);
-        //printStores();
+        dt = elapsedTime();
 
-        //startTime = glfwGetTime();
-        //usec = 16000;
+        fps(dt);
 
-        fps();
-        update(cam);
+        update(cam, dt);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderMeshes(renderer);
-        
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-
-        // encapsulate into timer class
-        //endTime = glfwGetTime();
-        //usec += (long) ((startTime - endTime)*1000000.0);
-        usleep(usec);
     }
 }
 
-void terminate(Engine* renderer) {
+void terminate(Engine *renderer) {
 
     freeCache(renderer->shaderCache);
     freeCache(renderer->uniformCache);
-    
+
     freeMeshes(renderer);
 
     free(renderer->context);
-    
+
     free(renderer->mainCam->perspective);
     free(renderer->mainCam->translation);
     free(renderer->mainCam->orientation);
@@ -187,19 +177,19 @@ void terminate(Engine* renderer) {
     free(renderer->mainCam->forward);
     free(renderer->mainCam->speed);
     free(renderer->mainCam->position);
-            
+
     free(renderer->mainCam);
-    
+
     deallocStores();
 
     free(renderer);
-    
+
     glfwTerminate();
 }
 
-void freeMeshes(Engine* renderer) {
+void freeMeshes(Engine *renderer) {
 
-    Mesh* freeMe;
+    Mesh *freeMe;
     for (uint32 i = 0; i < renderer->meshCount; i++) {
         freeMe = renderer->meshes[i];
         freeMesh(freeMe);

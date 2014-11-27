@@ -7,10 +7,10 @@
 
 #include <time.h>
 
-extern Engine* renderer;
+extern Engine *renderer;
 
-Camera* newCamera(float x, float y, float z) {
-    Camera* cam = (Camera*) malloc(sizeof (Camera));
+Camera *newCamera(float x, float y, float z) {
+    Camera *cam = (Camera *) malloc(sizeof (Camera));
 
     exit_guard(cam);
 
@@ -33,7 +33,9 @@ Camera* newCamera(float x, float y, float z) {
     return cam;
 }
 
-void update(Camera* cam) {
+void update(Camera *cam, double dt) {
+
+    // dt = (float) dt;
 
     float rotaCamX[4], rotaCamY[4], rotaCamZ[4];
     setQuat(rotaCamY, cam->angles[1] * TURN_SPEED, 1, 0, 0);
@@ -55,12 +57,12 @@ void update(Camera* cam) {
 
     float forwardSpeed = cam->speed[2];
     float strafeSpeed = cam->speed[0];
-    cam->position[0] += cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed;
-    cam->position[1] += cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1];
-    cam->position[2] += cam->forward[2] * forwardSpeed + strafeVec[2] * strafeSpeed;
-  
+    cam->position[0] += (cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed) * dt;
+    cam->position[1] += (cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1]) * dt;
+    cam->position[2] += (cam->forward[2] * forwardSpeed + strafeVec[2] * strafeSpeed) * dt;
+
     invertQ(rotaCamXYZ);
-    
+
     rotateQ(cam->orientation, rotaCamXYZ);
     translate(cam->translation, -cam->position[0], -cam->position[1], -cam->position[2]); // faellt spaeter weg
     perspectiveInf(cam->perspective, 1.0f, cam->fov, cam->aspectRatio);
@@ -71,14 +73,14 @@ void screenshot() {
     unsigned int x = renderer->context->xRes;
     unsigned int y = renderer->context->yRes;
 
-    unsigned char* buffer = (unsigned char*) malloc(sizeof (unsigned char)*x * y * 3);
+    unsigned char *buffer = (unsigned char *) malloc(sizeof (unsigned char) * x * y * 3);
     glReadPixels(0, 0, x, y, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 
     char name[1024];
     long int t = time(NULL);
     sprintf(name, "screenshot_%ld.raw", t);
 
-    FILE* target = fopen(name, "wb");
+    FILE *target = fopen(name, "wb");
     if (!target) {
         fprintf(stderr, "Failed to open file %s", name);
         exit(EXIT_FAILURE);

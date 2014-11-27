@@ -13,7 +13,6 @@ FILE *watchlog;
 Engine *renderer;
 
 /* progress TODO:
-- overlay with fonts
 - fix timestep
 - add shader uniforms defaults
 - better architecture

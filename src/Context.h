@@ -14,7 +14,7 @@ typedef struct {
 
 Context* createContext(uint32 xres, uint32 yres, const char* title);
 
-void fps();
+void fps(double elapsed);
 void resizeCB(GLFWwindow* win, int w, int h);
 void contextErrorCB(int code, const char* msg);
 void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,

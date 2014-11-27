@@ -5,11 +5,11 @@
 
 #include "LookupManager.h"
 
-extern Engine* renderer;
+extern Engine *renderer;
 
-Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
-    info("%s","–––––––––––––––– Log Start ––––––––––––––––––");
-    Context* context = (Context*) malloc(sizeof (Context));
+Context *createContext(uint32 xRes, uint32 yRes, const char *title) {
+    info("%s", "–––––––––––––––– Log Start ––––––––––––––––––");
+    Context *context = (Context *) malloc(sizeof (Context));
     context->xRes = xRes;
     context->yRes = yRes;
 
@@ -17,7 +17,7 @@ Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
 
     exit_guard(glfwInit());
 
-    info("%s","GLFW initialized.");
+    info("%s", "GLFW initialized.");
 
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_DEPTH_BITS, 32);
@@ -28,22 +28,22 @@ Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
 
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
-        err("%s","Failed to create main window.");
+        err("%s", "Failed to create main window.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 
     glfwMakeContextCurrent(context->win);
-    info("%s","Main window created.");
+    info("%s", "Main window created.");
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        err("%s","Failed to start GLEW.");
+        err("%s", "Failed to start GLEW.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    info("%s","GLEW initialized.");
+    info("%s", "GLEW initialized.");
 
     if (GLEW_KHR_debug) {
         int param = -1;
@@ -54,27 +54,22 @@ Context* createContext(uint32 xRes, uint32 yRes, const char *title) {
     return context;
 }
 
-void contextErrorCB(int code, const char* msg) {
+void contextErrorCB(int code, const char *msg) {
     err("[CONTEXT] %s (Code %i)", msg, code);
 }
 
-void resizeCB(GLFWwindow* win, int w, int h) {
+void resizeCB(GLFWwindow *win, int w, int h) {
     renderer->context->xRes = w;
     renderer->context->yRes = h;
     glViewport(0, 0, w, h);
 }
 
-void fps() {
-    static double prevTime = 0;
-    static int frames = 0;
+void fps(double elapsed) {
+    static int frames;
 
-    double currTime = glfwGetTime();
-    double diffTime = currTime - prevTime;
-    
-    if (diffTime > 0.5) {
-        prevTime = currTime;
+    if (elapsed > 0.5) {
         char title[20];
-        sprintf(title, "OpenGL @ %.2f", (double) frames / diffTime);
+        snprintf(title, 20, "OpenGL @ %.2f", (double) frames / elapsed);
         glfwSetWindowTitle(renderer->context->win, title);
         frames = 0;
     }
@@ -82,7 +77,7 @@ void fps() {
 }
 
 void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
-        GLsizei length, const GLchar *msg, const void* userParam) {
+             GLsizei length, const GLchar *msg, const void *userParam) {
 
     int src_i = source - 0x8246;
     int type_i = type - 0x824C;
@@ -93,6 +88,6 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
     }
 
     debug(stderr, "[%s %s %s] (Id: %u)\n- .%s\n",
-            ERR_SOURCE[src_i], ERR_TYPE[type_i], ERR_SEVERITY[sev_i], id, msg);
+          ERR_SOURCE[src_i], ERR_TYPE[type_i], ERR_SEVERITY[sev_i], id, msg);
     fflush(stderr);
 }

@@ -5,12 +5,14 @@ layout(location = 1) in vec4 texcoord;
 
 uniform mat4 MVP;
 
+out vec4 vert_pos;
 out vec4 tex_coord;
 
 void main() {
     
-    //gl_Position = MVP * vertex_position;
-    gl_Position = vertex_position;
+    gl_Position = MVP * vertex_position;
+    // gl_Position = vertex_position;
+    vert_pos = vertex_position;
 
     tex_coord = texcoord;
 }

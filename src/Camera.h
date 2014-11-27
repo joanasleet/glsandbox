@@ -43,7 +43,7 @@ typedef struct {
 } Camera;
 
 Camera* newCamera(float x, float y, float z);
-void update(Camera* cam);
+void update(Camera* cam, double dt);
 void screenshot();
 
 #endif	/* CAMERA_H */

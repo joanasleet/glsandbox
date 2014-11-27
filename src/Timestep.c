@@ -10,15 +10,23 @@
 
 #include <time.h>
 
-// some static var tracking current time state
-
+static double start, current, elapsed;
+static struct timespec sleepPeriod;
 
 void startTimer() {
-
+    start = glfwGetTime();
 }
 
-long stopTimer() {
-
-	return 0L;
+double elapsedTime() {
+    current = glfwGetTime();
+    elapsed = current - start;
+    start = current;
+    return elapsed;
 }
 
+void wait(long nanosec) {
+    sleepPeriod.tv_sec = 0;
+    sleepPeriod.tv_nsec = nanosec;
+
+    nanosleep(&sleepPeriod, NULL);
+}

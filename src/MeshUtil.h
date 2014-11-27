@@ -33,6 +33,7 @@ GLuint planeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfl
 GLuint terrainVAO(GLfloat xlength, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
 /* facing outside */
+GLuint circleVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32* vertcount);
 
 GLuint staticTextVAO(const char* text, GLfloat size, GLfloat x, GLfloat y, int32* vertcount);
