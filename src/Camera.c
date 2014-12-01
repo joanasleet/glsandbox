@@ -33,9 +33,16 @@ Camera *newCamera(float x, float y, float z) {
     return cam;
 }
 
-void update(Camera *cam, double dt) {
+float fov_lerp(float step, float max) {
+    static float val = 60;
 
-    // dt = (float) dt;
+    if (val >= max)
+        return val;
+
+    return (val += step);
+}
+
+void update(Camera *cam, double dt) {
 
     float rotaCamX[4], rotaCamY[4], rotaCamZ[4];
     setQuat(rotaCamY, cam->angles[1] * TURN_SPEED, 1, 0, 0);
@@ -65,6 +72,7 @@ void update(Camera *cam, double dt) {
 
     rotateQ(cam->orientation, rotaCamXYZ);
     translate(cam->translation, -cam->position[0], -cam->position[1], -cam->position[2]); // faellt spaeter weg
+    
     perspectiveInf(cam->perspective, 1.0f, cam->fov, cam->aspectRatio);
 }
 

@@ -13,16 +13,20 @@ FILE *watchlog;
 Engine *renderer;
 
 /* progress TODO:
-- fix timestep
 - add shader uniforms defaults
 - better architecture
 - atmospheric scattering
 - simple terrain
  */
 
-int main(int argc, char **argv) {
+void test(int a) {
+    static int target = 0;
 
-   
+    target += a;
+    printf("%d\n", target);
+}
+
+int main(int argc, char **argv) {
 
     clear_syserr();
     clear_logs();

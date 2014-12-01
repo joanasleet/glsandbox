@@ -27,7 +27,7 @@ Engine *init() {
 
     GLFWwindow *window = renderer->context->win;
 
-    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClearColor(0.2, 0.5, 1.0, 1.0);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     glfwSetCursorEnterCallback(window, cursorEnterCB);
@@ -143,7 +143,7 @@ void enterLoop(Engine *renderer) {
     double dt;
     startTimer();
 
-    info("%s", "–––––––––– Rendering ––––––––––");
+    info("%s", "# # # # # # #  Rendering  # # # # # # #");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
         dt = elapsedTime();

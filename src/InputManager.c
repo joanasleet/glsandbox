@@ -146,6 +146,14 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
 
         }
         break;
+    case GLFW_KEY_Z:
+
+        if (action == GLFW_PRESS) {
+            cam->fov += 10.0f;
+        } else if (action == GLFW_RELEASE) {
+            cam->fov -= 10.0f;
+        }
+        break;
     default:
         return;
         break;

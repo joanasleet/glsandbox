@@ -31,7 +31,7 @@ scene = {
     camera = {
         fov = 60,
         aspectRatio = 16/9,
-        position = {0, 0, 10}
+        position = {0, 1, 10}
     },
 
     objects = {
@@ -41,7 +41,7 @@ scene = {
                 type = MeshType.OVERLAY,
                 size = 1000,
                 texres = 1,
-                position = {0, 0, 0}
+                position = {0, 1, 0}
             },
             material = {"textures/brick.png"},
             uniforms = {"MVP"},
@@ -49,16 +49,30 @@ scene = {
             shaders = {"shaders/debug.vert", "shaders/debug.frag"}
         },
         {
+            name = "plane",
             mesh = {
                 type = MeshType.PLANE,
-                size = 1000,
-                texres = 100,
+                size = 25,
+                texres = 5,
                 position = {0, 0, 0}
             },
             material = {"textures/tiles.png"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
             shaders = {"shaders/base.vert", "shaders/tex.frag"}
+        },
+        {
+            name = "sky",
+            mesh = {
+                type = MeshType.CUBEMAP,
+                size = 10000,
+                texres = 0,
+                position = {0, 0, 0}
+            },
+            material = {"textures/SBRIGHT.png", "textures/SBLEFT.png", "textures/SBTOP.png", "textures/SBBOTTOM.png", "textures/SBFRONT.png", "textures/SBBACK.png"},
+            uniforms = {"MVP"},
+            uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
+            shaders = {"shaders/cubemap.vert", "shaders/cubemap.frag"}
         }
     }
 }
