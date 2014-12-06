@@ -2,14 +2,14 @@
 
 /*
  * debug */
-const char* ERR_SEVERITY[] = {
+const char *ERR_SEVERITY[] = {
     "HIGH",
     "MEDIUM",
     "LOW",
     "NOTE"
 };
 
-const char* ERR_SOURCE[] = {
+const char *ERR_SOURCE[] = {
     "API",
     "WINDOW SYSTEM",
     "SHADER COMPILER",
@@ -18,7 +18,7 @@ const char* ERR_SOURCE[] = {
     "OTHER"
 };
 
-const char* ERR_TYPE[] = {
+const char *ERR_TYPE[] = {
     "ERROR",
     "DEPRECATED BEHAVIOUR",
     "UNDEFINED DEHAVIOUR",
@@ -38,8 +38,8 @@ GLenum ShaderType[] = {
 };
 
 /* uniforms */
-UniformVarFunc UniVarFuncs[] = {
-    P, MV, MVP, MVPnoTrans
+UniformSetter UniVarFuncs[] = {
+    P, MV, MVP, MVPnoTrans, objMV, objMVnoTrans
 };
 
 

@@ -1,19 +1,19 @@
 #ifndef LOOKUPMANAGER_H
-#define	LOOKUPMANAGER_H
+#define LOOKUPMANAGER_H
 
 #include "common.h"
-#include "Mesh.h"
+#include "Shader.h"
 
 /* debug */
-extern const char* ERR_TYPE[];
-extern const char* ERR_SOURCE[];
-extern const char* ERR_SEVERITY[];
+extern const char *ERR_TYPE[];
+extern const char *ERR_SOURCE[];
+extern const char *ERR_SEVERITY[];
 
 /* GL */
 extern GLenum ShaderType[];
 
 /* uniforms */
-extern UniformVarFunc UniVarFuncs[];
+extern UniformSetter UniVarFuncs[];
 
 /* draw call */
 extern GLuint DrawMode[];

@@ -65,15 +65,19 @@ void resizeCB(GLFWwindow *win, int w, int h) {
 }
 
 void fps(double elapsed) {
-    static int frames;
 
-    if (elapsed > 0.5) {
-        char title[20];
-        snprintf(title, 20, "OpenGL @ %.2f", (double) frames / elapsed);
+    static int frames;
+    static double freq = 0.0;
+
+    if (freq > 0.5) {
+        char title[25];
+        snprintf(title, 25, "OpenGL @ %.2f", (double) frames / freq);
         glfwSetWindowTitle(renderer->context->win, title);
         frames = 0;
+        freq = 0.0;
     }
     ++frames;
+    freq += elapsed;
 }
 
 void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,

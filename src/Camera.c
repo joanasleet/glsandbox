@@ -1,8 +1,8 @@
 #include "Camera.h"
+
+#include "Engine.h"
 #include "Context.h"
 #include "Debugger.h"
-#include "Engine.h"
-
 #include "SceneManager.h"
 
 #include <time.h>
@@ -10,40 +10,33 @@
 extern Engine *renderer;
 
 Camera *newCamera(float x, float y, float z) {
-    Camera *cam = (Camera *) malloc(sizeof (Camera));
+
+    Camera *cam = NEW(Camera);
 
     exit_guard(cam);
 
+    cam->forward = vec4New(0, 0, -1, 0);
     cam->angles = vec3New(0, 0, 0);
 
-    cam->position = vec3New(x, y, z);
-    cam->forward = vec4New(0, 0, -1, 0);
+    cam->state = newState();
+    cam->state->position[0] = x;
+    cam->state->position[1] = y;
+    cam->state->position[2] = z;
 
-    cam->speed = vec3New(0, 0, 0);
-
-    cam->defaultSpeed = DEFAULT_CAM_SPEED;
+    cam->accel = ACCEL;
 
     cam->mouseGrab = 0;
     cam->wireframe = 0;
 
     cam->perspective = mat4New();
-    cam->orientation = mat4New();
     cam->translation = mat4New();
 
     return cam;
 }
 
-float fov_lerp(float step, float max) {
-    static float val = 60;
+void updateCam(Camera *cam) {
 
-    if (val >= max)
-        return val;
-
-    return (val += step);
-}
-
-void update(Camera *cam, double dt) {
-
+    // calc orientation quat
     float rotaCamX[4], rotaCamY[4], rotaCamZ[4];
     setQuat(rotaCamY, cam->angles[1] * TURN_SPEED, 1, 0, 0);
     setQuat(rotaCamX, cam->angles[0] * TURN_SPEED, 0, 1, 0);
@@ -53,27 +46,50 @@ void update(Camera *cam, double dt) {
     multQ(rotaCamX, rotaCamY, rotaCamXY);
     float rotaCamXYZ[4];
     multQ(rotaCamXY, rotaCamZ, rotaCamXYZ);
+
+    // convert orientation quat to matrix
     float rotaMat[16];
     rotateQ(rotaMat, rotaCamXYZ);
 
+    // update orientation vectors
+    float strafeVec[] = {1, 0, 0, 0};
     float forwardVec[] = {0, 0, -1, 0};
-    float rightVec[] = {1, 0, 0, 0};
-    float strafeVec[4];
+
+    float strafe[4];
     multMatVec(rotaMat, forwardVec, cam->forward);
-    multMatVec(rotaMat, rightVec, strafeVec);
+    multMatVec(rotaMat, strafeVec, strafe);
 
-    float forwardSpeed = cam->speed[2];
-    float strafeSpeed = cam->speed[0];
-    cam->position[0] += (cam->forward[0] * forwardSpeed + strafeVec[0] * strafeSpeed) * dt;
-    cam->position[1] += (cam->forward[1] * forwardSpeed + strafeVec[1] * strafeSpeed + cam->speed[1]) * dt;
-    cam->position[2] += (cam->forward[2] * forwardSpeed + strafeVec[2] * strafeSpeed) * dt;
+    // calc translation
+    State *state = cam->state;
+    float strafeSpeed = state->velocity[0];
+    float verticalSpeed = state->velocity[1];
+    float forwardSpeed = state->velocity[2];
+    state->position[0] += (cam->forward[0] * forwardSpeed + strafe[0] * strafeSpeed);
+    state->position[1] += (cam->forward[1] * forwardSpeed + strafe[1] * strafeSpeed + verticalSpeed);
+    state->position[2] += (cam->forward[2] * forwardSpeed + strafe[2] * strafeSpeed);
 
-    invertQ(rotaCamXYZ);
+    // store orientation
+    quat orientation = cam->state->orientation;
+    orientation[0] = -rotaCamXYZ[0];
+    orientation[1] = -rotaCamXYZ[1];
+    orientation[2] = -rotaCamXYZ[2];
+    orientation[3] = rotaCamXYZ[3];
 
-    rotateQ(cam->orientation, rotaCamXYZ);
-    translate(cam->translation, -cam->position[0], -cam->position[1], -cam->position[2]); // faellt spaeter weg
-    
-    perspectiveInf(cam->perspective, 1.0f, cam->fov, cam->aspectRatio);
+    // calc & store perspective
+    perspectiveInf(cam->perspective, NEAR_PLANE, cam->fov, cam->aspectRatio);
+
+    // store translation
+    translate(cam->translation, -state->position[0], -state->position[1], -state->position[2]);
+}
+
+void freeCamera(Camera *cam) {
+
+    free(cam->forward);
+    freeState(cam->state);
+    free(cam->angles);
+    free(cam->perspective);
+    free(cam->translation);
+    free(cam);
 }
 
 void screenshot() {

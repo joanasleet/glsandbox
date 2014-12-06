@@ -4,9 +4,9 @@
 
 #include <stdio.h>
 
-void addShader(const char* srcFile, GLenum type, GLuint prog, Cache* shaderCache) {
+void addShader(const char *srcFile, GLenum type, GLuint prog, Cache *shaderCache) {
 
-    info("%s","---");
+    info("%s", "---");
     GLuint shaderId = get(shaderCache, srcFile);
 
     if (!shaderId) {
@@ -29,13 +29,13 @@ void addShader(const char* srcFile, GLenum type, GLuint prog, Cache* shaderCache
     }
 }
 
-GLuint compileShader(const char* srcFile, GLuint shaderId) {
+GLuint compileShader(const char *srcFile, GLuint shaderId) {
 
-    char* shaderSrc = bufferFile(srcFile);
+    char *shaderSrc = bufferFile(srcFile);
 
     info("Compiling shader <%s>", srcFile);
 
-    glShaderSource(shaderId, 1, (const char**) &shaderSrc, NULL);
+    glShaderSource(shaderId, 1, (const char **) &shaderSrc, NULL);
     glCompileShader(shaderId);
     free(shaderSrc);
 
@@ -50,59 +50,20 @@ GLuint compileShader(const char* srcFile, GLuint shaderId) {
     return shaderId;
 }
 
-char* bufferFile_old(const char* path) {
+char *bufferFile(const char *path) {
 
-    char* fileContent = NULL;
-    FILE* file = fopen(path, "r");
-
-    if (!file) {
-        err("Couldn't access file %s", path);
-        exit(EXIT_FAILURE);
-    }
-
-    exit_guard(fseek(file, 0L, SEEK_END) == 0);
-    long int size = ftell(file);
-    exit_guard(size != -1);
-    fclose(file);
-
-    file = fopen(path, "r");
-    if (!file) {
-        err("Couldn't access file <%s>", path);
-        exit(EXIT_FAILURE);
-    }
-
-    if (size) {
-        fileContent = (char*) malloc(sizeof (char) * (size + 1));
-        int i = 0;
-        int c;
-        while ((c = getc(file)) != EOF) {
-            fileContent[i++] = c;
-        }
-        fileContent[i] = '\0';
-    } else {
-        fclose(file);
-        err("File <%s> is empty. Aborting.", path);
-        exit(EXIT_SUCCESS);
-    }
-
-    fclose(file);
-    return fileContent;
-}
-
-char* bufferFile(const char* path) {
-
-    FILE* file = fopen(path, "rb");
+    FILE *file = fopen(path, "rb");
     exit_guard(file);
     exit_guard(fseek(file, 0L, SEEK_END) == 0);
     long int size = ftell(file);
     fclose(file);
 
-    file = fopen(path,"r");
-    
-    char* fileContent;
+    file = fopen(path, "r");
+
+    char *fileContent;
 
     if (file && (size > 0)) {
-        fileContent = (char*) malloc(sizeof (char) * (size+1));
+        fileContent = (char *) malloc(sizeof (char) * (size + 1));
         fread(fileContent, sizeof(char), size, file);
         fileContent[size] = '\0';
     } else {

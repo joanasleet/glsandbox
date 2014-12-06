@@ -1,5 +1,5 @@
 #ifndef MATRIXMATH_H
-#define	MATRIXMATH_H
+#define MATRIXMATH_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,10 +12,12 @@
 #define printMat(m) (_printM(m, #m))
 #define printQuat(q) (_printQ(q, #q))
 
-typedef float* vec3;
-typedef float* vec4;
-typedef float* quat;
-typedef float* mat4;
+#define quatToMat(quat, mat) (rotateQ(mat, quat))
+
+typedef float *vec3;
+typedef float *vec4;
+typedef float *quat;
+typedef float *mat4;
 
 /* [ vector ] */
 
@@ -48,9 +50,9 @@ void normQ(quat q);
 void invertQ(quat q);
 
 /* private helper */
-void _setData(mat4 target, float* data);
-void _printM(mat4 A, const char* name);
-void _printQ(quat q, const char* name);
+void _setData(mat4 target, float *data);
+void _printM(mat4 A, const char *name);
+void _printQ(quat q, const char *name);
 
-#endif	/* MATRIXMATH_H */
+#endif  /* MATRIXMATH_H */
 

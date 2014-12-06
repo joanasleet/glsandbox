@@ -1,35 +1,36 @@
 #ifndef ENGINE_H
-#define	ENGINE_H
+#define ENGINE_H
 
 #include "common.h"
-#include "Mesh.h"
+#include "Object.h"
 #include "Camera.h"
 #include "Context.h"
 #include "ShaderCache.h"
 
 typedef struct Engine {
-    Mesh** meshes;
-    uint32 meshCount;
 
-    Camera* mainCam;
-    Context* context;
+    Object **objects;
+    uint32 objectCount;
 
-    Cache* shaderCache;
-    Cache* uniformCache;
+    Camera *mainCam;
+    Context *context;
+
+    Cache *shaderCache;
+    Cache *uniformCache;
 } Engine;
 
 /*
  *  primary API */
-Engine* init();
-void enterLoop(Engine* renderer);
-void terminate(Engine* renderer);
-void freeMeshes(Engine* renderer);
+Engine *init();
+void enterLoop(Engine *renderer);
+void terminate(Engine *renderer);
+void freeObjects(Engine *renderer);
 
 /* engine intern */
-void exitIfNoMeshes(Engine* renderer);
-void preload(Mesh* mesh, Engine* renderer);
-void preloadMeshes(Engine* renderer);
-void render(Mesh* mesh, Engine* renderer);
-void renderMeshes(Engine* renderer);
+void exitIfNoObjects(Engine *renderer);
+void preload(Object *obj, Engine *renderer);
+void preloadObjects(Engine *renderer);
+void render(Object *obj, Engine *renderer);
+void renderObjects(Engine *renderer);
 
-#endif	/* ENGINE_H */
+#endif  /* ENGINE_H */

@@ -3,10 +3,10 @@
 #include "Deallocator.h"
 #include <string.h>
 
-Element* newElement(const char* key, GLint value) {
-    Element* element = (Element*) malloc(sizeof (Element));
+Element *newElement(const char *key, GLint value) {
+    Element *element = (Element *) malloc(sizeof (Element));
     return_guard(element, NULL);
-    
+
     element->key = key;
     element->value = value;
 
@@ -16,11 +16,11 @@ Element* newElement(const char* key, GLint value) {
     return element;
 }
 
-Cache* newCache() {
-    Cache* cache = (Cache*) malloc(sizeof (Cache));
+Cache *newCache() {
+    Cache *cache = (Cache *) malloc(sizeof (Cache));
 
     return_guard(cache, NULL);
-    
+
     for (int i = 0; i < BUCKETS; ++i) {
         cache->buckets[i].last = NULL;
     }
@@ -28,22 +28,22 @@ Cache* newCache() {
     return cache;
 }
 
-void freeCache(Cache* hash) {
+void freeCache(Cache *hash) {
     clearCache(hash);
     free(hash);
 }
 
-void clearCache(Cache* hash) {
+void clearCache(Cache *hash) {
     Bucket b;
-    Element* it;
-    Element* freeMe;
+    Element *it;
+    Element *freeMe;
     for (int i = 0; i < BUCKETS; i++) {
 
         b = hash->buckets[i];
         it = b.last;
 
         while (it) {
-            if (it->key) free((char*) it->key); // possible issue
+            if (it->key) free((char *) it->key); // possible issue
             it->key = NULL;
             freeMe = it;
             it = it->prev;
@@ -54,13 +54,13 @@ void clearCache(Cache* hash) {
     }
 }
 
-GLint get(Cache* cache, const char* key) {
+GLint get(Cache *cache, const char *key) {
 
     int index = hash(key);
 
     Bucket target = cache->buckets[index];
 
-    Element* iterator = target.last;
+    Element *iterator = target.last;
 
     if (!iterator) {
         info("Key: %s not cached", key);
@@ -78,14 +78,14 @@ GLint get(Cache* cache, const char* key) {
     return NOT_CACHED;
 }
 
-void cache(Cache* cache, const char* key, GLint value) {
+void cache(Cache *cache, const char *key, GLint value) {
     info("Caching (KEY: '%s', VALUE: %i)", key, value);
 
     int index = hash(key);
     Bucket target = cache->buckets[index];
 
-    Element* last = target.last;
-    Element* newE = newElement(key, value);
+    Element *last = target.last;
+    Element *newE = newElement(key, value);
 
     if (last) {
         last->next = newE;
@@ -96,7 +96,7 @@ void cache(Cache* cache, const char* key, GLint value) {
 }
 
 /* djb2 */
-int hash(const char* key) {
+int hash(const char *key) {
 
     unsigned long hash = 5381;
     int c;
@@ -109,20 +109,20 @@ int hash(const char* key) {
 }
 
 /* shit's leaking */
-const char* getKey(const char* str, GLint num) {
+const char *getKey(const char *str, GLint num) {
     int len = strlen(str);
     int digits = floor(log10(abs(num))) + 1;
     size_t size = len + digits + 2;
-    char* key = (char*) malloc(sizeof (char)*size);
+    char *key = (char *) malloc(sizeof (char) * size);
     sprintf(key, "%i_%s", num, str);
-    const char* rkey = (const char*) key;
+    const char *rkey = (const char *) key;
     return rkey;
 }
 
-void printCache(Cache* cache, FILE* stream) {
+void printCache(Cache *cache, FILE *stream) {
 
     Bucket bit;
-    Element* elit;
+    Element *elit;
 
     for (int i = 0; i < BUCKETS; ++i) {
         bit = cache->buckets[i];

@@ -8,6 +8,8 @@
 
 #include <string.h>
 
+static float renderInterpolation = 0.0f;
+
 Engine *init() {
 
     Engine *renderer = (Engine *) malloc(sizeof (Engine));
@@ -35,8 +37,6 @@ Engine *init() {
     glfwSetKeyCallback(window, keyCB);
     glfwSetWindowSizeCallback(window, resizeCB);
 
-    //glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTexSlots);
-
     glEnable(GL_FRAMEBUFFER_SRGB);
 
     glEnable(GL_BLEND);
@@ -45,17 +45,18 @@ Engine *init() {
     return renderer;
 }
 
-void preload(Mesh *mesh, Engine *renderer) {
+void preload(Object *obj, Engine *renderer) {
 
-    GLint prog = mesh->shaderProgram;
-    const char *shader;
+    Shader *shader = obj->shader;
+    GLint prog = shader->program;
+    const char *shaderStage;
 
     /* cache shaders */
-    for (int i = 0; i < mesh->shadersLen; ++i) {
-        shader = mesh->shaders[i];
+    for (int i = 0; i < shader->stageCount; ++i) {
+        shaderStage = shader->stages[i];
 
-        if (strlen(shader) > 0) {
-            addShader(shader, ShaderType[i], prog, renderer->shaderCache);
+        if (strlen(shaderStage) > 0) {
+            addShader(shaderStage, ShaderType[i], prog, renderer->shaderCache);
         }
     }
 
@@ -64,29 +65,35 @@ void preload(Mesh *mesh, Engine *renderer) {
     const char *str;
     const char *key;
 
-    for (int i = 0; i < mesh->uniLen; ++i) {
-        str = mesh->uniforms[i];
+    for (int i = 0; i < shader->uniformCount; ++i) {
+        str = shader->uniforms[i];
         loc = glGetUniformLocation(prog, str);
         key = getKey(str, prog);
         cache(renderer->uniformCache, key, loc);
     }
 }
 
-void render(Mesh *mesh, Engine *renderer) {
+void render(Object *obj, Engine *renderer) {
+
+    printf("Rendering at %.0f%%.\n", renderInterpolation * 100.f);
 
     GLint loc;
-    glUseProgram(mesh->shaderProgram);
+    Shader *shader = obj->shader;
+    GLint program = shader->program;
+    glUseProgram(program);
 
     char *tempstr;
 
-    for (int i = 0; i < mesh->uniLen; ++i) {
-        tempstr = (char *) getKey(mesh->uniforms[i], mesh->shaderProgram);
+    /*
+     * update uniforms */
+    for (int i = 0; i < shader->uniformCount; ++i) {
+        tempstr = (char *) getKey(shader->uniforms[i], program);
         loc = get(renderer->uniformCache, tempstr);
         free(tempstr);
-        (*mesh->setUniformFunc[i])(loc, renderer->mainCam);
+        (*shader->setters[i])(loc, renderer->mainCam);
     }
 
-    Material *mat = mesh->mats;
+    Material *mat = obj->mats;
 
     /*
      * at least bind diffuse map */
@@ -108,25 +115,28 @@ void render(Mesh *mesh, Engine *renderer) {
         glBindTexture(normals->target, normals->id);
     }
 
+    /*
+     * draw object */
+    Mesh *mesh = obj->mesh;
     glBindVertexArray(mesh->vaoId);
-    (*mesh->drawFunc)(mesh->mode, &mesh->first, mesh->count);
+    (*mesh->draw)(mesh->mode, &mesh->first, mesh->count);
 }
 
-void exitIfNoMeshes(Engine *renderer) {
-    exit_guard(renderer->meshes[0]);
+void exitIfNoObjects(Engine *renderer) {
+    exit_guard(renderer->objects[0]);
 }
 
-void preloadMeshes(Engine *renderer) {
-    info("%s", "–––––– Preloading meshes ––––––");
-    for (unsigned int i = 0; i < renderer->meshCount; ++i) {
-        preload(renderer->meshes[i], renderer);
+void preloadObjects(Engine *renderer) {
+    info("%s", "~ ~ ~ ~ Preloading objects ~ ~ ~ ~");
+    for (unsigned int i = 0; i < renderer->objectCount; ++i) {
+        preload(renderer->objects[i], renderer);
     }
 }
 
-void renderMeshes(Engine *renderer) {
+void renderObjects(Engine *renderer) {
 
-    for (unsigned int i = 0; i < renderer->meshCount; ++i) {
-        render(renderer->meshes[i], renderer);
+    for (unsigned int i = 0; i < renderer->objectCount; ++i) {
+        render(renderer->objects[i], renderer);
     }
 }
 
@@ -134,8 +144,8 @@ void enterLoop(Engine *renderer) {
 
     exit_guard(renderer);
 
-    exitIfNoMeshes(renderer);
-    preloadMeshes(renderer);
+    exitIfNoObjects(renderer);
+    preloadObjects(renderer);
 
     Camera *cam = renderer->mainCam;
     GLFWwindow *window = renderer->context->win;
@@ -150,10 +160,10 @@ void enterLoop(Engine *renderer) {
 
         fps(dt);
 
-        update(cam, dt);
+        updateCam(cam);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderMeshes(renderer);
+        renderObjects(renderer);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -165,20 +175,11 @@ void terminate(Engine *renderer) {
     freeCache(renderer->shaderCache);
     freeCache(renderer->uniformCache);
 
-    freeMeshes(renderer);
+    freeObjects(renderer);
 
     free(renderer->context);
 
-    free(renderer->mainCam->perspective);
-    free(renderer->mainCam->translation);
-    free(renderer->mainCam->orientation);
-
-    free(renderer->mainCam->angles);
-    free(renderer->mainCam->forward);
-    free(renderer->mainCam->speed);
-    free(renderer->mainCam->position);
-
-    free(renderer->mainCam);
+    freeCamera(renderer->mainCam);
 
     deallocStores();
 
@@ -187,14 +188,14 @@ void terminate(Engine *renderer) {
     glfwTerminate();
 }
 
-void freeMeshes(Engine *renderer) {
+void freeObjects(Engine *renderer) {
 
-    Mesh *freeMe;
-    for (uint32 i = 0; i < renderer->meshCount; i++) {
-        freeMe = renderer->meshes[i];
-        freeMesh(freeMe);
-        renderer->meshes[i] = NULL;
+    Object *freeMe;
+    for (uint32 i = 0; i < renderer->objectCount; ++i) {
+        freeMe = renderer->objects[i];
+        freeObject(freeMe);
+        renderer->objects[i] = NULL;
     }
-    free(renderer->meshes);
-    renderer->meshes = NULL;
+    free(renderer->objects);
+    renderer->objects = NULL;
 }

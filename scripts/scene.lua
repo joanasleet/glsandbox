@@ -1,31 +1,3 @@
---[[
-scene = {
-    {
-        name = "ground",
-        vaoType = VaoType.PLANE,
-        texture = "textures/concrete.jpg",
-        uniforms = {"P", "MV"},
-        uniVarFuncs = {UniVarFuncType.Perspective, UniVarFuncType.ModelView},
-        shaders = {"shaders/tex_light.vert", "shaders/tex_light.frag"}
-    },
-    {
-        name = "overlay",
-        vaoType = VaoType.OVERLAY,
-        texture = "fontsheet/font.png",
-        uniforms = {},
-        uniVarFuncs = {},
-        shaders = {"shaders/overlay.vert", "shaders/overlay.frag"}
-    }
-}
-]]
-
--- scene = {
---      camera = {},
---      player = {},
---      objects = {},
---      ???
---}
-
 scene = {
 
     camera = {
@@ -52,11 +24,11 @@ scene = {
             name = "plane",
             mesh = {
                 type = MeshType.PLANE,
-                size = 25,
-                texres = 5,
+                size = 1000,
+                texres = 400,
                 position = {0, 0, 0}
             },
-            material = {"textures/tiles.png"},
+            material = {"textures/grass.jpg"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
             shaders = {"shaders/base.vert", "shaders/tex.frag"}
@@ -65,11 +37,11 @@ scene = {
             name = "sky",
             mesh = {
                 type = MeshType.CUBEMAP,
-                size = 10000,
+                size = 1000,
                 texres = 0,
                 position = {0, 0, 0}
             },
-            material = {"textures/SBRIGHT.png", "textures/SBLEFT.png", "textures/SBTOP.png", "textures/SBBOTTOM.png", "textures/SBFRONT.png", "textures/SBBACK.png"},
+            material = {"textures/left.png", "textures/right.png", "textures/up.png", "textures/down.png", "textures/front.png", "textures/back.png"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
             shaders = {"shaders/cubemap.vert", "shaders/cubemap.frag"}

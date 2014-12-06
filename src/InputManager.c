@@ -1,5 +1,5 @@
-#include "InputManager.h"
 #include "Engine.h"
+#include "InputManager.h"
 #include "SceneManager.h"
 
 #include <time.h>
@@ -28,13 +28,13 @@ void scrollCB(GLFWwindow *win, double xoffset, double yoffset) {
 
     Camera *cam = renderer->mainCam;
 
-    if (cam->defaultSpeed > 1.0f) {
-        cam->defaultSpeed += 1.0f * yoffset;
+    if (cam->accel > 1.0f) {
+        cam->accel += 1.0f * yoffset;
     } else {
-        cam->defaultSpeed += 0.1f * yoffset;
+        cam->accel += 0.1f * yoffset;
     }
 
-    cam->defaultSpeed = MAX(cam->defaultSpeed, 0.1f);
+    cam->accel = MAX(cam->accel, 0.1f);
 }
 
 void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
@@ -45,49 +45,49 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     case GLFW_KEY_W:
 
         if (action == GLFW_PRESS) {
-            cam->speed[2] = cam->defaultSpeed;
+            cam->state->velocity[2] = cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->speed[2] = 0.0f;
+            cam->state->velocity[2] = 0.0f;
         } else {
-            cam->speed[2] = cam->defaultSpeed;
+            cam->state->velocity[2] = cam->accel;
         }
         break;
     case GLFW_KEY_A:
 
         if (action == GLFW_PRESS) {
-            cam->speed[0] = -cam->defaultSpeed;
+            cam->state->velocity[0] = -cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->speed[0] = 0.0f;
+            cam->state->velocity[0] = 0.0f;
         } else {
-            cam->speed[0] = -cam->defaultSpeed;
+            cam->state->velocity[0] = -cam->accel;
         }
         break;
     case GLFW_KEY_S:
 
         if (action == GLFW_PRESS) {
-            cam->speed[2] = -cam->defaultSpeed;
+            cam->state->velocity[2] = -cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->speed[2] = 0.0f;
+            cam->state->velocity[2] = 0.0f;
         } else {
-            cam->speed[2] = -cam->defaultSpeed;
+            cam->state->velocity[2] = -cam->accel;
         }
         break;
     case GLFW_KEY_D:
 
         if (action == GLFW_PRESS) {
-            cam->speed[0] = cam->defaultSpeed;
+            cam->state->velocity[0] = cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->speed[0] = 0.0f;
+            cam->state->velocity[0] = 0.0f;
         } else {
-            cam->speed[0] = cam->defaultSpeed;
+            cam->state->velocity[0] = cam->accel;
         }
         break;
     case GLFW_KEY_SPACE:
 
         if (action == GLFW_PRESS) {
-            cam->speed[1] = cam->defaultSpeed;
+            cam->state->velocity[1] = cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->speed[1] = 0.0f;
+            cam->state->velocity[1] = 0.0f;
         }
         break;
     case GLFW_KEY_C:

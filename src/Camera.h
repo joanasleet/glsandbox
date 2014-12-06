@@ -1,50 +1,56 @@
 #ifndef CAMERA_H
-#define	CAMERA_H
+#define CAMERA_H
 
 #include "common.h"
 
+#include "State.h"
 #include "MatrixMath.h"
 
 #define FOV (60.0f)
-#define ASPECT_RATIO (16.0f / 9.0f)
+
+#define ACCEL (0.5f)
+#define TURN_SPEED (0.1f)
+
 #define NEAR_PLANE (0.1f)
 #define FAR_PLANE (10000.0f)
-
-#define TURN_SPEED (0.1f)
-#define DEFAULT_CAM_SPEED (0.5f)
+#define ASPECT_RATIO (16.0f / 9.0f)
 
 typedef struct {
 
-    vec3 speed;
+    /* acceleration */
+    float accel;
+
+    /* facing direction */
     vec4 forward;
-    vec3 position;
 
-    // do i even need dis ?
-    float defaultSpeed;
-
-    uint8 mouseGrab;
+    /* control flags */
     uint8 wireframe;
-    
+    uint8 mouseGrab;
 
-    // replaces orientation
+    /* contains translation
+       params & orientation
+       storage */
+    State *state;
+
+    /* orientation params */
     vec3 angles;
-    // no need to store this
-    mat4 orientation;
 
-    // can be derived from position
-    mat4 translation;
-
-    // update on init and callback
-    mat4 perspective;
-    // use:
+    /* perspective params */
     float fov;
     float aspectRatio;
 
+    /* perspective storage */
+    mat4 perspective;
+
+    /* translation storage */
+    mat4 translation;
+
 } Camera;
 
-Camera* newCamera(float x, float y, float z);
-void update(Camera* cam, double dt);
+Camera *newCamera(float x, float y, float z);
+void freeCamera(Camera *cam);
+void updateCam(Camera *cam);
 void screenshot();
 
-#endif	/* CAMERA_H */
+#endif
 

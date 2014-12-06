@@ -1,42 +1,44 @@
 #include "common.h"
 
+#include "Script.h"
 #include "MeshUtil.h"
 #include "Debugger.h"
+#include "Material.h"
 #include "SceneManager.h"
-#include "Script.h"
-#include "Texture.h"
-
 #include "LookupManager.h"
 
 #define SCENE_LOADER "scripts/loadScene.lua"
 
-void loadScene(Engine* renderer) {
+void loadScene(Engine *renderer) {
     return_guard(renderer, RVOID);
 
     initScript(SCENE_LOADER);
     exeScript();
 
     // camera
-    renderer->mainCam->fov = (float) popFloat();
-    renderer->mainCam->aspectRatio = (float) popFloat();
-    renderer->mainCam->position[0] = (float) popFloat();
-    renderer->mainCam->position[1] = (float) popFloat();
-    renderer->mainCam->position[2] = (float) popFloat();
+    Camera *cam = renderer->mainCam;
 
-    uint32 meshCount = (uint32) popInt();
+    cam->fov = (float) popFloat();
+    cam->aspectRatio = (float) popFloat();
+    cam->state->position[0] = (float) popFloat();
+    cam->state->position[1] = (float) popFloat();
+    cam->state->position[2] = (float) popFloat();
 
-    info("Found meshes: %d", meshCount);
-    return_guard(meshCount, RVOID);
+    uint32 objectCount = (uint32) popInt();
+
+    info("Found objects: %d", objectCount);
+    return_guard(objectCount, RVOID);
 
     // objects
-    Mesh** meshes = (Mesh**) malloc(sizeof (Mesh*) * meshCount);
+    Object **objects = (Object **) malloc(sizeof (Object *) * objectCount);
 
-    Mesh* mesh;
-    for (uint32 j = 0; j < meshCount; j++) {
-        mesh = newMesh();
+    for (uint32 j = 0; j < objectCount; j++) {
 
-        /* mesh name */
-        info("Adding mesh: %s", popString());
+        Object *object = newObject();
+        Mesh *mesh = newMesh();
+
+        /* object name */
+        info("Adding object: %s", popString());
 
         /* vao type */
         uint32 vaoType = (uint32) popInt();
@@ -50,112 +52,113 @@ void loadScene(Engine* renderer) {
 
         /* texture */
         int32 texCount = popInt();
-        
-        Material* mat = newMaterial();
+
+        Material *mat = newMaterial();
 
         switch (texCount) {
-            case 1:
+        case 1:
             mat->diffuseMap = newTex(popString());
             break;
-            case 2:
+        case 2:
             mat->diffuseMap = newTex(popString());
             mat->specularMap = newTex(popString());
             break;
-            case 3:
+        case 3:
             mat->diffuseMap = newTex(popString());
             mat->specularMap = newTex(popString());
             mat->normalMap = newTex(popString());
             break;
-            case 4:
+        case 4:
             break;
-            case 5:
+        case 5:
             break;
-            case 6:
-            {
-                const char* faces[6];
-                faces[0] = popString();
-                faces[1] = popString();
-                faces[2] = popString();
-                faces[3] = popString();
-                faces[4] = popString();
-                faces[5] = popString();
+        case 6: {
+            const char *faces[6];
+            faces[0] = popString();
+            faces[1] = popString();
+            faces[2] = popString();
+            faces[3] = popString();
+            faces[4] = popString();
+            faces[5] = popString();
 
-                mat->diffuseMap = cubeTexture((const char**) faces, 0, 0);
-            }
-            break;
-            default:
+            mat->diffuseMap = cubeTexture((const char **) faces, 0, 0);
+        }
+        break;
+        default:
             break;
         }
 
-        mesh->mats = mat;
-
+        Shader *shader = newShader();
         /* uniform count */
         uint8 uniformCount = (uint8) popInt();
-        mesh->uniLen = uniformCount;
+        shader->uniformCount = uniformCount;
 
         /* uniforms */
-        mesh->uniforms = (const char**) malloc(sizeof (const char*)*uniformCount);
+        shader->uniforms = (const char **) malloc(sizeof (const char *)*uniformCount);
 
-        const char* src;
-        char* dest;
+        const char *src;
+        char *dest;
         for (uint8 i = 0; i < uniformCount; i++) {
 
             /* i-th uniform variable */
             src = popString();
 
-            dest = (char*) malloc(sizeof (char)*(strlen(src) + 1));
-            mesh->uniforms[i] = (const char*) strcpy(dest, src);
-            info("Uniform variable: %s", mesh->uniforms[i]);
+            dest = (char *) malloc(sizeof (char) * (strlen(src) + 1));
+            shader->uniforms[i] = (const char *) strcpy(dest, src);
+            info("Uniform variable: %s", shader->uniforms[i]);
         }
 
         /* uniforms setter functions */
-        UniformVarFunc *uniVarFuncs = (UniformVarFunc*) malloc(sizeof (UniformVarFunc) * uniformCount);
+        UniformSetter *setters = (UniformSetter *) malloc(sizeof (UniformSetter) * uniformCount);
         for (uint8 i = 0; i < uniformCount; i++) {
-            uniVarFuncs[i] = UniVarFuncs[popInt()];
+            setters[i] = UniVarFuncs[popInt()];
         }
-        mesh->setUniformFunc = uniVarFuncs;
+        shader->setters = setters;
 
         /* shader count */
-        uint8 shaderCount = (uint8) popInt();
-        mesh->shadersLen = shaderCount;
+        uint8 stageCount = (uint8) popInt();
+        shader->stageCount = stageCount;
 
         /* shaders */
-        mesh->shaders = (const char**) malloc(sizeof (const char*)*shaderCount);
+        shader->stages = (const char **) malloc(sizeof (const char *)*stageCount);
 
-        for (uint8 i = 0; i < shaderCount; i++) {
+        for (uint8 i = 0; i < stageCount; i++) {
 
             /* i-th shader */
             src = popString();
 
-            dest = (char*) malloc(sizeof (char)*(strlen(src) + 1));
-            mesh->shaders[i] = (const char*) strcpy(dest, src);
-            info("Shader: %s", mesh->shaders[i]);
+            dest = (char *) malloc(sizeof (char) * (strlen(src) + 1));
+            shader->stages[i] = (const char *) strcpy(dest, src);
+            info("Shader: %s", shader->stages[i]);
         }
 
-        mesh->drawFunc = drawArrays;
-        mesh->first = 0;
-        //mesh->count = VertexCount[vaoType]; // replaced by vertcount pointer
+        mesh->draw = drawArrays;
         mesh->mode = DrawMode[vaoType];
 
-        meshes[j] = mesh;
+        object->mesh = mesh;
+        object->state = newState();
+        object->shader = shader;
+        object->mats = mat;
+
+        objects[j] = object;
     }
 
     termScript();
 
-    renderer->meshCount = meshCount;
-    renderer->meshes = meshes;
+    renderer->objectCount = objectCount;
+    renderer->objects = objects;
 }
 
-void reloadScene(Engine* renderer) {
+void reloadScene(Engine *renderer) {
     return_guard(renderer, RVOID);
 
     info("%s", "# # # # # Reloading scene # # # # #");
-    freeMeshes(renderer);
+    freeObjects(renderer);
     clearCache(renderer->shaderCache);
     clearCache(renderer->uniformCache);
     deallocStores();
 
     loadScene(renderer);
-    preloadMeshes(renderer);
-    info("%s", "# # # # # Scene reloaded # # # # #");
+    preloadObjects(renderer);
+    info("%s", "######### Scene reloaded #########");
 }

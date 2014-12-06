@@ -1,5 +1,5 @@
 #ifndef COMMON_H
-#define	COMMON_H
+#define COMMON_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -22,19 +22,21 @@
 #define TRUE 1
 #define FALSE 0
 
-/* 
+#define NEW(type) ((type*) malloc(sizeof(type)))
+
+/*
  * unsigned number types */
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
 typedef unsigned long uint64;
 
-/* 
+/*
  * signed number types */
 typedef signed char int8;
 typedef short int16;
 typedef int int32;
 typedef long int64;
 
-#endif	/* COMMON_H */
+#endif  /* COMMON_H */
 
