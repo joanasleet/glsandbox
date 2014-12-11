@@ -27,10 +27,11 @@ void terminate(Engine *renderer);
 void freeObjects(Engine *renderer);
 
 /* engine intern */
-void exitIfNoObjects(Engine *renderer);
-void preload(Object *obj, Engine *renderer);
-void preloadObjects(Engine *renderer);
-void render(Object *obj, Engine *renderer);
 void renderObjects(Engine *renderer);
+void preloadObjects(Engine *renderer);
+void exitIfNoObjects(Engine *renderer);
+void render(Object *obj, Engine *renderer);
+void preload(Object *obj, Engine *renderer);
+void renderLerp(State *prevState, State *currState);
 
 #endif  /* ENGINE_H */

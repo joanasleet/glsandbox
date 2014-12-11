@@ -8,7 +8,7 @@
 
 #define FOV (60.0f)
 
-#define ACCEL (0.5f)
+#define ACCEL (0.01f)
 #define TURN_SPEED (0.1f)
 
 #define NEAR_PLANE (0.1f)
@@ -23,17 +23,18 @@ typedef struct {
     /* facing direction */
     vec4 forward;
 
+    /* right vector */
+    vec4 right;
+
+    /* up vector */
+    vec4 up;
+
     /* control flags */
     uint8 wireframe;
     uint8 mouseGrab;
 
-    /* contains translation
-       params & orientation
-       storage */
+    /* translation & orientation */
     State *state;
-
-    /* orientation params */
-    vec3 angles;
 
     /* perspective params */
     float fov;
@@ -41,9 +42,6 @@ typedef struct {
 
     /* perspective storage */
     mat4 perspective;
-
-    /* translation storage */
-    mat4 translation;
 
 } Camera;
 

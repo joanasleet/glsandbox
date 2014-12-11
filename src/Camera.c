@@ -9,14 +9,20 @@
 
 extern Engine *renderer;
 
+// needs to be some place else
+static float baseUpVec[] = {0.0f, 1.0f, 0.0f, 0.0f};
+static float baseRightVec[] = {1.0f, 0.0f, 0.0f, 0.0f};
+static float baseForwardVec[] = {0.0f, 0.0f, -1.0f, 0.0f};
+
 Camera *newCamera(float x, float y, float z) {
 
     Camera *cam = NEW(Camera);
 
     exit_guard(cam);
 
+    cam->up = vec4New(0, 1, 0, 0);
+    cam->right = vec4New(1, 0, 0, 0);
     cam->forward = vec4New(0, 0, -1, 0);
-    cam->angles = vec3New(0, 0, 0);
 
     cam->state = newState();
     cam->state->position[0] = x;
@@ -29,66 +35,58 @@ Camera *newCamera(float x, float y, float z) {
     cam->wireframe = 0;
 
     cam->perspective = mat4New();
-    cam->translation = mat4New();
 
     return cam;
 }
 
 void updateCam(Camera *cam) {
 
-    // calc orientation quat
-    float rotaCamX[4], rotaCamY[4], rotaCamZ[4];
-    setQuat(rotaCamY, cam->angles[1] * TURN_SPEED, 1, 0, 0);
-    setQuat(rotaCamX, cam->angles[0] * TURN_SPEED, 0, 1, 0);
-    setQuat(rotaCamZ, cam->angles[2] * TURN_SPEED, 0, 0, 1);
+    State *state = cam->state;
 
-    float rotaCamXY[4];
-    multQ(rotaCamX, rotaCamY, rotaCamXY);
-    float rotaCamXYZ[4];
-    multQ(rotaCamXY, rotaCamZ, rotaCamXYZ);
+    state->angles[0] += state->angleVelocity[0];
+    state->angles[1] += state->angleVelocity[1];
+    state->angles[2] += state->angleVelocity[2];
 
-    // convert orientation quat to matrix
-    float rotaMat[16];
-    rotateQ(rotaMat, rotaCamXYZ);
+    static int count = 0;
+
+    if (count++ == 10) {
+        // info("AngleV: (%.1f, %.1f, %.1f)", state->angleVelocity[0], state->angleVelocity[1], state->angleVelocity[2]);
+        info("Up: (%.1f, %.1f, %.1f)", cam->up[0], cam->up[1], cam->up[2]);
+        info("Right: (%.1f, %.1f, %.1f)", cam->right[0], cam->right[1], cam->right[2]);
+        info("Forward: (%.1f, %.1f, %.1f)", cam->forward[0], cam->forward[1], cam->forward[2]);
+        count = 0;
+    }
+
+    GLfloat rotation[16];
+    rotate3D(rotation, state->angles);
 
     // update orientation vectors
-    float strafeVec[] = {1, 0, 0, 0};
-    float forwardVec[] = {0, 0, -1, 0};
-
-    float strafe[4];
-    multMatVec(rotaMat, forwardVec, cam->forward);
-    multMatVec(rotaMat, strafeVec, strafe);
+    multMatVec(rotation, baseUpVec, cam->up);
+    multMatVec(rotation, baseRightVec, cam->right);
+    multMatVec(rotation, baseForwardVec, cam->forward);
 
     // calc translation
-    State *state = cam->state;
     float strafeSpeed = state->velocity[0];
     float verticalSpeed = state->velocity[1];
     float forwardSpeed = state->velocity[2];
-    state->position[0] += (cam->forward[0] * forwardSpeed + strafe[0] * strafeSpeed);
-    state->position[1] += (cam->forward[1] * forwardSpeed + strafe[1] * strafeSpeed + verticalSpeed);
-    state->position[2] += (cam->forward[2] * forwardSpeed + strafe[2] * strafeSpeed);
-
-    // store orientation
-    quat orientation = cam->state->orientation;
-    orientation[0] = -rotaCamXYZ[0];
-    orientation[1] = -rotaCamXYZ[1];
-    orientation[2] = -rotaCamXYZ[2];
-    orientation[3] = rotaCamXYZ[3];
+    state->position[0] += (cam->forward[0] * forwardSpeed + cam->right[0] * strafeSpeed + cam->up[0] * verticalSpeed);
+    state->position[1] += (cam->forward[1] * forwardSpeed + cam->right[1] * strafeSpeed + cam->up[1] * verticalSpeed);
+    state->position[2] += (cam->forward[2] * forwardSpeed + cam->right[2] * strafeSpeed + cam->up[2] * verticalSpeed);
 
     // calc & store perspective
     perspectiveInf(cam->perspective, NEAR_PLANE, cam->fov, cam->aspectRatio);
-
-    // store translation
-    translate(cam->translation, -state->position[0], -state->position[1], -state->position[2]);
 }
 
 void freeCamera(Camera *cam) {
 
+    free(cam->up);
+    free(cam->right);
     free(cam->forward);
+
     freeState(cam->state);
-    free(cam->angles);
+
     free(cam->perspective);
-    free(cam->translation);
+
     free(cam);
 }
 

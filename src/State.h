@@ -7,7 +7,9 @@ typedef struct {
 
     vec3 position;
     vec3 velocity;
-    quat orientation;
+    
+    vec3 angles;
+    vec3 angleVelocity;
 
 } State;
 

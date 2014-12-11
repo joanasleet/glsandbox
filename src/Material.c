@@ -116,6 +116,7 @@ Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
     glGenTextures(1, &texture->id);
     texture->target = GL_TEXTURE_CUBE_MAP;
     glBindTexture(texture->target, texture->id);
+    texture->data = NULL;
 
     int w, h;
     uint8 *faceData;

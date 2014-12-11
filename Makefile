@@ -3,7 +3,7 @@ TARGET	=	main
 SRC 	=	src
 CC		=	gcc
 STD 	=	gnu99
-CFLAGS	=	-Wall -Werror -pedantic -std=$(STD) -g -I$(SRC)
+CFLAGS	=	-Wall -Werror -pedantic -std=$(STD) -g -I$(SRC) -pg
 LIBS	=	-lm -lGLEW -lGL -lglfw -llua
 
 BIN		=	bin

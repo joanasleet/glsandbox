@@ -11,9 +11,9 @@ Shader *newShader() {
 void freeShader(Shader *shader) {
 
     glDeleteProgram(shader->program);
-    // stages are freed by the cache
+    free(shader->stages);
     free(shader->setters);
-    // uniforms are freed by the cache
+    free(shader->uniforms);
 
     free(shader);
 }
@@ -26,12 +26,15 @@ void P(GLint loc, Camera *cam, State *objState) {
 
 void MV(GLint loc, Camera *cam, State *objState) {
 
+    State *camState = cam->state;
+
     // orientation
     GLfloat orientation[16];
-    quatToMat(cam->state->orientation, orientation);
+    rotate3D(orientation, camState->angles);
 
     // translation
-    mat4 translation = cam->translation;
+    GLfloat translation[16];
+    translate(translation, -camState->position[0], -camState->position[1], -camState->position[2]);
 
     // ModelView
     GLfloat MVmat[16];
@@ -43,19 +46,22 @@ void MV(GLint loc, Camera *cam, State *objState) {
 
 void MVP(GLint loc, Camera *cam, State *objState) {
 
-    // perspective
-    mat4 P = cam->perspective;
+    State *state = cam->state;
 
     // orientation
     GLfloat orientation[16];
-    quatToMat(cam->state->orientation, orientation);
+    state->angles[0] *= -1.0f;
+    state->angles[1] *= -1.0f;
+    state->angles[2] *= -1.0f;
+    rotate3D(orientation, state->angles);
 
     // translation
-    mat4 translation = cam->translation;
+    GLfloat translation[16];
+    translate(translation, -state->position[0], -state->position[1], -state->position[2]);
 
     // perspective * orientation
     GLfloat VPmat[16];
-    mult(P, orientation, VPmat);
+    mult(cam->perspective, orientation, VPmat);
 
     // (perspective * orientation) * translation
     GLfloat MVPmat[16];
@@ -67,15 +73,13 @@ void MVP(GLint loc, Camera *cam, State *objState) {
 
 void MVPnoTrans(GLint loc, Camera *cam, State *objState) {
 
-    mat4 P = cam->perspective;
-
     // orientation
     GLfloat orientation[16];
-    quatToMat(cam->state->orientation, orientation);
+    rotate3D(orientation, cam->state->angles);
 
     // ModelViewPerspective
     float MVP[16];
-    mult(P, orientation, MVP);
+    mult(cam->perspective, orientation, MVP);
 
     // update uniform
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVP);
@@ -88,7 +92,7 @@ void objMV(GLint loc, Camera *cam, State *objState) {
     translate(translation, pos[0], pos[1], pos[2]);
 
     float orientation[16];
-    rotateQ(orientation, objState->orientation);
+    rotate3D(orientation, objState->angles);
 
     float MV[16];
     mult(orientation, translation, MV);
@@ -99,7 +103,7 @@ void objMV(GLint loc, Camera *cam, State *objState) {
 void objMVnoTrans(GLint loc, Camera *cam, State *objState) {
 
     float MV[16];
-    rotateQ(MV, objState->orientation);
+    rotate3D(MV, objState->angles);
 
     glUniformMatrix4fv(loc, 1, GL_FALSE, MV);
 }

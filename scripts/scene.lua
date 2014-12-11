@@ -10,15 +10,15 @@ scene = {
         {
             name = "test",
             mesh = {
-                type = MeshType.OVERLAY,
-                size = 1000,
+                type = MeshType.CUBE,
+                size = 2,
                 texres = 1,
                 position = {0, 1, 0}
             },
             material = {"textures/brick.png"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
-            shaders = {"shaders/debug.vert", "shaders/debug.frag"}
+            shaders = {"shaders/base.vert", "shaders/tex.frag"}
         },
         {
             name = "plane",

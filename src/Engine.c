@@ -8,7 +8,7 @@
 
 #include <string.h>
 
-static float renderInterpolation = 0.0f;
+static float renderAlpha = 0.0f;
 
 Engine *init() {
 
@@ -75,7 +75,32 @@ void preload(Object *obj, Engine *renderer) {
 
 void render(Object *obj, Engine *renderer) {
 
-    printf("Rendering at %.0f%%.\n", renderInterpolation * 100.f);
+    // printf("Rendering at %.0f%%.\n", renderAlpha * 100.f);
+
+    Camera *cam = renderer->mainCam;
+
+    // save old state
+    State *oldState = cam->state;
+    State newState;
+
+    float position[3];
+    position[0] = oldState->position[0] + (cam->forward[0] * oldState->velocity[2] + cam->right[0] * oldState->velocity[0] + cam->up[0] * oldState->velocity[1]) * renderAlpha;
+    position[1] = oldState->position[1] + (cam->forward[1] * oldState->velocity[2] + cam->right[1] * oldState->velocity[0] + cam->up[1] * oldState->velocity[1]) * renderAlpha;
+    position[2] = oldState->position[2] + (cam->forward[2] * oldState->velocity[2] + cam->right[2] * oldState->velocity[0] + cam->up[2] * oldState->velocity[1]) * renderAlpha;
+
+    float angles[3];
+    angles[0] = oldState->angles[0] + oldState->angleVelocity[0] * renderAlpha;
+    angles[1] = oldState->angles[1] + oldState->angleVelocity[1] * renderAlpha;
+    angles[2] = oldState->angles[2] + oldState->angleVelocity[2] * renderAlpha;
+
+    newState.position = position;
+    newState.angles = angles;
+
+    // set interpolated state
+    cam->state = &newState;
+
+    /* calc orientation from
+    new state and set to cam */
 
     GLint loc;
     Shader *shader = obj->shader;
@@ -90,8 +115,18 @@ void render(Object *obj, Engine *renderer) {
         tempstr = (char *) getKey(shader->uniforms[i], program);
         loc = get(renderer->uniformCache, tempstr);
         free(tempstr);
-        (*shader->setters[i])(loc, renderer->mainCam);
+
+        (*shader->setters[i])(loc, renderer->mainCam, obj->state);
     }
+
+    // set old state
+    cam->state = oldState;
+
+    //info("after render (%.1f, %.1f, %.1f)", cam->state->angleVelocity[0], cam->state->angleVelocity[1], cam->state->angleVelocity[2]);
+
+    // cam->state->angleVelocity[0] = 0.0f;
+    // cam->state->angleVelocity[1] = 0.0f;
+    // cam->state->angleVelocity[2] = 0.0f;
 
     Material *mat = obj->mats;
 
@@ -150,20 +185,30 @@ void enterLoop(Engine *renderer) {
     Camera *cam = renderer->mainCam;
     GLFWwindow *window = renderer->context->win;
 
-    double dt;
+    double dt, lag = 0.0;
+
     startTimer();
 
     info("%s", "# # # # # # #  Rendering  # # # # # # #");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
         dt = elapsedTime();
+        lag += dt;
 
         fps(dt);
 
-        updateCam(cam);
+        while ( lag >= 0.016) {
+
+            updateCam(cam);
+            lag -= 0.016;
+        }
+
+        renderAlpha = (float) (lag / 0.016);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderObjects(renderer);
+
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();

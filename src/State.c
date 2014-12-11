@@ -8,7 +8,9 @@ State *newState() {
 
     state->position = vec3New(0.0f, 0.0f, 0.0f);
     state->velocity = vec3New(0.0f, 0.0f, 0.0f);
-    state->orientation = quatNew();
+
+    state->angles = vec3New(0.0f, 0.0f, 0.0f);
+    state->angleVelocity = vec3New(0.0f, 0.0f, 0.0f);
 
     return state;
 }
@@ -17,6 +19,7 @@ void freeState(State *state) {
 
     free(state->position);
     free(state->velocity);
-    free(state->orientation);
+    free(state->angles);
+    free(state->angleVelocity);
     free(state);
 }
