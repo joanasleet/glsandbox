@@ -162,7 +162,7 @@ void rotateQ(mat4 target, quat q) {
     _setData(target, data);
 }
 
-void rotate3D(mat4 target, vec3 angles) {
+void rotate3D(quat target, vec3 angles) {
 
     float quatX[4], quatY[4], quatZ[4];
 
@@ -179,8 +179,11 @@ void rotate3D(mat4 target, vec3 angles) {
     float quatXYZ[4];
     multQ(quatXY, quatZ, quatXYZ);
 
-    // convert orientation quat to matrix
-    rotateQ(target, quatXYZ);
+    // write to target quat
+    target[0] = quatXYZ[0];
+    target[1] = quatXYZ[1];
+    target[2] = quatXYZ[2];
+    target[3] = quatXYZ[3];
 }
 
 

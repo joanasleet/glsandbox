@@ -1,5 +1,5 @@
 #ifndef DEBUGGER_H
-#define	DEBUGGER_H
+#define DEBUGGER_H
 
 #include <stdio.h>
 #include <errno.h>
@@ -9,8 +9,8 @@
 #define SCROLL_LOG_NAME "scroll.log"
 #define WATCH_LOG_NAME "watch.log"
 
-extern FILE* scrolllog;
-extern FILE* watchlog;
+extern FILE *scrolllog;
+extern FILE *watchlog;
 
 #ifdef NODEBUG
 #define debug(target, ...)
@@ -65,57 +65,63 @@ extern FILE* watchlog;
 /*
  * Prints formatted info string to the scrolling log. */
 #define log_info(msg, ...) \
-do { \
-    scrolllog = fopen(SCROLL_LOG_NAME, "a+"); \
-    check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
-    info(msg, ##__VA_ARGS__); \
-    fclose(scrolllog); \
-} while (0) \
-
+    do { \
+        scrolllog = fopen(SCROLL_LOG_NAME, "a+"); \
+        check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
+        info(msg, ##__VA_ARGS__); \
+        fclose(scrolllog); \
+    } while (0) \
+         
 /*
  * Prints formatted error string to the scrolling log. */
 #define log_err(msg, ...) \
-do { \
-    scrolllog = fopen(SCROLL_LOG_NAME, "a+"); \
-    check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
-    err(msg, ##__VA_ARGS__); \
-    fclose(scrolllog); \
-} while (0) \
-
+    do { \
+        scrolllog = fopen(SCROLL_LOG_NAME, "a+"); \
+        check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
+        err(msg, ##__VA_ARGS__); \
+        fclose(scrolllog); \
+    } while (0) \
+         
 /*
  * Prints formatted string to the watch log. */
 #define watch(msg, ...) \
-do { \
-    watchlog = fopen(WATCH_LOG_NAME, "a+"); \
-    check(watchlog, "Failed to open " WATCH_LOG_NAME); \
-    debug(watchlog, msg, ##__VA_ARGS__); \
-    fclose(watchlog); \
-} while(0) \
-
+    do { \
+        watchlog = fopen(WATCH_LOG_NAME, "a+"); \
+        check(watchlog, "Failed to open " WATCH_LOG_NAME); \
+        debug(watchlog, msg, ##__VA_ARGS__); \
+        fclose(watchlog); \
+    } while(0) \
+         
 /*
  * Clears the scrolling and- watch log. */
 #define clear_logs() \
-do { \
-    scrolllog = fopen(SCROLL_LOG_NAME, "w"); \
-    check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
-    fclose(scrolllog); \
-    watchlog = fopen(WATCH_LOG_NAME, "w"); \
-    check(watchlog, "Failed to open " WATCH_LOG_NAME); \
-    fclose(watchlog); \
-} while(0) \
-
+    do { \
+        scrolllog = fopen(SCROLL_LOG_NAME, "w"); \
+        check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
+        fclose(scrolllog); \
+        watchlog = fopen(WATCH_LOG_NAME, "w"); \
+        check(watchlog, "Failed to open " WATCH_LOG_NAME); \
+        fclose(watchlog); \
+    } while(0) \
+         
 /*
  * Measures execution time of func */
 #define MEASURE(func) \
-do { \
-    clock_t start, end; \
-    double dt; \
-    start = clock(); \
-    func; \
-    end = clock(); \
-    dt = (double)(end-start) / CLOCKS_PER_SEC; \
-    printf("%s took %f sec.\n", #func, dt); \
-} while(0) \
-
-#endif	/* DEBUGGER_H */
+    do { \
+        clock_t start, end; \
+        double dt; \
+        start = clock(); \
+        func; \
+        end = clock(); \
+        dt = (double)(end-start) / CLOCKS_PER_SEC; \
+        printf("%s took %f sec.\n", #func, dt); \
+    } while(0) \
+         
+#define PULSE(call, freq) \
+    do { \
+        static int count = 0; \
+        if(count++ == freq) { call; count=0; } \
+    } while(0) \
+         
+#endif  /* DEBUGGER_H */
 

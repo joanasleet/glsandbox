@@ -39,7 +39,7 @@ void perspective(mat4 target, float near, float far, float fovx, float ratio);
 void perspectiveInf(mat4 target, float near, float fov, float ratio);
 void rotate(mat4 target, float angle, float x, float y, float z);
 void rotateQ(mat4 target, quat q);
-void rotate3D(mat4 target, vec3 angles);
+void rotate3D(quat target, vec3 angles);
 
 /* [ quaternion ] */
 

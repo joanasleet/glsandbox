@@ -32,6 +32,8 @@ void MV(GLint loc, Camera *cam, State *objState) {
     GLfloat orientation[16];
     rotate3D(orientation, camState->angles);
 
+
+
     // translation
     GLfloat translation[16];
     translate(translation, -camState->position[0], -camState->position[1], -camState->position[2]);
@@ -49,11 +51,12 @@ void MVP(GLint loc, Camera *cam, State *objState) {
     State *state = cam->state;
 
     // orientation
+    float rotaQ[4];
+    rotate3D(rotaQ, state->angles);
+    invertQ(rotaQ);
+
     GLfloat orientation[16];
-    state->angles[0] *= -1.0f;
-    state->angles[1] *= -1.0f;
-    state->angles[2] *= -1.0f;
-    rotate3D(orientation, state->angles);
+    rotateQ(orientation, rotaQ);
 
     // translation
     GLfloat translation[16];

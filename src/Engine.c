@@ -6,7 +6,10 @@
 #include "InputManager.h"
 #include "LookupManager.h"
 
+#include <math.h>
 #include <string.h>
+
+#define SGN(x) ((x > 0.0f) ? 1.0f : ((x < 0.0f) ? -1.0f : 0.0f))
 
 static float renderAlpha = 0.0f;
 
@@ -122,11 +125,39 @@ void render(Object *obj, Engine *renderer) {
     // set old state
     cam->state = oldState;
 
-    //info("after render (%.1f, %.1f, %.1f)", cam->state->angleVelocity[0], cam->state->angleVelocity[1], cam->state->angleVelocity[2]);
+    // State *state = cam->state;
 
-    // cam->state->angleVelocity[0] = 0.0f;
-    // cam->state->angleVelocity[1] = 0.0f;
-    // cam->state->angleVelocity[2] = 0.0f;
+    // update angle velocity
+    // static double lastMousePos[2];
+    // double currMousePos[2];
+    // glfwGetCursorPos(renderer->context->win, currMousePos, currMousePos + 1);
+    // // PULSE( info("(%.1f, %.1f)", currMousePos[0], currMousePos[1]), 10);
+
+    // if (    (lastMousePos[0] - currMousePos[0]) < 0.0000001 &&
+    //         (lastMousePos[1] - currMousePos[1]) < 0.0000001 ) {
+
+    //     /* if last updates state equals this one
+    //        then mouse was not moved */
+    //     // state->angleVelocity[0] -= copysignf(0.001f, state->angleVelocity[0]);
+    //     // state->angleVelocity[1] -= copysignf(0.001f, state->angleVelocity[1]);
+    //     // state->angleVelocity[2] -= copysignf(0.001f, state->angleVelocity[2]);
+
+    //     // state->angleVelocity[0] = fmax(state->angleVelocity[0], 0.0f);
+    //     // state->angleVelocity[1] = fmax(state->angleVelocity[1], 0.0f);
+    //     // state->angleVelocity[2] = fmax(state->angleVelocity[2], 0.0f);
+
+    //     state->angleVelocity[0] = 0.0f;
+    //     state->angleVelocity[1] = 0.0f;
+    //     state->angleVelocity[2] = 0.0f;
+    // } else {
+
+    //     // save for next update
+    //     lastMousePos[0] = currMousePos[0];
+    //     lastMousePos[1] = currMousePos[1];
+    // }
+
+
+    //info("after render (%.1f, %.1f, %.1f)", cam->state->angleVelocity[0], cam->state->angleVelocity[1], cam->state->angleVelocity[2]);
 
     Material *mat = obj->mats;
 

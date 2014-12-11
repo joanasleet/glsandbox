@@ -11,7 +11,7 @@ scene = {
             name = "test",
             mesh = {
                 type = MeshType.CUBE,
-                size = 2,
+                size = 10,
                 texres = 1,
                 position = {0, 1, 0}
             },
