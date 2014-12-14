@@ -15,8 +15,8 @@ void cursorCB(GLFWwindow *win, double xpos, double ypos) {
     const double sens = 0.1;
 
     Camera *cam = renderer->mainCam;
-    cam->targetX += ((xres / 2.0) - xpos) * sens;
-    cam->targetY += ((yres / 2.0) - ypos) * sens;
+    cam->state->targetAngles[0] += ((xres / 2.0) - xpos) * sens;
+    cam->state->targetAngles[1] += ((yres / 2.0) - ypos) * sens;
 
     // if (cam->targetX > 360.0) cam->targetX -= 360.0;
     // if (cam->targetX < 0.0) cam->targetX += 360.0;
@@ -52,54 +52,55 @@ void scrollCB(GLFWwindow *win, double xoffset, double yoffset) {
 void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
 
     Camera *cam = renderer->mainCam;
+    State *camState = cam->state;
 
     switch (key) {
     case GLFW_KEY_W:
 
         if (action == GLFW_PRESS) {
-            cam->state->velocity[2] = cam->accel;
+            camState->targetVelocity[2] = cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->state->velocity[2] = 0.0f;
+            camState->targetVelocity[2] = 0.0f;
         } else {
-            cam->state->velocity[2] = cam->accel;
+            camState->targetVelocity[2] = cam->accel;
         }
         break;
     case GLFW_KEY_A:
 
         if (action == GLFW_PRESS) {
-            cam->state->velocity[0] = -cam->accel;
+            camState->targetVelocity[0] = -cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->state->velocity[0] = 0.0f;
+            camState->targetVelocity[0] = 0.0f;
         } else {
-            cam->state->velocity[0] = -cam->accel;
+            camState->targetVelocity[0] = -cam->accel;
         }
         break;
     case GLFW_KEY_S:
 
         if (action == GLFW_PRESS) {
-            cam->state->velocity[2] = -cam->accel;
+            camState->targetVelocity[2] = -cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->state->velocity[2] = 0.0f;
+            camState->targetVelocity[2] = 0.0f;
         } else {
-            cam->state->velocity[2] = -cam->accel;
+            camState->targetVelocity[2] = -cam->accel;
         }
         break;
     case GLFW_KEY_D:
 
         if (action == GLFW_PRESS) {
-            cam->state->velocity[0] = cam->accel;
+            camState->targetVelocity[0] = cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->state->velocity[0] = 0.0f;
+            camState->targetVelocity[0] = 0.0f;
         } else {
-            cam->state->velocity[0] = cam->accel;
+            camState->targetVelocity[0] = cam->accel;
         }
         break;
     case GLFW_KEY_SPACE:
 
         if (action == GLFW_PRESS) {
-            cam->state->velocity[1] = cam->accel;
+            camState->targetVelocity[1] = cam->accel;
         } else if (action == GLFW_RELEASE) {
-            cam->state->velocity[1] = 0.0f;
+            camState->targetVelocity[1] = 0.0f;
         }
         break;
     case GLFW_KEY_C:

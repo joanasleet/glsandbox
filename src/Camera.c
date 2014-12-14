@@ -29,12 +29,6 @@ Camera *newCamera(float x, float y, float z) {
     cam->state->position[1] = y;
     cam->state->position[2] = z;
 
-    cam->targetX = 0.0;
-    cam->targetY = 0.0;
-
-    cam->smoothX = 0.0;
-    cam->smoothY = 0.0;
-
     cam->accel = ACCEL;
 
     cam->mouseGrab = 0;
@@ -49,15 +43,13 @@ void updateCam(Camera *cam) {
 
     State *state = cam->state;
 
-    state->angleVelocity[0] = lerpStep(cam->smoothX, cam->targetX, 1.0 / 10.0);
-    state->angleVelocity[1] = lerpStep(cam->smoothY, cam->targetY, 1.0 / 10.0);
+    state->angleVelocity[0] = lerpStep(state->angles[0], state->targetAngles[0], 1.0 / 10.0);
+    state->angleVelocity[1] = lerpStep(state->angles[1], state->targetAngles[1], 1.0 / 10.0);
+    state->angleVelocity[2] = 0.0f;
 
-    cam->smoothX += state->angleVelocity[0];
-    cam->smoothY += state->angleVelocity[1];
-
-    state->angles[0] = cam->smoothX;
-    state->angles[1] = cam->smoothY;
-    state->angles[2] = 0.0f;
+    state->angles[0] += state->angleVelocity[0];
+    state->angles[1] += state->angleVelocity[1];
+    state->angles[2] += state->angleVelocity[2];
 
     float rotaQ[4];
     rotate3D(rotaQ, state->angles);
@@ -71,9 +63,18 @@ void updateCam(Camera *cam) {
     multMatVec(rotation, baseForwardVec, cam->forward);
 
     // calc translation
+    state->velocity[0] += lerpStep(state->velocity[0], state->targetVelocity[0], 1.0 / 10.0);
+    state->velocity[1] += lerpStep(state->velocity[1], state->targetVelocity[1], 1.0 / 10.0);
+    state->velocity[2] += lerpStep(state->velocity[2], state->targetVelocity[2], 1.0 / 10.0);
+
+    PULSE(watch("%s\n", "- - - - - - - - - - - - -"), 10);
+    PULSE(watch("Velocity (%f, %f, %f)\n", state->velocity[0], state->velocity[1], state->velocity[2]), 10);
+    PULSE(watch("%s\n\n\n", "- - - - - - - - - - - - -"), 10);
+
     float strafeSpeed = state->velocity[0];
     float verticalSpeed = state->velocity[1];
     float forwardSpeed = state->velocity[2];
+
     state->position[0] += (cam->forward[0] * forwardSpeed + cam->right[0] * strafeSpeed + cam->up[0] * verticalSpeed);
     state->position[1] += (cam->forward[1] * forwardSpeed + cam->right[1] * strafeSpeed + cam->up[1] * verticalSpeed);
     state->position[2] += (cam->forward[2] * forwardSpeed + cam->right[2] * strafeSpeed + cam->up[2] * verticalSpeed);
