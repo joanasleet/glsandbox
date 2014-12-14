@@ -260,3 +260,23 @@ void _printM(mat4 A, const char *name) {
 void _printQ(quat q, const char *name) {
     printf("\nquat %s = (%.5f,\t%.5f,\t%.5f,\t%.5f)\n", name, q[0], q[1], q[2], q[3]);
 }
+
+float lerpStepf(float from, float to, float alpha) {
+
+    float delta = to - from;
+
+    if (delta < 0.0000001f && delta > -0.0000001f)
+        return 0.0f;
+
+    return (delta * alpha);
+}
+
+double lerpStep(double from, double to, double alpha) {
+
+    double delta = to - from;
+
+    if (delta < 0.0000001 && delta > -0.0000001)
+        return 0.0;
+
+    return (delta * alpha);
+}

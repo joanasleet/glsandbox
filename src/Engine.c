@@ -78,7 +78,7 @@ void preload(Object *obj, Engine *renderer) {
 
 void render(Object *obj, Engine *renderer) {
 
-    // printf("Rendering at %.0f%%.\n", renderAlpha * 100.f);
+    //info("Rendering at %.0f%%.", renderAlpha * 100.f);
 
     Camera *cam = renderer->mainCam;
 
@@ -94,7 +94,9 @@ void render(Object *obj, Engine *renderer) {
     float angles[3];
     angles[0] = oldState->angles[0] + oldState->angleVelocity[0] * renderAlpha;
     angles[1] = oldState->angles[1] + oldState->angleVelocity[1] * renderAlpha;
-    angles[2] = oldState->angles[2] + oldState->angleVelocity[2] * renderAlpha;
+    angles[2] = 0.0f;
+
+    // angles[2] = oldState->angles[2] + oldState->angleVelocity[2] * renderAlpha;
 
     newState.position = position;
     newState.angles = angles;
@@ -125,39 +127,8 @@ void render(Object *obj, Engine *renderer) {
     // set old state
     cam->state = oldState;
 
-    // State *state = cam->state;
-
-    // update angle velocity
-    // static double lastMousePos[2];
-    // double currMousePos[2];
-    // glfwGetCursorPos(renderer->context->win, currMousePos, currMousePos + 1);
-    // // PULSE( info("(%.1f, %.1f)", currMousePos[0], currMousePos[1]), 10);
-
-    // if (    (lastMousePos[0] - currMousePos[0]) < 0.0000001 &&
-    //         (lastMousePos[1] - currMousePos[1]) < 0.0000001 ) {
-
-    //     /* if last updates state equals this one
-    //        then mouse was not moved */
-    //     // state->angleVelocity[0] -= copysignf(0.001f, state->angleVelocity[0]);
-    //     // state->angleVelocity[1] -= copysignf(0.001f, state->angleVelocity[1]);
-    //     // state->angleVelocity[2] -= copysignf(0.001f, state->angleVelocity[2]);
-
-    //     // state->angleVelocity[0] = fmax(state->angleVelocity[0], 0.0f);
-    //     // state->angleVelocity[1] = fmax(state->angleVelocity[1], 0.0f);
-    //     // state->angleVelocity[2] = fmax(state->angleVelocity[2], 0.0f);
-
-    //     state->angleVelocity[0] = 0.0f;
-    //     state->angleVelocity[1] = 0.0f;
-    //     state->angleVelocity[2] = 0.0f;
-    // } else {
-
-    //     // save for next update
-    //     lastMousePos[0] = currMousePos[0];
-    //     lastMousePos[1] = currMousePos[1];
-    // }
 
 
-    //info("after render (%.1f, %.1f, %.1f)", cam->state->angleVelocity[0], cam->state->angleVelocity[1], cam->state->angleVelocity[2]);
 
     Material *mat = obj->mats;
 

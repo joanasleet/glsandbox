@@ -29,6 +29,12 @@ Camera *newCamera(float x, float y, float z) {
     cam->state->position[1] = y;
     cam->state->position[2] = z;
 
+    cam->targetX = 0.0;
+    cam->targetY = 0.0;
+
+    cam->smoothX = 0.0;
+    cam->smoothY = 0.0;
+
     cam->accel = ACCEL;
 
     cam->mouseGrab = 0;
@@ -43,37 +49,15 @@ void updateCam(Camera *cam) {
 
     State *state = cam->state;
 
-    state->angles[0] += state->angleVelocity[0];
-    state->angles[1] += state->angleVelocity[1];
-    state->angles[2] += state->angleVelocity[2];
+    state->angleVelocity[0] = lerpStep(cam->smoothX, cam->targetX, 1.0 / 10.0);
+    state->angleVelocity[1] = lerpStep(cam->smoothY, cam->targetY, 1.0 / 10.0);
 
-    static double lastMousePos[2];
-    double currMousePos[2];
-    glfwGetCursorPos(renderer->context->win, currMousePos, currMousePos + 1);
-    PULSE(info("(%.1f, %.1f)", currMousePos[0], currMousePos[1]), 5);
+    cam->smoothX += state->angleVelocity[0];
+    cam->smoothY += state->angleVelocity[1];
 
-    if (    (lastMousePos[0] - currMousePos[0]) < 0.00000001 &&
-            (lastMousePos[1] - currMousePos[1]) < 0.00000001 ) {
-
-        /* if last updates state equals this one
-           then mouse was not moved */
-        state->angleVelocity[0] = 0.0f;
-        state->angleVelocity[1] = 0.0f;
-        state->angleVelocity[2] = 0.0f;
-
-        // state->angleVelocity[0] -= copysignf(0.1f, state->angleVelocity[0]);
-        // state->angleVelocity[1] -= copysignf(0.1f, state->angleVelocity[1]);
-        // state->angleVelocity[2] -= copysignf(0.1f, state->angleVelocity[2]);
-
-        // state->angleVelocity[0] = fmax(state->angleVelocity[0], 0.0f);
-        // state->angleVelocity[1] = fmax(state->angleVelocity[1], 0.0f);
-        // state->angleVelocity[2] = fmax(state->angleVelocity[2], 0.0f);
-    } else {
-
-        // save for next update
-        lastMousePos[0] = currMousePos[0];
-        lastMousePos[1] = currMousePos[1];
-    }
+    state->angles[0] = cam->smoothX;
+    state->angles[1] = cam->smoothY;
+    state->angles[2] = 0.0f;
 
     float rotaQ[4];
     rotate3D(rotaQ, state->angles);

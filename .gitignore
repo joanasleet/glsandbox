@@ -6,3 +6,4 @@ nbproject/
 cachegrind.*
 callgrind.*
 *.sublime-workspace
+gmon.out

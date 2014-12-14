@@ -36,6 +36,13 @@ typedef struct {
     /* translation & orientation */
     State *state;
 
+    // smooth criminal
+    double smoothX;
+    double smoothY;
+
+    double targetX;
+    double targetY;
+
     /* perspective params */
     float fov;
     float aspectRatio;

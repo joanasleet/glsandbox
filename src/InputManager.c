@@ -9,21 +9,20 @@ extern Engine *renderer;
 
 void cursorCB(GLFWwindow *win, double xpos, double ypos) {
 
-    static double xwrap = 0.0;
-
     uint32 xres = renderer->context->xRes;
     uint32 yres = renderer->context->yRes;
 
-    xwrap += (xres / 2.0f) - xpos; // angle velocity
-    if (xwrap >= 360.0) xwrap -= 360.0;
-    if (xwrap <= -360.0) xwrap += 360.0;
+    const double sens = 0.1;
 
-    State *camState = renderer->mainCam->state;
-    camState->angleVelocity[0] = ((xres / 2.0f) - xpos) * 0.2f;
-    camState->angleVelocity[1] = ((yres / 2.0f) - ypos) * 0.2f;
+    Camera *cam = renderer->mainCam;
+    cam->targetX += ((xres / 2.0) - xpos) * sens;
+    cam->targetY += ((yres / 2.0) - ypos) * sens;
 
-    // camState->angles[0] += (xres / 2.0f) - xpos;
-    // camState->angles[1] += (yres / 2.0f) - ypos;
+    // if (cam->targetX > 360.0) cam->targetX -= 360.0;
+    // if (cam->targetX < 0.0) cam->targetX += 360.0;
+
+    // if (cam->targetY > 360.0) cam->targetY -= 360.0;
+    // if (cam->targetY < 0.0) cam->targetY += 360.0;
 
     glfwSetCursorPos(win, (xres / 2.0f), (yres / 2.0f));
 }
@@ -123,30 +122,30 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
         break;
     case GLFW_KEY_UP:
         if (action == GLFW_PRESS) {
-            cam->state->angleVelocity[1] = cam->accel * 10.0;
+
         } else if (action == GLFW_RELEASE) {
-            cam->state->angleVelocity[1] = 0.0f;
+
         }
         break;
     case GLFW_KEY_DOWN:
         if (action == GLFW_PRESS) {
-            cam->state->angleVelocity[1] = -cam->accel * 10.0;
+
         } else if (action == GLFW_RELEASE) {
-            cam->state->angleVelocity[1] = 0.0f;
+
         }
         break;
     case GLFW_KEY_LEFT:
         if (action == GLFW_PRESS) {
-            cam->state->angleVelocity[0] = cam->accel * 10.0;
+
         } else if (action == GLFW_RELEASE) {
-            cam->state->angleVelocity[0] = 0.0f;
+
         }
         break;
     case GLFW_KEY_RIGHT:
         if (action == GLFW_PRESS) {
-            cam->state->angleVelocity[0] = -cam->accel * 10.0;
+
         } else if (action == GLFW_RELEASE) {
-            cam->state->angleVelocity[0] = 0.0f;
+
         }
         break;
     case GLFW_KEY_F:
@@ -182,9 +181,7 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     case GLFW_KEY_E:
 
         if (action == GLFW_PRESS) {
-            cam->state->angleVelocity[0] = 0.0f;
-            cam->state->angleVelocity[1] = 0.0f;
-            cam->state->angleVelocity[2] = 0.0f;
+
         }
         break;
     default:

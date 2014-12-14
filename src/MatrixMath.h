@@ -55,5 +55,10 @@ void _setData(mat4 target, float *data);
 void _printM(mat4 A, const char *name);
 void _printQ(quat q, const char *name);
 
+/* [ interpolation ] */
+
+float lerpStepf(float from, float to, float alpha);
+double lerpStep(double from, double to, double alpha);
+
 #endif  /* MATRIXMATH_H */
 
