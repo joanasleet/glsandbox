@@ -6,8 +6,8 @@
 
 #include <math.h>
 
-#define PI (3.141592)
-#define RAD(x) (x*PI/180)
+#define PI (3.141592f)
+#define RAD(x) (x * PI / 180.0f)
 
 #define printMat(m) (_printM(m, #m))
 #define printQuat(q) (_printQ(q, #q))
@@ -24,6 +24,8 @@ typedef float *mat4;
 vec3 vec3New(float x, float y, float z);
 vec4 vec4New(float x, float y, float z, float w);
 
+void setVec3(vec3 target, vec3 source);
+
 /* [ matrix ] */
 
 mat4 mat4New();
@@ -31,12 +33,15 @@ mat4 mat4New();
 void add(mat4 A, mat4 B, mat4 target);
 void sub(mat4 A, mat4 B, mat4 target);
 void mult(mat4 A, mat4 B, mat4 target);
-void multMatVec(mat4 A, vec4 v, vec4 target);
+void multMatVec4(mat4 A, vec4 v, vec4 target);
+void multMatVec3(mat4 A, vec3 v, vec3 target);
 
 void scale(mat4 target, float x, float y, float z);
 void translate(mat4 target, float x, float y, float z);
+
 void perspective(mat4 target, float near, float far, float fovx, float ratio);
 void perspectiveInf(mat4 target, float near, float fov, float ratio);
+
 void rotate(mat4 target, float angle, float x, float y, float z);
 void rotateQ(mat4 target, quat q);
 void rotate3D(quat target, vec3 angles);

@@ -6,7 +6,7 @@
 #include "State.h"
 #include "MatrixMath.h"
 
-#define FOV (60.0f)
+#define FOV (75.0f)
 
 #define ACCEL (0.01f)
 #define TURN_SPEED (0.1f)
@@ -17,18 +17,6 @@
 
 typedef struct {
 
-    /* acceleration */
-    float accel;
-
-    /* facing direction */
-    vec4 forward;
-
-    /* right vector */
-    vec4 right;
-
-    /* up vector */
-    vec4 up;
-
     /* control flags */
     uint8 wireframe;
     uint8 mouseGrab;
@@ -38,6 +26,7 @@ typedef struct {
 
     /* perspective params */
     float fov;
+    float targetFov;
     float aspectRatio;
 
     /* perspective storage */

@@ -34,4 +34,4 @@ void render(Object *obj, Engine *renderer);
 void preload(Object *obj, Engine *renderer);
 void renderLerp(State *prevState, State *currState);
 
-#endif  /* ENGINE_H */
+#endif

@@ -17,6 +17,13 @@ vec4 vec4New(float x, float y, float z, float w) {
     return vector;
 }
 
+void setVec3(vec3 target, vec3 source) {
+
+    target[0] = source[0];
+    target[1] = source[1];
+    target[2] = source[2];
+}
+
 /* # # # # # # # # # # # # # # # # # # # # # # # # # # # #
  * # # # # # # # # # # #  Matrix # # # # # # # # # # # # #
  * # # # # # # # # # # # # # # # # # # # # # # # # # # # # */
@@ -55,12 +62,19 @@ void mult(mat4 A, mat4 B, mat4 target) {
     }
 }
 
-void multMatVec(mat4 A, vec4 v, vec4 target) {
+void multMatVec4(mat4 A, vec4 v, vec4 target) {
 
     target[0] = A[0] * v[0] + A[4] * v[1] + A[8] * v[2] + A[12] * v[3];
     target[1] = A[1] * v[0] + A[5] * v[1] + A[9] * v[2] + A[13] * v[3];
     target[2] = A[2] * v[0] + A[6] * v[1] + A[10] * v[2] + A[14] * v[3];
     target[3] = A[3] * v[0] + A[7] * v[1] + A[11] * v[2] + A[15] * v[3];
+}
+
+void multMatVec3(mat4 A, vec3 v, vec3 target) {
+
+    target[0] = A[0] * v[0] + A[4] * v[1] +  A[8] * v[2] + A[12];
+    target[1] = A[1] * v[0] + A[5] * v[1] +  A[9] * v[2] + A[13];
+    target[2] = A[2] * v[0] + A[6] * v[1] + A[10] * v[2] + A[14];
 }
 
 void scale(mat4 target, float x, float y, float z) {

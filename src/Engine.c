@@ -9,8 +9,6 @@
 #include <math.h>
 #include <string.h>
 
-#define SGN(x) ((x > 0.0f) ? 1.0f : ((x < 0.0f) ? -1.0f : 0.0f))
-
 static float renderAlpha = 0.0f;
 
 Engine *init() {
@@ -25,10 +23,7 @@ Engine *init() {
 
     glEnable(GL_DEPTH_TEST);
 
-#if (CULL_FACES)
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-#endif
 
     GLFWwindow *window = renderer->context->win;
 
@@ -78,68 +73,61 @@ void preload(Object *obj, Engine *renderer) {
 
 void render(Object *obj, Engine *renderer) {
 
-    //info("Rendering at %.0f%%.", renderAlpha * 100.f);
-
+    /*
+     * interpolate camera */
     Camera *cam = renderer->mainCam;
 
-    // save old state
+    /* save old state */
     State *oldState = cam->state;
-    State newState;
 
+    /* setup interpolated state */
+    State interpolatedState;
+
+    /* setup position */
     float position[3];
-    position[0] = oldState->position[0] + (cam->forward[0] * oldState->velocity[2] + cam->right[0] * oldState->velocity[0] + cam->up[0] * oldState->velocity[1]) * renderAlpha;
-    position[1] = oldState->position[1] + (cam->forward[1] * oldState->velocity[2] + cam->right[1] * oldState->velocity[0] + cam->up[1] * oldState->velocity[1]) * renderAlpha;
-    position[2] = oldState->position[2] + (cam->forward[2] * oldState->velocity[2] + cam->right[2] * oldState->velocity[0] + cam->up[2] * oldState->velocity[1]) * renderAlpha;
+    setPosition(position, oldState, renderAlpha);
+    interpolatedState.position = position;
 
+    /* setup angles */
     float angles[3];
-    angles[0] = oldState->angles[0] + oldState->angleVelocity[0] * renderAlpha;
-    angles[1] = oldState->angles[1] + oldState->angleVelocity[1] * renderAlpha;
-    angles[2] = 0.0f;
+    setAngles(angles, oldState, renderAlpha);
+    interpolatedState.angles = angles;
 
-    // angles[2] = oldState->angles[2] + oldState->angleVelocity[2] * renderAlpha;
+    /* set interpolated state */
+    cam->state = &interpolatedState;
 
-    newState.position = position;
-    newState.angles = angles;
-
-    // set interpolated state
-    cam->state = &newState;
-
-    /* calc orientation from
-    new state and set to cam */
-
+    /*
+     * update uniforms */
     GLint loc;
+    char *tempstr;
     Shader *shader = obj->shader;
     GLint program = shader->program;
     glUseProgram(program);
 
-    char *tempstr;
-
-    /*
-     * update uniforms */
     for (int i = 0; i < shader->uniformCount; ++i) {
         tempstr = (char *) getKey(shader->uniforms[i], program);
         loc = get(renderer->uniformCache, tempstr);
         free(tempstr);
 
-        (*shader->setters[i])(loc, renderer->mainCam, obj->state);
+        // TODO: interpolate object state
+
+        (*shader->setters[i])(loc, cam, obj->state);
     }
 
-    // set old state
+    /*
+     * reset old state */
     cam->state = oldState;
 
-
-
-
+    /*
+     * bind materials */
     Material *mat = obj->mats;
 
-    /*
-     * at least bind diffuse map */
+    /* at least bind diffuse map */
     Texture *diff = mat->diffuseMap;
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(diff->target, diff->id);
 
-    /*
-     * normal and specular are optional */
+    /* normal and specular are optional */
     Texture *spec = mat->specularMap;
     if (spec) {
         glActiveTexture(GL_TEXTURE2);

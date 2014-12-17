@@ -19,6 +19,7 @@ void loadScene(Engine *renderer) {
     Camera *cam = renderer->mainCam;
 
     cam->fov = (float) popFloat();
+    cam->targetFov = cam->fov;
     cam->aspectRatio = (float) popFloat();
     cam->state->position[0] = (float) popFloat();
     cam->state->position[1] = (float) popFloat();

@@ -10,9 +10,11 @@
 extern Engine *renderer;
 
 // needs to be some place else
-static float baseUpVec[] = {0.0f, 1.0f, 0.0f, 0.0f};
-static float baseRightVec[] = {1.0f, 0.0f, 0.0f, 0.0f};
-static float baseForwardVec[] = {0.0f, 0.0f, -1.0f, 0.0f};
+static float baseUpVec[] = {0.0f, 1.0f, 0.0f};
+static float baseRightVec[] = {1.0f, 0.0f, 0.0f};
+static float baseForwardVec[] = {0.0f, 0.0f, -1.0f};
+
+#define SMOOTH_FACTOR (1.0 / 10.0)
 
 Camera *newCamera(float x, float y, float z) {
 
@@ -20,16 +22,12 @@ Camera *newCamera(float x, float y, float z) {
 
     exit_guard(cam);
 
-    cam->up = vec4New(0, 1, 0, 0);
-    cam->right = vec4New(1, 0, 0, 0);
-    cam->forward = vec4New(0, 0, -1, 0);
-
     cam->state = newState();
     cam->state->position[0] = x;
     cam->state->position[1] = y;
     cam->state->position[2] = z;
 
-    cam->accel = ACCEL;
+    cam->state->accel = ACCEL;
 
     cam->mouseGrab = 0;
     cam->wireframe = 0;
@@ -43,51 +41,41 @@ void updateCam(Camera *cam) {
 
     State *state = cam->state;
 
-    state->angleVelocity[0] = lerpStep(state->angles[0], state->targetAngles[0], 1.0 / 10.0);
-    state->angleVelocity[1] = lerpStep(state->angles[1], state->targetAngles[1], 1.0 / 10.0);
-    state->angleVelocity[2] = 0.0f;
+    // calc & update angle velocity
+    float newAngleVel[] = {
+        lerpStep(state->angles[0], state->targetAngles[0], SMOOTH_FACTOR),
+        lerpStep(state->angles[1], state->targetAngles[1], SMOOTH_FACTOR),
+        0.0f
+    };
+    setVec3(state->angleVelocity, newAngleVel);
+    setAngles(state->angles, state, 1.0f);
 
-    state->angles[0] += state->angleVelocity[0];
-    state->angles[1] += state->angleVelocity[1];
-    state->angles[2] += state->angleVelocity[2];
-
-    float rotaQ[4];
-    rotate3D(rotaQ, state->angles);
-
-    GLfloat rotation[16];
-    rotateQ(rotation, rotaQ);
+    // calc rotation
+    float rotaQuaternion[4];
+    rotate3D(rotaQuaternion, state->angles);
+    GLfloat rotaMatrix[16];
+    rotateQ(rotaMatrix, rotaQuaternion);
 
     // update orientation vectors
-    multMatVec(rotation, baseUpVec, cam->up);
-    multMatVec(rotation, baseRightVec, cam->right);
-    multMatVec(rotation, baseForwardVec, cam->forward);
+    multMatVec3(rotaMatrix, baseUpVec, state->up);
+    multMatVec3(rotaMatrix, baseRightVec, state->right);
+    multMatVec3(rotaMatrix, baseForwardVec, state->forward);
 
-    // calc translation
-    state->velocity[0] += lerpStep(state->velocity[0], state->targetVelocity[0], 1.0 / 10.0);
-    state->velocity[1] += lerpStep(state->velocity[1], state->targetVelocity[1], 1.0 / 10.0);
-    state->velocity[2] += lerpStep(state->velocity[2], state->targetVelocity[2], 1.0 / 10.0);
-
-    PULSE(watch("%s\n", "- - - - - - - - - - - - -"), 10);
-    PULSE(watch("Velocity (%f, %f, %f)\n", state->velocity[0], state->velocity[1], state->velocity[2]), 10);
-    PULSE(watch("%s\n\n\n", "- - - - - - - - - - - - -"), 10);
-
-    float strafeSpeed = state->velocity[0];
-    float verticalSpeed = state->velocity[1];
-    float forwardSpeed = state->velocity[2];
-
-    state->position[0] += (cam->forward[0] * forwardSpeed + cam->right[0] * strafeSpeed + cam->up[0] * verticalSpeed);
-    state->position[1] += (cam->forward[1] * forwardSpeed + cam->right[1] * strafeSpeed + cam->up[1] * verticalSpeed);
-    state->position[2] += (cam->forward[2] * forwardSpeed + cam->right[2] * strafeSpeed + cam->up[2] * verticalSpeed);
+    // calc & update velocity
+    float newVel[] = {
+        state->velocity[0] + lerpStep(state->velocity[0], state->targetVelocity[0], SMOOTH_FACTOR),
+        state->velocity[1] + lerpStep(state->velocity[1], state->targetVelocity[1], SMOOTH_FACTOR),
+        state->velocity[2] + lerpStep(state->velocity[2], state->targetVelocity[2], SMOOTH_FACTOR)
+    };
+    setVec3(state->velocity, newVel);
+    setPosition(state->position, state, 1.0f);
 
     // calc & store perspective
+    cam->fov += lerpStep(cam->fov, cam->targetFov, SMOOTH_FACTOR);
     perspectiveInf(cam->perspective, NEAR_PLANE, cam->fov, cam->aspectRatio);
 }
 
 void freeCamera(Camera *cam) {
-
-    free(cam->up);
-    free(cam->right);
-    free(cam->forward);
 
     freeState(cam->state);
 

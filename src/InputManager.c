@@ -36,17 +36,17 @@ void cursorEnterCB(GLFWwindow *win, int enter) {
 void scrollCB(GLFWwindow *win, double xoffset, double yoffset) {
 
 
-    Camera *cam = renderer->mainCam;
+    State *camState = renderer->mainCam->state;
 
-    if (cam->accel > 1.0f) {
-        cam->accel += 1.0f * yoffset;
-    } else if (cam->accel > 0.1f) {
-        cam->accel += 0.1f * yoffset;
+    if (camState->accel > 1.0f) {
+        camState->accel += 1.0f * yoffset;
+    } else if (camState->accel > 0.1f) {
+        camState->accel += 0.1f * yoffset;
     } else {
-        cam->accel += 0.01f * yoffset;
+        camState->accel += 0.01f * yoffset;
     }
 
-    cam->accel = MAX(cam->accel, 0.01f);
+    camState->accel = MAX(camState->accel, 0.01f);
 }
 
 void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
@@ -55,72 +55,58 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     State *camState = cam->state;
 
     switch (key) {
+
+    // move camera
     case GLFW_KEY_W:
 
         if (action == GLFW_PRESS) {
-            camState->targetVelocity[2] = cam->accel;
+            camState->targetVelocity[2] = camState->accel;
         } else if (action == GLFW_RELEASE) {
             camState->targetVelocity[2] = 0.0f;
         } else {
-            camState->targetVelocity[2] = cam->accel;
+            camState->targetVelocity[2] = camState->accel;
         }
         break;
     case GLFW_KEY_A:
 
         if (action == GLFW_PRESS) {
-            camState->targetVelocity[0] = -cam->accel;
+            camState->targetVelocity[0] = -camState->accel;
         } else if (action == GLFW_RELEASE) {
             camState->targetVelocity[0] = 0.0f;
         } else {
-            camState->targetVelocity[0] = -cam->accel;
+            camState->targetVelocity[0] = -camState->accel;
         }
         break;
     case GLFW_KEY_S:
 
         if (action == GLFW_PRESS) {
-            camState->targetVelocity[2] = -cam->accel;
+            camState->targetVelocity[2] = -camState->accel;
         } else if (action == GLFW_RELEASE) {
             camState->targetVelocity[2] = 0.0f;
         } else {
-            camState->targetVelocity[2] = -cam->accel;
+            camState->targetVelocity[2] = -camState->accel;
         }
         break;
     case GLFW_KEY_D:
 
         if (action == GLFW_PRESS) {
-            camState->targetVelocity[0] = cam->accel;
+            camState->targetVelocity[0] = camState->accel;
         } else if (action == GLFW_RELEASE) {
             camState->targetVelocity[0] = 0.0f;
         } else {
-            camState->targetVelocity[0] = cam->accel;
+            camState->targetVelocity[0] = camState->accel;
         }
         break;
     case GLFW_KEY_SPACE:
 
         if (action == GLFW_PRESS) {
-            camState->targetVelocity[1] = cam->accel;
+            camState->targetVelocity[1] = camState->accel;
         } else if (action == GLFW_RELEASE) {
             camState->targetVelocity[1] = 0.0f;
         }
         break;
-    case GLFW_KEY_C:
 
-        if (action == GLFW_PRESS && !cam->mouseGrab) {
-            glfwSetCursorPos(win, renderer->context->xRes / 2.0f, renderer->context->yRes / 2.0f);
-            glfwSetCursorPosCallback(win, cursorCB);
-            glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            cam->mouseGrab = 1;
-        } else if (action == GLFW_PRESS && cam->mouseGrab) {
-            glfwSetCursorPosCallback(win, NULL);
-            glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            cam->mouseGrab = 0;
-        }
-        break;
-    case GLFW_KEY_V:
-        if (action == GLFW_PRESS) {
-            screenshot();
-        }
-        break;
+    // move some object
     case GLFW_KEY_UP:
         if (action == GLFW_PRESS) {
 
@@ -149,7 +135,60 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
 
         }
         break;
-    case GLFW_KEY_F:
+
+    // zoom in
+    case GLFW_KEY_E:
+
+        if (action == GLFW_PRESS) {
+            cam->targetFov = FOV - 50.0f;
+        } else if (action == GLFW_RELEASE) {
+            cam->targetFov = FOV;
+
+        }
+        break;
+
+    // grab mouse cursor
+    case GLFW_KEY_C:
+
+        if (action == GLFW_PRESS && !cam->mouseGrab) {
+            glfwSetCursorPos(win, renderer->context->xRes / 2.0f, renderer->context->yRes / 2.0f);
+            glfwSetCursorPosCallback(win, cursorCB);
+            glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            cam->mouseGrab = 1;
+        } else if (action == GLFW_PRESS && cam->mouseGrab) {
+            glfwSetCursorPosCallback(win, NULL);
+            glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            cam->mouseGrab = 0;
+        }
+        break;
+
+    // take screenshot
+    case GLFW_KEY_V:
+        if (action == GLFW_PRESS) {
+            screenshot();
+        }
+        break;
+
+    // reload scene
+    case GLFW_KEY_R:
+
+        if (action == GLFW_PRESS) {
+            reloadScene(renderer);
+        }
+        break;
+
+    // toggle face culling
+    case GLFW_KEY_1:
+
+        if (action == GLFW_PRESS) {
+            glDisable(GL_CULL_FACE);
+        } else if (action == GLFW_RELEASE) {
+            glEnable(GL_CULL_FACE);
+        }
+        break;
+
+    // toggle wireframe mode
+    case GLFW_KEY_2:
 
         if (action == GLFW_PRESS && !cam->wireframe) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -159,32 +198,7 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
             cam->wireframe = 0;
         }
         break;
-    case GLFW_KEY_R:
 
-        if (action == GLFW_PRESS) {
-            reloadScene(renderer);
-        }
-        break;
-    case GLFW_KEY_M:
-
-        if (action == GLFW_PRESS) {
-
-        }
-        break;
-    case GLFW_KEY_Z:
-
-        if (action == GLFW_PRESS) {
-            cam->fov += 10.0f;
-        } else if (action == GLFW_RELEASE) {
-            cam->fov -= 10.0f;
-        }
-        break;
-    case GLFW_KEY_E:
-
-        if (action == GLFW_PRESS) {
-
-        }
-        break;
     default:
         return;
         break;

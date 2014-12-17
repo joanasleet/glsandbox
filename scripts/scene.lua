@@ -1,9 +1,9 @@
 scene = {
 
     camera = {
-        fov = 60,
+        fov = 75,
         aspectRatio = 16/9,
-        position = {0, 1, 10}
+        position = {0, 1, 15}
     },
 
     objects = {
@@ -11,11 +11,11 @@ scene = {
             name = "test",
             mesh = {
                 type = MeshType.CUBE,
-                size = 10,
+                size = 2,
                 texres = 1,
-                position = {0, 1, 0}
+                position = {0, 1.2, 0}
             },
-            material = {"textures/brick.png"},
+            material = {"textures/tiles.png"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
             shaders = {"shaders/base.vert", "shaders/tex.frag"}
@@ -25,10 +25,10 @@ scene = {
             mesh = {
                 type = MeshType.PLANE,
                 size = 1000,
-                texres = 400,
+                texres = 300,
                 position = {0, 0, 0}
             },
-            material = {"textures/grass.jpg"},
+            material = {"textures/ground.jpg"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
             shaders = {"shaders/base.vert", "shaders/tex.frag"}

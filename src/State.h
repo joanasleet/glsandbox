@@ -5,6 +5,12 @@
 
 typedef struct {
 
+    vec3 up;
+    vec3 right;
+    vec3 forward;
+
+    float accel;
+
     vec3 position;
     vec3 velocity;
     vec3 targetVelocity;
@@ -17,5 +23,12 @@ typedef struct {
 
 State *newState();
 void freeState(State *state);
+
+void setAngles(vec3 target, State *src, float alpha);
+void setPosition(vec3 target, State *src, float alpha);
+
+void setVelocity(State *state);
+void setAngleVelocity(State *state);
+
 
 #endif
