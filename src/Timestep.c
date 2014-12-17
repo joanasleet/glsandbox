@@ -11,7 +11,7 @@
 #include <time.h>
 
 static double start, current, elapsed;
-static struct timespec sleepPeriod;
+// static struct timespec sleepPeriod;
 
 void startTimer() {
     start = glfwGetTime();
@@ -25,8 +25,10 @@ double elapsedTime() {
 }
 
 void wait(long nanosec) {
-    sleepPeriod.tv_sec = 0;
-    sleepPeriod.tv_nsec = nanosec;
 
-    nanosleep(&sleepPeriod, NULL);
+    // undefined in c99
+    // sleepPeriod.tv_sec = 0;
+    // sleepPeriod.tv_nsec = nanosec;
+
+    // nanosleep(&sleepPeriod, NULL);
 }
