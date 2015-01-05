@@ -12,22 +12,22 @@
 void loadScene(Engine *renderer) {
     return_guard(renderer, RVOID);
 
-    initScript(SCENE_LOADER);
-    exeScript();
+    log_info("%s", "- - - - - Loading Scene - - - - -");
+    execScript(SCENE_LOADER);
 
     // camera
     Camera *cam = renderer->mainCam;
 
-    cam->fov = (float) popFloat();
+    cam->fov = popFloat();
     cam->targetFov = cam->fov;
-    cam->aspectRatio = (float) popFloat();
-    cam->state->position[0] = (float) popFloat();
-    cam->state->position[1] = (float) popFloat();
-    cam->state->position[2] = (float) popFloat();
+    cam->aspectRatio = popFloat();
+    cam->state->position[0] = popFloat();
+    cam->state->position[1] = popFloat();
+    cam->state->position[2] = popFloat();
 
     uint32 objectCount = (uint32) popInt();
 
-    info("Found objects: %d", objectCount);
+    log_info("<Object count %d>", objectCount);
     return_guard(objectCount, RVOID);
 
     // objects
@@ -39,7 +39,7 @@ void loadScene(Engine *renderer) {
         Mesh *mesh = newMesh();
 
         /* object name */
-        info("Adding object: %s", popString());
+        log_info("<Adding object %s>", popString());
 
         /* vao type */
         uint32 vaoType = (uint32) popInt();
@@ -106,7 +106,7 @@ void loadScene(Engine *renderer) {
 
             dest = (char *) malloc(sizeof (char) * (strlen(src) + 1));
             shader->uniforms[i] = (const char *) strcpy(dest, src);
-            info("Uniform variable: %s", shader->uniforms[i]);
+            log_info("<Uniform %s>", shader->uniforms[i]);
         }
 
         /* uniforms setter functions */
@@ -125,12 +125,12 @@ void loadScene(Engine *renderer) {
 
         for (uint8 i = 0; i < stageCount; i++) {
 
-            /* i-th shader */
+            /* i-th shader stage */
             src = popString();
 
             dest = (char *) malloc(sizeof (char) * (strlen(src) + 1));
             shader->stages[i] = (const char *) strcpy(dest, src);
-            info("Shader: %s", shader->stages[i]);
+            log_info("<Shader %s>", shader->stages[i]);
         }
 
         mesh->draw = drawArrays;
@@ -153,7 +153,7 @@ void loadScene(Engine *renderer) {
 void reloadScene(Engine *renderer) {
     return_guard(renderer, RVOID);
 
-    info("%s", "# # # # # Reloading scene # # # # #");
+    log_info("%s", "- - - - - Reloading Scene - - - - -");
     freeObjects(renderer);
     clearCache(renderer->shaderCache);
     clearCache(renderer->uniformCache);
@@ -161,5 +161,5 @@ void reloadScene(Engine *renderer) {
 
     loadScene(renderer);
     preloadObjects(renderer);
-    info("%s", "######### Scene reloaded #########");
+    log_info("%s", "- - - - - - - - - - - - - - - - - -");
 }

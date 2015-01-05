@@ -8,7 +8,7 @@
 extern Engine *renderer;
 
 Context *createContext(uint32 xRes, uint32 yRes, const char *title) {
-    info("%s", "–––––––––––––––– Log Start ––––––––––––––––––");
+    log_info("%s", "- - - - - - - Loading Context - - - - - - -");
     Context *context = (Context *) malloc(sizeof (Context));
     context->xRes = xRes;
     context->yRes = yRes;
@@ -17,7 +17,7 @@ Context *createContext(uint32 xRes, uint32 yRes, const char *title) {
 
     exit_guard(glfwInit());
 
-    info("%s", "GLFW initialized.");
+    log_info("%s", "GLFW initialized.");
 
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_DEPTH_BITS, 32);
@@ -28,22 +28,22 @@ Context *createContext(uint32 xRes, uint32 yRes, const char *title) {
 
     context->win = glfwCreateWindow(context->xRes, context->yRes, title, NULL, NULL);
     if (!context->win) {
-        err("%s", "Failed to create main window.");
+        log_err("%s", "Failed to create main window.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 
     glfwMakeContextCurrent(context->win);
-    info("%s", "Main window created.");
-    glfwWindowHint(GLFW_SAMPLES, 4);
+    log_info("%s", "Main window created.");
+    glfwWindowHint(GLFW_SAMPLES, 16);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        err("%s", "Failed to start GLEW.");
+        log_err("%s", "Failed to start GLEW.");
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    info("%s", "GLEW initialized.");
+    log_info("%s", "GLEW initialized.");
 
     if (GLEW_KHR_debug) {
         int param = -1;
@@ -55,7 +55,7 @@ Context *createContext(uint32 xRes, uint32 yRes, const char *title) {
 }
 
 void contextErrorCB(int code, const char *msg) {
-    err("[CONTEXT] %s (Code %i)", msg, code);
+    log_err("[CONTEXT] %s (Code %i)", msg, code);
 }
 
 void resizeCB(GLFWwindow *win, int w, int h) {
@@ -91,7 +91,7 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
         sev_i = 3;
     }
 
-    debug(stderr, "[%s %s %s] (Id: %u)\n- .%s\n",
-          ERR_SOURCE[src_i], ERR_TYPE[type_i], ERR_SEVERITY[sev_i], id, msg);
+    log_info("[%s %s %s] (id: %u)\n\"%s\"",
+             ERR_SOURCE[src_i], ERR_TYPE[type_i], ERR_SEVERITY[sev_i], id, msg);
     fflush(stderr);
 }

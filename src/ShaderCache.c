@@ -63,7 +63,6 @@ GLint get(Cache *cache, const char *key) {
     Element *iterator = target.last;
 
     if (!iterator) {
-        info("Key: %s not cached", key);
         return NOT_CACHED;
     }
 
@@ -74,12 +73,10 @@ GLint get(Cache *cache, const char *key) {
         iterator = iterator->prev;
     } while (iterator);
 
-    info("Key: %s not cached", key);
     return NOT_CACHED;
 }
 
 void cache(Cache *cache, const char *key, GLint value) {
-    info("Caching (KEY: '%s', VALUE: %i)", key, value);
 
     int index = hash(key);
     Bucket target = cache->buckets[index];

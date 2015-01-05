@@ -1,43 +1,47 @@
 #include "Script.h"
+#include "Debugger.h"
 
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 
-lua_State *L;
+static lua_State *L;
+static const char *currentScript;
 
-void initScript(const char* script) {
+void execScript(const char *script) {
+
     L = luaL_newstate();
+    err_guard(L);
+
+    currentScript = script;
+
     luaL_openlibs(L);
 
     if (luaL_loadfile(L, script)) {
-        fprintf(stderr, "Error loading script %s:\n%s", script, lua_tostring(L, -1));
+        err("[SCRIPT] %s:\n%s", script, lua_tostring(L, -1));
         termScript();
-        exit(EXIT_FAILURE);
     }
-}
 
-void argScript(uint8 argType, void* value) {
-    switch (argType) {
-        case ARG_NUMBER:
-            printf("Passing Number %f\n", *(double*) value);
-            break;
-        case ARG_STRING:
-            printf("Passing String %s\n", (char*) value);
-            break;
-        case ARG_TABLE:
-            break;
-        default:
-            printf("Unknown arg type %d\n", argType);
-            break;
-    }
-}
-
-void exeScript() {
     if (lua_pcall(L, 0, LUA_MULTRET, 0)) {
-        fprintf(stderr, "Error calling script:\n%s", lua_tostring(L, -1));
+        err("[SCRIPT] %s:\n%s", script, lua_tostring(L, -1));
         termScript();
-        exit(EXIT_FAILURE);
+    }
+}
+
+// TODO: finish
+void argScript(uint8 argType, void *value) {
+    switch (argType) {
+    case ARG_NUMBER:
+        printf("Passing Number %f\n", *(double *) value);
+        break;
+    case ARG_STRING:
+        printf("Passing String %s\n", (char *) value);
+        break;
+    case ARG_TABLE:
+        break;
+    default:
+        printf("Unknown arg type %d\n", argType);
+        break;
     }
 }
 
@@ -54,36 +58,40 @@ void dumpResult() {
     }
 }
 
-int hasNext() {
-    return !lua_isnil(L, -1);
-}
-
-// TODO: sane fallback return values
 int popInt() {
+
     if (!lua_isnil(L, -1) && lua_isnumber(L, -1)) {
         int number = lua_tointeger(L, -1);
         lua_pop(L, 1);
         return number;
     }
+
+    warn("[SCRIPT] %s: returning fallback value", currentScript);
     return -1;
 }
 
 double popFloat() {
+
     if (!lua_isnil(L, -1) && lua_isnumber(L, -1)) {
         double number = lua_tonumber(L, -1);
         lua_pop(L, 1);
         return number;
     }
+
+    warn("[SCRIPT] %s: returning fallback value", currentScript);
     return -1.0;
 }
 
-const char* popString() {
+const char *popString() {
+
     if (!lua_isnil(L, -1) && lua_isstring(L, -1)) {
-        const char* string = lua_tostring(L, -1);
+        const char *string = lua_tostring(L, -1);
         lua_pop(L, 1);
         return string;
     }
-    return NULL;
+
+    warn("[SCRIPT] %s: returning fallback value", currentScript);
+    return "fallback";
 }
 
 void termScript() {

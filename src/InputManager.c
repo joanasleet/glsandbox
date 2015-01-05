@@ -54,6 +54,9 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     Camera *cam = renderer->mainCam;
     State *camState = cam->state;
 
+    static float tessIn = 64;
+    static float tessOut = 64;
+
     switch (key) {
 
     // move camera
@@ -109,28 +112,40 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     // move some object
     case GLFW_KEY_UP:
         if (action == GLFW_PRESS) {
-
+            tessIn += 1.0f;
+            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
+            glUseProgram(1);
+            glUniform1f(glGetUniformLocation(1, "tessLevelInner"), tessIn);
         } else if (action == GLFW_RELEASE) {
 
         }
         break;
     case GLFW_KEY_DOWN:
         if (action == GLFW_PRESS) {
-
+            tessIn -= 1.0f;
+            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
+            glUseProgram(1);
+            glUniform1f(glGetUniformLocation(1, "tessLevelInner"), tessIn);
         } else if (action == GLFW_RELEASE) {
 
         }
         break;
     case GLFW_KEY_LEFT:
         if (action == GLFW_PRESS) {
-
+            tessOut -= 1.0f;
+            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
+            glUseProgram(1);
+            glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), tessOut);
         } else if (action == GLFW_RELEASE) {
 
         }
         break;
     case GLFW_KEY_RIGHT:
         if (action == GLFW_PRESS) {
-
+            tessOut += 1.0f;
+            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
+            glUseProgram(1);
+            glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), tessOut);
         } else if (action == GLFW_RELEASE) {
 
         }

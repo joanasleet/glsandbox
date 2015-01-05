@@ -11,7 +11,7 @@
 #define ACCEL (0.01f)
 #define TURN_SPEED (0.1f)
 
-#define NEAR_PLANE (0.1f)
+#define NEAR_PLANE (0.01f)
 #define FAR_PLANE (10000.0f)
 #define ASPECT_RATIO (16.0f / 9.0f)
 

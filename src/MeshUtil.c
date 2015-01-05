@@ -309,41 +309,69 @@ GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLflo
     return vao;
 }
 
-
-
+// TODO: Some Debugging
 GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount) {
+
+    const int patch_dim = 2;
+    const int patch_verts = 4;
+
+    const float plen = length / (float) patch_dim;
+    const float hlen = length / 2.0f;
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
 
-    GLfloat len = length / 2.0f;
+    *vertcount = patch_dim * patch_dim * patch_verts;
 
-    *vertcount = 4;
+    GLfloat data[ (*vertcount) * 4];
 
+    for (int i = 0; i < patch_dim; ++i) {
+
+        for (int j = 0; j < patch_dim; ++j) {
+
+            data[16 * (patch_dim * i + j) + 0] = midX - hlen + j * (plen);
+            data[16 * (patch_dim * i + j) + 1] = midY;
+            data[16 * (patch_dim * i + j) + 2] = midZ - hlen + i * (plen);
+            data[16 * (patch_dim * i + j) + 3] = 1.0f;
+
+            data[16 * (patch_dim * i + j) + 4] = midX - hlen + j * (plen) + plen;
+            data[16 * (patch_dim * i + j) + 5] = midY;
+            data[16 * (patch_dim * i + j) + 6] = midZ - hlen + i * (plen);
+            data[16 * (patch_dim * i + j) + 7] = 1.0f;
+
+            data[16 * (patch_dim * i + j) + 8] = midX - hlen + j * (plen) + plen;
+            data[16 * (patch_dim * i + j) + 9] = midY;
+            data[16 * (patch_dim * i + j) + 10] = midZ - hlen + i * (plen) - plen;
+            data[16 * (patch_dim * i + j) + 11] = 1.0f;
+
+            data[16 * (patch_dim * i + j) + 12] = midX - hlen + j * (plen);
+            data[16 * (patch_dim * i + j) + 13] = midY;
+            data[16 * (patch_dim * i + j) + 14] = midZ - hlen + i * (plen) - plen;
+            data[16 * (patch_dim * i + j) + 15] = 1.0f;
+        }
+    }
+
+
+    /*
     const GLfloat data[] = {
 
         midX - len, midY, midZ + len, 1.0f,
         midX - len, midY, midZ - len, 1.0f,
         midX + len, midY, midZ - len, 1.0f,
         midX + len, midY, midZ + len, 1.0f,
-
-        0.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        1.0f, 0.0f
     };
+    */
     glBufferData(GL_ARRAY_BUFFER, sizeof (data), data, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * 16));
-    glEnableVertexAttribArray(1);
+    glPatchParameteri(GL_PATCH_VERTICES, patch_verts);
 
     return vao;
 }
 
-GLuint overlayVAO(int32* vertcount) {
+GLuint overlayVAO(int32 *vertcount) {
 
     // return staticTextVAO("Hello OpenGL", 30, -1, 1, vertcount);
 

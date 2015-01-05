@@ -27,7 +27,7 @@ Engine *init() {
 
     GLFWwindow *window = renderer->context->win;
 
-    glClearColor(0.2, 0.5, 1.0, 1.0);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     glfwSetCursorEnterCallback(window, cursorEnterCB);
@@ -65,7 +65,11 @@ void preload(Object *obj, Engine *renderer) {
 
     for (int i = 0; i < shader->uniformCount; ++i) {
         str = shader->uniforms[i];
+
         loc = glGetUniformLocation(prog, str);
+        if (loc < 0)
+            log_warn("[PRELOAD] missing uniform '%s' in shader prog %i", str, prog);
+
         key = getKey(str, prog);
         cache(renderer->uniformCache, key, loc);
     }
@@ -144,7 +148,7 @@ void render(Object *obj, Engine *renderer) {
      * draw object */
     Mesh *mesh = obj->mesh;
     glBindVertexArray(mesh->vaoId);
-    (*mesh->draw)(mesh->mode, &mesh->first, mesh->count);
+    mesh->draw(mesh->mode, &mesh->first, mesh->count);
 }
 
 void exitIfNoObjects(Engine *renderer) {
@@ -152,7 +156,7 @@ void exitIfNoObjects(Engine *renderer) {
 }
 
 void preloadObjects(Engine *renderer) {
-    info("%s", "~ ~ ~ ~ Preloading objects ~ ~ ~ ~");
+    log_info("%s", "- - - - - Preloading objects - - - - -");
     for (unsigned int i = 0; i < renderer->objectCount; ++i) {
         preload(renderer->objects[i], renderer);
     }
@@ -179,7 +183,7 @@ void enterLoop(Engine *renderer) {
 
     startTimer();
 
-    info("%s", "# # # # # # #  Rendering  # # # # # # #");
+    log_info("%s", "- - - - - - - Rendering - - - - - - -");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
         dt = elapsedTime();
@@ -197,8 +201,6 @@ void enterLoop(Engine *renderer) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderObjects(renderer);
-
-
 
         glfwSwapBuffers(window);
         glfwPollEvents();

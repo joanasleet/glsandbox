@@ -1,5 +1,5 @@
 #ifndef SCRIPT_H
-#define	SCRIPT_H
+#define SCRIPT_H
 
 #include "common.h"
 
@@ -7,17 +7,16 @@
 #define ARG_STRING 2
 #define ARG_TABLE 3
 
-void initScript(const char* script);
-void argScript(uint8 argType, void* value);
-void exeScript();
+void execScript(const char *script);
+void argScript(uint8 argType, void *value);
 
 int32 popInt();
 double popFloat();
 double popNumber();
-const char* popString();
+const char *popString();
 
 void dumpResult();
 void termScript();
 
-#endif	/* SCRIPT_H */
+#endif  /* SCRIPT_H */
 

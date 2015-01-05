@@ -64,19 +64,19 @@ uint8 *getData(const char *file, int *width, int *height) {
 
     if (width && height) {
         data = stbi_load(file, width, height, &texCompr, 4);
-        info("Texture <%s>: %i x %i (%i) ", file, *width, *height, texCompr);
+        log_info("<Texture %s>: %i x %i (%i) ", file, *width, *height, texCompr);
     } else if (width && !height) {
         int h;
         data = stbi_load(file, width, &h, &texCompr, 4);
-        info("Texture <%s>: %i x %i (%i) ", file, *width, h, texCompr);
+        log_info("<Texture %s>: %i x %i (%i) ", file, *width, h, texCompr);
     } else if (!width && height) {
         int w;
         data = stbi_load(file, &w, height, &texCompr, 4);
-        info("Texture <%s>: %i x %i (%i) ", file, w, *height, texCompr);
+        log_info("<Texture %s>: %i x %i (%i) ", file, w, *height, texCompr);
     } else {
         int w, h;
         data = stbi_load(file, &w, &h, &texCompr, 4);
-        info("Texture <%s>: %i x %i (%i) ", file, w, h, texCompr);
+        log_info("<Texture %s>: %i x %i (%i) ", file, w, h, texCompr);
     }
 
     return_guard(data, NULL);
@@ -130,9 +130,11 @@ Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
         if (!allSame) {
             faceData = getData(cubeFaces[face], &w, &h);
 
-            /* cant find a good model to unify
-             * cubemaps with textues, so buffers
-             * like these are still freed */
+            /* * * * * * * * * * * * * * * * * * *
+             * cant find a good model to unify   *
+             * cubemaps with textues, so buffers *
+             * like these are still freed        *
+             * * * * * * * * * * * * * * * * * * */
             storeBuffer(faceData);
         }
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB_ALPHA, w, h, 0,

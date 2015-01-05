@@ -4,6 +4,7 @@
 #include "common.h"
 
 typedef void (*DrawFunc)(GLenum, GLint *, GLsizei);
+typedef void (*PreDrawFunc)();
 
 typedef struct {
 

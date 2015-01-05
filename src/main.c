@@ -7,7 +7,8 @@
 #include <unistd.h>
 #include <string.h>
 
-FILE *scrolllog;
+FILE *errlog;
+FILE *infolog;
 FILE *watchlog;
 
 Engine *renderer;
@@ -19,17 +20,12 @@ Engine *renderer;
 - simple terrain
  */
 
-void test(int a) {
-    static int target = 0;
-
-    target += a;
-    printf("%d\n", target);
-}
-
 int main(int argc, char **argv) {
 
     clear_syserr();
     clear_logs();
+
+    log_info("%s\n", "- - - - - - - - - - Log Start - - - - - - - - - -");
 
     renderer = init();
     loadScene(renderer);

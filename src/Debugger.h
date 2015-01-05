@@ -6,11 +6,17 @@
 #include <string.h>
 #include <time.h>
 
-#define SCROLL_LOG_NAME "scroll.log"
 #define WATCH_LOG_NAME "watch.log"
 
-extern FILE *scrolllog;
 extern FILE *watchlog;
+
+#define ERR_LOG_NAME "err.log"
+#define INFO_LOG_NAME "info.log"
+
+extern FILE *errlog;
+extern FILE *infolog;
+
+#define RVOID
 
 #ifdef NODEBUG
 #define debug(target, ...)
@@ -18,25 +24,20 @@ extern FILE *watchlog;
 #define debug(target, ...) (fprintf(target, ##__VA_ARGS__))
 #endif
 
-#define RVOID
-
 #define err_str() (strerror(errno))
 #define shit_happend() (errno != 0 ? 1 : 0)
 
 /*
  * Prints formatted INFO and ERROR messages. */
 #define info(msg, ...) debug(stdout, "[INFO] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define warn(msg, ...) debug(stdout, "[WARN] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #define err(msg, ...) debug(stderr, "[ERROR] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__)
-
-/*
- * Checks for true expression and prints error if false. */
-#define check(exp, hint) do { if(!(exp)) { err("Check failed: (%s) %s", #exp, hint); } } while(0)
 
 /* ******************* GUARDS **************************
  * Guards control code flow by evaluating an expression.
  * If true, code will proceed. Otherwise, an action
  * specific to the guard is performed.
- * *************************************************** */
+ * *****************************************************/
 
 /*
  * Prints error upon failed expression. */
@@ -47,8 +48,13 @@ extern FILE *watchlog;
 #define exit_guard(exp) do { if(!(exp)) { err("[Guard] Assertion failed: (%s)", #exp); exit(EXIT_FAILURE); } } while(0)
 
 /*
+ * Breaks upon failed expression. */
+#define break_guard(exp) do { if(!(exp)) { err("[Guard] Assertion failed: (%s)", #exp); break; } } while(0)
+
+/*
  * Returns upon failed expression. */
 #define return_guard(exp, ...) do { if(!(exp)) { err("[Guard] Assertion failed: (%s)", #exp); return __VA_ARGS__ ; } } while(0)
+
 
 /*
  * Resets system-set errors. */
@@ -62,24 +68,35 @@ extern FILE *watchlog;
  * Prints and calls function */
 #define info_call(f) do { info(#f); f; } while(0)
 
+
 /*
  * Prints formatted info string to the scrolling log. */
 #define log_info(msg, ...) \
     do { \
-        scrolllog = fopen(SCROLL_LOG_NAME, "a+"); \
-        check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
-        info(msg, ##__VA_ARGS__); \
-        fclose(scrolllog); \
+        infolog = fopen(INFO_LOG_NAME, "a+"); \
+        break_guard(infolog); \
+        debug(infolog, "[INFO] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
+        fclose(infolog); \
+    } while (0) \
+         
+/*
+ * Prints formatted info string to the scrolling log. */
+#define log_warn(msg, ...) \
+    do { \
+        errlog = fopen(ERR_LOG_NAME, "a+"); \
+        break_guard(errlog); \
+        debug(errlog, "[WARN] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
+        fclose(errlog); \
     } while (0) \
          
 /*
  * Prints formatted error string to the scrolling log. */
 #define log_err(msg, ...) \
     do { \
-        scrolllog = fopen(SCROLL_LOG_NAME, "a+"); \
-        check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
-        err(msg, ##__VA_ARGS__); \
-        fclose(scrolllog); \
+        errlog = fopen(ERR_LOG_NAME, "a+"); \
+        break_guard(errlog); \
+        debug(errlog, "[ERROR] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
+        fclose(errlog); \
     } while (0) \
          
 /*
@@ -87,7 +104,7 @@ extern FILE *watchlog;
 #define watch(msg, ...) \
     do { \
         watchlog = fopen(WATCH_LOG_NAME, "a+"); \
-        check(watchlog, "Failed to open " WATCH_LOG_NAME); \
+        break_guard(watchlog); \
         debug(watchlog, msg, ##__VA_ARGS__); \
         fclose(watchlog); \
     } while(0) \
@@ -96,11 +113,14 @@ extern FILE *watchlog;
  * Clears the scrolling and- watch log. */
 #define clear_logs() \
     do { \
-        scrolllog = fopen(SCROLL_LOG_NAME, "w"); \
-        check(scrolllog, "Failed to open " SCROLL_LOG_NAME); \
-        fclose(scrolllog); \
+        infolog = fopen(INFO_LOG_NAME, "w"); \
+        err_guard(infolog); \
+        fclose(infolog); \
+        errlog = fopen(ERR_LOG_NAME, "w"); \
+        err_guard(errlog); \
+        fclose(errlog); \
         watchlog = fopen(WATCH_LOG_NAME, "w"); \
-        check(watchlog, "Failed to open " WATCH_LOG_NAME); \
+        err_guard(watchlog); \
         fclose(watchlog); \
     } while(0) \
          
@@ -123,5 +143,5 @@ extern FILE *watchlog;
         if(count++ == freq) { call; count=0; } \
     } while(0) \
          
-#endif  /* DEBUGGER_H */
+#endif
 
