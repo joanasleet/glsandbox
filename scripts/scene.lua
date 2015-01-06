@@ -31,8 +31,7 @@ scene = {
             material = {"textures/ground.jpg","textures/hm.png"},
             uniforms = {"MVP"},
             uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
-            shaders = {"shaders/debug.vert", "shaders/debug.frag", "shaders/control.tess", "shaders/eval.tess"}
-            --shaders = {"shaders/base.vert", "shaders/tex.frag"}
+            shaders = {"shaders/terrain.vert", "shaders/terrain.frag", "shaders/terrain.tcs", "shaders/terrain.tes"}
         },
         {
             name = "sky",

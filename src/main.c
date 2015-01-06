@@ -17,7 +17,6 @@ Engine *renderer;
 - add shader uniforms defaults
 - better architecture
 - atmospheric scattering
-- simple terrain
  */
 
 int main(int argc, char **argv) {
