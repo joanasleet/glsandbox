@@ -310,9 +310,11 @@ GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLflo
 }
 
 // TODO: Some Debugging
+// - winding order
+// - test influence of parameters
 GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount) {
 
-    const int patch_dim = 2;
+    const int patch_dim = 3;
     const int patch_verts = 4;
 
     const float plen = length / (float) patch_dim;
@@ -341,12 +343,12 @@ GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, int3
 
             data[16 * (patch_dim * i + j) + 8] = midX - hlen + j * (plen) + plen;
             data[16 * (patch_dim * i + j) + 9] = midY;
-            data[16 * (patch_dim * i + j) + 10] = midZ - hlen + i * (plen) - plen;
+            data[16 * (patch_dim * i + j) + 10] = midZ - hlen + i * (plen) + plen;
             data[16 * (patch_dim * i + j) + 11] = 1.0f;
 
             data[16 * (patch_dim * i + j) + 12] = midX - hlen + j * (plen);
             data[16 * (patch_dim * i + j) + 13] = midY;
-            data[16 * (patch_dim * i + j) + 14] = midZ - hlen + i * (plen) - plen;
+            data[16 * (patch_dim * i + j) + 14] = midZ - hlen + i * (plen) + plen;
             data[16 * (patch_dim * i + j) + 15] = 1.0f;
         }
     }

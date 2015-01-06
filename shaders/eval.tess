@@ -1,8 +1,9 @@
 #version 440
 
-layout (quads, equal_spacing, ccw) in;
+layout (quads, equal_spacing, cw) in;
 
 out vec2 teTex;
+out vec4 tePos;
 out float height;
 
 uniform mat4 MVP;
@@ -22,12 +23,14 @@ void main() {
     	(u * v * gl_in[2].gl_Position) +
     	(omu * v * gl_in[3].gl_Position);
 
-    //float dispy = sqrt(2500 - (pos.z)*(pos.z) - (pos.x)*(pos.x));
-    pos.y = 1*texture(samplerDisp, gl_TessCoord.xy).z;
-    pos.y = sqrt(pos.y);
+    pos.y = texture(samplerDisp, gl_TessCoord.xy).z;
+    pos.y = sqrt(pos.y*10);
     height = pos.y;
 
     gl_Position = MVP * (pos);
+
+    // position
+    tePos = gl_Position;
 
     // texture coords
     teTex = gl_TessCoord.xy;

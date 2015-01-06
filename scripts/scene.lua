@@ -3,7 +3,7 @@ scene = {
     camera = {
         fov = 75,
         aspectRatio = 16/9,
-        position = {0, 1, 0}
+        position = {0, 2, 0}
     },
 
     objects = {
@@ -24,7 +24,7 @@ scene = {
             name = "terrain",
             mesh = {
                 type = MeshType.TERRAIN,
-                size = 50,
+                size = 500,
                 texres = 25,
                 position = {0, 0, 0}
             },

@@ -70,7 +70,7 @@ void updateCam(Camera *cam) {
     setVec3(state->velocity, newVel);
     setPosition(state->position, state, 1.0f);
 
-    //watch("Position: (%.1f, %.1f, %.1f)\n", state->position[0], state->position[1], state->position[2]);
+    watch("Position: (%.1f, %.1f, %.1f)\n\n", state->position[0], state->position[1], state->position[2]);
     //watch("Velocity: (%.2f, %.2f, %.2f)\n", newVel[0], newVel[1], newVel[2]);
 
     // calc & store perspective
