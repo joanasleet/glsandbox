@@ -45,11 +45,7 @@ UniformSetter UniVarFuncs[] = {
 
 /* draw call */
 GLuint DrawMode[] = {
-    GL_QUADS, GL_QUADS, GL_TRIANGLE_FAN, GL_QUADS, GL_QUADS, GL_PATCHES
-};
-
-GLsizei VertexCount[] = {
-    4, 24, 8004, 24, 40, 4
+    GL_QUADS, GL_QUADS, GL_PATCHES, GL_QUADS, GL_QUADS, GL_PATCHES, GL_PATCHES
 };
 
 // VaoType defined in header

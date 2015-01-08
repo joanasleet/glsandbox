@@ -4,7 +4,8 @@ local MeshType = {
     SPHERE = 2,
     CUBEMAP = 3,
     OVERLAY = 4,
-    TERRAIN = 5
+    TERRAIN = 5,
+    SKYDOME = 6
 }
 
 return MeshType

@@ -17,14 +17,16 @@ GLuint genVao(uint32 type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat
         return planeVAO(length, texRes, midX, midY, midZ, vertcount);
     case CUBE:
         return cubeVAO(length, texRes, midX, midY, midZ, vertcount);
-    case SPHERE:
-        return circleVAO(length, texRes, midX, midY, midZ, vertcount);
     case CUBEMAP:
         return cubeMapVAO(length, texRes, midX, midY, midZ, vertcount);
     case OVERLAY:
         return overlayVAO(vertcount);
     case TERRAIN:
         return terrainVAO(length, midX, midY, midZ, vertcount);
+    case SPHERE:
+        return sphereVAO(length, texRes, midX, midY, midZ, vertcount);
+    case SKYDOME:
+        return sphereVAO(length, texRes, midX, midY, midZ, vertcount);
     default:
         err("Unknown vao type: %d", type);
         return 0;
@@ -128,7 +130,19 @@ GLuint cubeMapVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GL
     return vao;
 }
 
+GLuint sphereVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount) {
+
+    GLuint vao = cubeVAO(radius, texRes, midX, midY, midZ, vertcount);
+
+    glPatchParameteri(GL_PATCH_VERTICES, 4);
+
+    return vao;
+}
+
+
 GLuint circleVAO(GLfloat radius, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount) {
+
+    return sphereVAO(radius, texRes, midX, midY, midZ, vertcount);
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -352,17 +366,6 @@ GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, int3
             data[16 * (patch_dim * i + j) + 15] = 1.0f;
         }
     }
-
-
-    /*
-    const GLfloat data[] = {
-
-        midX - len, midY, midZ + len, 1.0f,
-        midX - len, midY, midZ - len, 1.0f,
-        midX + len, midY, midZ - len, 1.0f,
-        midX + len, midY, midZ + len, 1.0f,
-    };
-    */
     glBufferData(GL_ARRAY_BUFFER, sizeof (data), data, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -473,13 +476,6 @@ GLuint staticTextVAO(const char *text, GLfloat size, GLfloat x, GLfloat y, int32
         texstep = (indx % FONTMAP_SIZE) / FONTMAP_SIZE_F;
         textopleftX = texstep;
         textopleftY = 1.0f - (indx / FONTMAP_SIZE) / FONTMAP_SIZE_F;
-
-        /*
-        printf("topleft  (%.2f, %.2f)\n", textopleftX, textopleftY);
-        printf("topright (%.2f, %.2f)\n", textopleftX + 0.0625f, textopleftY);
-        printf("botright (%.2f, %.2f)\n", textopleftX + 0.0625f, textopleftY - 0.0625f);
-        printf("botleft  (%.2f, %.2f)\n", textopleftX, textopleftY - 0.0625f);
-        */
 
         // tex topleft
         data[16 * strl + 8 * i] = textopleftX;
