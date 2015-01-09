@@ -2,12 +2,8 @@
 
 layout (quads, equal_spacing, ccw) in;
 
-out vec2 teTex;
-out vec4 tePos;
-
 uniform mat4 MVP;
-
-uniform float radius = 10.0;
+uniform float radius = 100.0;
 
 void main() {
 
@@ -23,10 +19,5 @@ void main() {
     	(u * v * gl_in[2].gl_Position) +
     	(omu * v * gl_in[3].gl_Position);
 
-    pos = vec4(radius * normalize(pos.xyz), 1.0);
-
-    gl_Position = MVP * (pos);
-
-    teTex = gl_TessCoord.xy;
-    tePos = pos;
+    gl_Position = MVP * pos;
 }

@@ -126,22 +126,12 @@ void render(Object *obj, Engine *renderer) {
      * bind materials */
     Material *mat = obj->mats;
 
-    /* at least bind diffuse map */
-    Texture *diff = mat->diffuseMap;
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(diff->target, diff->id);
+    Texture *tex;
+    for (uint32 i = 0; i < mat->texCount; ++i) {
 
-    /* normal and specular are optional */
-    Texture *spec = mat->specularMap;
-    if (spec) {
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(spec->target, spec->id);
-    }
-
-    Texture *normals = mat->normalMap;
-    if (normals) {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(normals->target, normals->id);
+        tex = mat->textures[i];
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(tex->target, tex->id);
     }
 
     /*

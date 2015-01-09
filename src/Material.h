@@ -4,7 +4,7 @@
 #include "common.h"
 
 #define ANISOTROPIC_LVL 4.0f
-#define newTex(file) createTexture(file, GL_TEXTURE_2D, TRUE)
+#define newTex2D(file) createTexture(file, GL_TEXTURE_2D, TRUE)
 
 extern int32 maxTexSlots;
 
@@ -27,9 +27,10 @@ Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps);
 Texture *nullTexture();
 
 typedef struct {
-    Texture *diffuseMap;
-    Texture *specularMap;
-    Texture *normalMap;
+
+    uint32 texCount;
+    Texture **textures;
+
 } Material;
 
 Material *newMaterial();

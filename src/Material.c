@@ -7,21 +7,24 @@
 Texture *nullTex = NULL;
 
 Material *newMaterial() {
+
     Material *material = (Material *) malloc(sizeof (Material));
     return_guard(material, NULL);
 
-    material->diffuseMap = NULL;
-    material->specularMap = NULL;
-    material->normalMap = NULL;
+    material->texCount = 0;
+    material->textures = NULL;
 
     return material;
 }
 
 void freeMaterial(Material *mat) {
 
-    freeTexture(mat->diffuseMap);
-    freeTexture(mat->specularMap);
-    freeTexture(mat->normalMap);
+    for (uint32 i = 0; i < mat->texCount; ++i) {
+        freeTexture(mat->textures[i]);
+        mat->textures[i] = NULL;
+    }
+
+    free(mat->textures);
     free(mat);
 }
 

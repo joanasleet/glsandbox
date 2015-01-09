@@ -58,21 +58,18 @@ void loadScene(Engine *renderer) {
 
         switch (texCount) {
         case 1:
-            mat->diffuseMap = newTex(popString());
-            break;
         case 2:
-            mat->diffuseMap = newTex(popString());
-            mat->specularMap = newTex(popString());
-            break;
         case 3:
-            mat->diffuseMap = newTex(popString());
-            mat->specularMap = newTex(popString());
-            mat->normalMap = newTex(popString());
-            break;
         case 4:
-            break;
-        case 5:
-            break;
+        case 5: {
+            mat->texCount = (uint32) texCount;
+            mat->textures = (Texture **) malloc(texCount * sizeof(Texture *));
+
+            for (int32 i = 0; i < texCount; ++i) {
+                mat->textures[i] = newTex2D(popString());
+            }
+        }
+        break;
         case 6: {
             const char *faces[6];
             faces[0] = popString();
@@ -82,7 +79,9 @@ void loadScene(Engine *renderer) {
             faces[4] = popString();
             faces[5] = popString();
 
-            mat->diffuseMap = cubeTexture((const char **) faces, 0, 0);
+            mat->texCount = 1;
+            mat->textures = (Texture **) malloc(sizeof(Texture *));
+            mat->textures[0] = cubeTexture((const char **) faces, 0, 0);
         }
         break;
         default:
