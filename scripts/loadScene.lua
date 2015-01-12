@@ -1,5 +1,5 @@
 MeshType = require "scripts.MeshType"
-UniVarFuncType = require "scripts.UniVarFuncType"
+Uniform = require "scripts.Uniform"
 
 function unpackScene(s)
     local unpacked_scene = {}

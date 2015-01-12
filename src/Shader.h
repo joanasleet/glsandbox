@@ -34,4 +34,7 @@ void MVPnoTrans(GLint loc, Camera *cam, State *objState);
 void objMV(GLint loc, Camera *cam, State *objState);
 void objMVnoTrans(GLint loc, Camera *cam, State *objState);
 
+/* misc */
+void gTime(GLint loc, float _time);
+
 #endif

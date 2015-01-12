@@ -3,10 +3,10 @@
 
 #include "common.h"
 
-#define ANISOTROPIC_LVL 4.0f
+#define ANISOTROPIC_LVL 16.0f
 #define newTex2D(file) createTexture(file, GL_TEXTURE_2D, TRUE)
 
-extern int32 maxTexSlots;
+int32 maxTexSlots;
 
 typedef struct {
     GLuint id;

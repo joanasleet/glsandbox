@@ -100,6 +100,10 @@ void render(Object *obj, Engine *renderer) {
     /* set interpolated state */
     cam->state = &interpolatedState;
 
+    // special sun stuff
+    glUseProgram(2);
+    glUniform1f(glGetUniformLocation(2, "time"), glfwGetTime());
+
     /*
      * update uniforms */
     GLint loc;
@@ -128,6 +132,11 @@ void render(Object *obj, Engine *renderer) {
 
     Texture *tex;
     for (uint32 i = 0; i < mat->texCount; ++i) {
+
+        if (i > maxTexSlots - 1) {
+            log_warn("Texture bind limit (%d) reached.", maxTexSlots);
+            break;
+        }
 
         tex = mat->textures[i];
         glActiveTexture(GL_TEXTURE0 + i);

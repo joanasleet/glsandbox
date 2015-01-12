@@ -128,3 +128,7 @@ void objMVnoTrans(GLint loc, Camera *cam, State *objState) {
 
     glUniformMatrix4fv(loc, 1, GL_FALSE, orientation);
 }
+
+void gTime(GLint loc, GLfloat _time) {
+    glUniform1f(loc, _time);
+}

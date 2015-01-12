@@ -1,4 +1,4 @@
-local UniVarFuncType = {
+local Uniform = {
 
 	-- world matrix
     Perspective = 0,
@@ -8,7 +8,10 @@ local UniVarFuncType = {
 
     -- object matrix
     ObjectModelView = 4,
-    ObjectModelViewNoTrans = 5 
+    ObjectModelViewNoTrans = 5,
+
+    -- misc
+    time = 6
 }
 
-return UniVarFuncType
+return Uniform

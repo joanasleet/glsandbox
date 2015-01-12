@@ -7,19 +7,6 @@ scene = {
     },
 
     objects = {
-        -- {
-        --     name = "test",
-        --     mesh = {
-        --         type = MeshType.CUBE,
-        --         size = 2,
-        --         texres = 1,
-        --         position = {0, 1.2, 0}
-        --     },
-        --     material = {"textures/tiles.png"},
-        --     uniforms = {"MVP"},
-        --     uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
-        --     shaders = {"shaders/base.vert", "shaders/tex.frag"}
-        -- },
         {
             name = "terrain",
             mesh = {
@@ -30,7 +17,7 @@ scene = {
             },
             material = {"textures/ground.jpg", "textures/hm3.png"},
             uniforms = {"MVP"},
-            uniVarFuncs = {UniVarFuncType.ModelViewPerspective},
+            uniVarFuncs = {Uniform.ModelViewPerspective},
             shaders = {
                 "shaders/terrain.vert",
                 "shaders/terrain.frag",
@@ -46,9 +33,9 @@ scene = {
                 texres = 1,
                 position = {0, 0, 0}
             },
-            material = {"textures/hm3.png"},
+            material = {"textures/gm.png"},
             uniforms = {"MVP"},
-            uniVarFuncs = {UniVarFuncType.ModelViewPerspectiveNoTrans},
+            uniVarFuncs = {Uniform.ModelViewPerspective},
             shaders = {
                 "shaders/sphere.vert",
                 "shaders/sphere.frag",
@@ -56,18 +43,5 @@ scene = {
                 "shaders/sphereIN.tes"
             }
         }
-        -- {
-        --     name = "sky",
-        --     mesh = {
-        --         type = MeshType.CUBEMAP,
-        --         size = 1000,
-        --         texres = 0,
-        --         position = {0, 0, 0}
-        --     },
-        --     material = {"textures/left.png", "textures/right.png", "textures/up.png", "textures/down.png", "textures/front.png", "textures/back.png"},
-        --     uniforms = {"MVP"},
-        --     uniVarFuncs = {UniVarFuncType.ModelViewPerspectiveNoTrans},
-        --     shaders = {"shaders/cubemap.vert", "shaders/cubemap.frag"}
-        -- }
     }
 }

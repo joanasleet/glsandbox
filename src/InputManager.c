@@ -64,8 +64,10 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
 
         if (action == GLFW_PRESS) {
             camState->targetVelocity[2] = camState->accel;
+            //cam->targetFov = FOV + 15.0f;
         } else if (action == GLFW_RELEASE) {
             camState->targetVelocity[2] = 0.0f;
+            //cam->targetFov = FOV;
         } else {
             camState->targetVelocity[2] = camState->accel;
         }

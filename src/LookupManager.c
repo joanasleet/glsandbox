@@ -27,7 +27,7 @@ const char *ERR_TYPE[] = {
     "OTHER"
 };
 
-/* GL */
+/* shader stages */
 GLenum ShaderType[] = {
     GL_VERTEX_SHADER,
     GL_FRAGMENT_SHADER,
@@ -41,7 +41,6 @@ GLenum ShaderType[] = {
 UniformSetter UniVarFuncs[] = {
     P, MV, MVP, MVPnoTrans, objMV, objMVnoTrans
 };
-
 
 /* draw call */
 GLuint DrawMode[] = {

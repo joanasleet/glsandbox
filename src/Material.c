@@ -28,6 +28,8 @@ void freeMaterial(Material *mat) {
     free(mat);
 }
 
+// NOTE: mipmaps might be wrong for height maps ?!
+
 Texture *createTexture(const char *file, GLenum target, uint8 genMipMaps) {
     Texture *texture = (Texture *) malloc(sizeof (Texture));
     return_guard(texture, NULL);
