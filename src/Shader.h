@@ -29,6 +29,7 @@ void P(GLint loc, Camera *cam, State *objState);
 void MV(GLint loc, Camera *cam, State *objState);
 void MVP(GLint loc, Camera *cam, State *objState);
 void MVPnoTrans(GLint loc, Camera *cam, State *objState);
+void CamPos(GLint loc, Camera *cam, State *objState);
 
 /* object specific */
 void objMV(GLint loc, Camera *cam, State *objState);

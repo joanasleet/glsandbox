@@ -17,14 +17,14 @@ void main() {
     float v = gl_TessCoord.y;
     float omv = 1.0 - v;
 
-    vec4 pos = 
-    	(omu * omv *gl_in[0].gl_Position) +
-    	(u * omv * gl_in[1].gl_Position) +
-    	(u * v * gl_in[2].gl_Position) +
-    	(omu * v * gl_in[3].gl_Position);
+    vec4 pos =
+        (omu * omv * gl_in[0].gl_Position) +
+        (u * omv * gl_in[1].gl_Position) +
+        (u * v * gl_in[2].gl_Position) +
+        (omu * v * gl_in[3].gl_Position);
 
     pos.y = texture(samplerDisp, gl_TessCoord.xy).z;
-    pos.y = sqrt(pos.y*10);
+    pos.y = sqrt(pos.y * 10);
     height = pos.y;
 
     gl_Position = MVP * (pos);

@@ -39,7 +39,7 @@ GLenum ShaderType[] = {
 
 /* uniforms */
 UniformSetter UniVarFuncs[] = {
-    P, MV, MVP, MVPnoTrans, objMV, objMVnoTrans
+    P, MV, MVP, MVPnoTrans, objMV, objMVnoTrans, CamPos
 };
 
 /* draw call */

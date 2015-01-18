@@ -10,8 +10,14 @@ local Uniform = {
     ObjectModelView = 4,
     ObjectModelViewNoTrans = 5,
 
+    -- camera
+    CamPos = 6,
+
     -- misc
-    time = 6
+    time = 7
+
+
+
 }
 
 return Uniform

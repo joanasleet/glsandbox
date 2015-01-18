@@ -68,7 +68,7 @@ void preload(Object *obj, Engine *renderer) {
 
         loc = glGetUniformLocation(prog, str);
         if (loc < 0)
-            log_warn("[PRELOAD] missing uniform '%s' in shader prog %i", str, prog);
+            log_warn("[PRELOAD] missing uniform '%s' in shader prog %i (loc: %i)", str, prog, loc);
 
         key = getKey(str, prog);
         cache(renderer->uniformCache, key, loc);
@@ -101,8 +101,11 @@ void render(Object *obj, Engine *renderer) {
     cam->state = &interpolatedState;
 
     // special sun stuff
-    glUseProgram(2);
-    glUniform1f(glGetUniformLocation(2, "time"), glfwGetTime());
+    glUseProgram(1);
+    double t = glfwGetTime();
+    glUniform1f(glGetUniformLocation(1, "time"), t);
+    //double x = 1.0 - (0.5 * (cosf(0.1 * t) + 1.0));
+    //watch("x tex coord: %.10f\n", x);
 
     /*
      * update uniforms */

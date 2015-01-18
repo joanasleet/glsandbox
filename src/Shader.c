@@ -132,3 +132,7 @@ void objMVnoTrans(GLint loc, Camera *cam, State *objState) {
 void gTime(GLint loc, GLfloat _time) {
     glUniform1f(loc, _time);
 }
+
+void CamPos(GLint loc, Camera *cam, State *objState) {
+    glUniform3fv(loc, 1, cam->state->position);
+}

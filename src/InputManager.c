@@ -110,6 +110,14 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
             camState->targetVelocity[1] = 0.0f;
         }
         break;
+    case GLFW_KEY_X:
+
+        if (action == GLFW_PRESS) {
+            camState->targetVelocity[1] = -camState->accel;
+        } else if (action == GLFW_RELEASE) {
+            camState->targetVelocity[1] = 0.0f;
+        }
+        break;
 
     // move some object
     case GLFW_KEY_UP:
