@@ -9,7 +9,7 @@ out vec4 color;
 uniform sampler2D skymap;
 uniform float gTime;
 
-uniform float timeScale = 0.05;
+uniform float timeScale = 0.5;
 
 void main() {
 
@@ -20,23 +20,24 @@ void main() {
     vec3 sunPos = vec3(x, z, -y);
 
     /* sun color */
-    vec4 sunColor = vec4(1.0, 0.9, 0.6, 1.0);
+    vec4 sunColor = vec4(1.0, 0.9, 0.7, 1.0);
     vec4 riseColor = vec4(1.0, 0.2, 0.0, 1.0);
     float sunSize = 20.0;
     float dist = (1.0 / sunSize) * distance(sunPos, tePos.xyz);
     float delta = 0.2;
     float alpha = smoothstep(0.45 - delta, 0.45, dist);
 
-    float u = (z / maxHeight);
+    float u = (z / (2.0 * maxHeight)); /* + 0.15; // cool black hole effect */
     if (z < -dist) {
-        //    u = 0.0;
+        u = 0.0;
     }
+
     vec2 uv = vec2(u, 1.0 - height / (1.01 * maxHeight));
 
     /* sky color */
     color = texture(skymap, uv);
 
-    /* draw sun */
+    /* draw sun and sky */
     sunColor = mix(riseColor, sunColor, 2.0 * sunPos.y / maxHeight);
     color = mix(sunColor, color, alpha);
 }
