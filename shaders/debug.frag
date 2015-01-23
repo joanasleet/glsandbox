@@ -1,17 +1,19 @@
 #version 440
 
+in float height;
+in float maxHeight;
+
 out vec4 color;
 
-in vec2 teTex;
-in vec4 tePos;
-in float height;
+uniform sampler2D skymap;
+uniform float gTime;
 
-layout (binding = 0) uniform sampler2D samplerDiff;
+uniform float timeScale = 0.05;
 
 void main() {
 
-	//color = vec4(0.1, 0.1, 0.12, 1.0);
-	float h = clamp(2*height, 2*height, 4*height);
-	color = texture(samplerDiff, 50*teTex);
-	color = vec4(h * color.xyz, 1.0); 
+    color = vec4(0.0);
+
+    if (height >= 0.0)
+        color = texture(skymap, vec2(timeScale * gTime, 1.0 - height / (1.01 * maxHeight)));
 }

@@ -17,7 +17,6 @@ extern UniformSetter UniVarFuncs[];
 
 /* draw call */
 extern GLuint DrawMode[];
-extern GLsizei VertexCount[];
-extern enum { PLANE, CUBE, SPHERE, CUBEMAP, OVERLAY, TERRAIN, SKYDOME } VaoType;
+extern enum { PLANE, CUBE, SPHERE, CUBEMAP, OVERLAY, TERRAIN, SKYDOME, SCREEN_QUAD } VaoType;
 
 #endif

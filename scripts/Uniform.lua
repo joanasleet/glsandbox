@@ -1,23 +1,20 @@
 local Uniform = {
 
 	-- world matrix
-    Perspective = 0,
-    ModelView = 1,
-    ModelViewPerspective = 2,
-    ModelViewPerspectiveNoTrans = 3,
+    P = 0,
+    MV = 1,
+    MVP = 2,
+    MVPNoTrans = 3,
 
     -- object matrix
-    ObjectModelView = 4,
-    ObjectModelViewNoTrans = 5,
+    objMV = 4,
+    objMVNoTrans = 5,
 
     -- camera
-    CamPos = 6,
+    camPos = 6,
 
     -- misc
-    time = 7
-
-
-
+    gTime = 7
 }
 
 return Uniform

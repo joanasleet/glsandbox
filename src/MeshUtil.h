@@ -40,5 +40,7 @@ GLuint staticTextVAO(const char *text, GLfloat size, GLfloat x, GLfloat y, int32
 
 GLuint overlayVAO(int32 *vertcount);
 
+GLuint screenQuadVAO(int32 *vertcount);
+
 #endif  /* GLHELPER_H */
 

@@ -6,7 +6,7 @@
 #include "State.h"
 #include "Camera.h"
 
-typedef void (*UniformSetter)();
+typedef void (*UniformSetter)(GLint, Camera *, State *, double);
 
 typedef struct {
 
@@ -25,17 +25,17 @@ Shader *newShader();
 void freeShader(Shader *shader);
 
 /* uniforms setter */
-void P(GLint loc, Camera *cam, State *objState);
-void MV(GLint loc, Camera *cam, State *objState);
-void MVP(GLint loc, Camera *cam, State *objState);
-void MVPnoTrans(GLint loc, Camera *cam, State *objState);
-void CamPos(GLint loc, Camera *cam, State *objState);
+void P(GLint loc, Camera *cam, State *objState, double globalTime);
+void MV(GLint loc, Camera *cam, State *objState, double globalTime);
+void MVP(GLint loc, Camera *cam, State *objState, double globalTime);
+void MVPnoTrans(GLint loc, Camera *cam, State *objState, double globalTime);
+void camPos(GLint loc, Camera *cam, State *objState, double globalTime);
 
 /* object specific */
-void objMV(GLint loc, Camera *cam, State *objState);
-void objMVnoTrans(GLint loc, Camera *cam, State *objState);
+void objMV(GLint loc, Camera *cam, State *objState, double globalTime);
+void objMVnoTrans(GLint loc, Camera *cam, State *objState, double globalTime);
 
 /* misc */
-void gTime(GLint loc, float _time);
+void gTime(GLint loc, Camera *cam, State *objState, double globalTime);
 
 #endif

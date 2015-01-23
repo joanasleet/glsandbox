@@ -3,62 +3,45 @@ scene = {
     camera = {
         fov = 75,
         aspectRatio = 16/9,
-        position = {0, 10.0 , 0}
+        position = {0, 2, -50}
     },
 
     objects = {
         {
-            name = "sphere",
+            name = "sky",
             mesh = {
                 type = MeshType.SPHERE,
-                size = 1,
-                texres = 1,
-                position = {0, 0, 0}
             },
-            material = {"textures/sky.png"},
-            uniforms = {"MVP", "v3CameraPos"},
-            uniVarFuncs = {Uniform.ModelViewPerspective, Uniform.CamPos},
+            material = {"textures/skymap1.png"},
+            uniformsMap = {
+                MVP     = Uniform.MVP,
+                gTime   = Uniform.gTime
+            },
             shaders = {
-                "shaders/sphere.vert",
-                "shaders/sphere.frag",
-                "shaders/sphere.tcs",
+                "shaders/pass.vert",
+                "shaders/skymap.frag",
+                "shaders/quad.tcs",
                 "shaders/sphereIN.tes"
             }
         },
         {
+            name = "terrain",
             mesh = {
-                type = MeshType.SPHERE,
-                size = 1,
-                texres = 1,
+                type = MeshType.TERRAIN,
+                size = 100,
+                texres = 25,
                 position = {0, 0, 0}
             },
-            material = {"textures/ground.jpg"},
-            uniforms = {"MVP"},
-            uniVarFuncs = {Uniform.ModelViewPerspective},
+            material = {"textures/sand.png", "textures/hm3.png"},
+            uniformsMap = {
+                MVP     = Uniform.MVP
+            },
             shaders = {
-                "shaders/sphere.vert",
-                "shaders/sphere2.frag",
-                "shaders/sphere.tcs",
-                "shaders/sphereOUT.tes"
+                "shaders/pass.vert",
+                "shaders/terrain.frag",
+                "shaders/quad.tcs",
+                "shaders/terrain.tes"
             }
         }
-        -- {
-        --     name = "terrain",
-        --     mesh = {
-        --         type = MeshType.TERRAIN,
-        --         size = 2,
-        --         texres = 25,
-        --         position = {0, 0, 0}
-        --     },
-        --     material = {"textures/ground.jpg", "textures/hm3.png"},
-        --     uniforms = {"MVP"},
-        --     uniVarFuncs = {Uniform.ModelViewPerspective},
-        --     shaders = {
-        --         "shaders/terrain.vert",
-        --         "shaders/terrain.frag",
-        --         "shaders/terrain.tcs",
-        --         "shaders/terrain.tes"
-        --     }
-        -- }
     }
 }

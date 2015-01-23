@@ -2,9 +2,10 @@
 
 layout (quads, equal_spacing, cw) in;
 
-out vec2 teTex;
+out vec2 texcoord;
 out vec4 tePos;
-out float rad;
+out float height;
+out float maxHeight;
 
 uniform mat4 MVP;
 uniform float radius = 100.0;
@@ -17,17 +18,18 @@ void main() {
     float v = gl_TessCoord.y;
     float omv = 1.0 - v;
 
-    vec4 pos = 
-    	(omu * omv *gl_in[0].gl_Position) +
-    	(u * omv * gl_in[1].gl_Position) +
-    	(u * v * gl_in[2].gl_Position) +
-    	(omu * v * gl_in[3].gl_Position);
+    vec4 pos =
+        (omu * omv * gl_in[0].gl_Position) +
+        (u * omv * gl_in[1].gl_Position) +
+        (u * v * gl_in[2].gl_Position) +
+        (omu * v * gl_in[3].gl_Position);
 
     pos = vec4( radius * normalize(pos.xyz), 1.0);
 
     gl_Position = MVP * (pos);
 
-    teTex = gl_TessCoord.xy;
+    texcoord = gl_TessCoord.xy;
     tePos = pos;
-    rad = radius;
+    height = pos.y;
+    maxHeight = radius;
 }

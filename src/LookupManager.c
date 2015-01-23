@@ -39,12 +39,24 @@ GLenum ShaderType[] = {
 
 /* uniforms */
 UniformSetter UniVarFuncs[] = {
-    P, MV, MVP, MVPnoTrans, objMV, objMVnoTrans, CamPos
+    P,
+    MV,
+    MVP,
+    MVPnoTrans,
+    objMV,
+    objMVnoTrans,
+    camPos,
+    gTime
 };
 
 /* draw call */
 GLuint DrawMode[] = {
-    GL_QUADS, GL_QUADS, GL_PATCHES, GL_QUADS, GL_QUADS, GL_PATCHES, GL_PATCHES
+    GL_QUADS,   /* PLANE */
+    GL_QUADS,   /* CUBE */
+    GL_PATCHES, /* SPHERE */
+    GL_QUADS,   /* CUBEMAP */
+    GL_QUADS,   /* OVERLAY */
+    GL_PATCHES, /* TERRAIN */
+    GL_PATCHES, /* SKYDOME */
+    GL_QUADS    /* SCREEN_QUAD */
 };
-
-// VaoType defined in header

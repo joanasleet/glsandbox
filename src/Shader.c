@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "Debugger.h"
 #include "MatrixMath.h"
 
 Shader *newShader() {
@@ -19,12 +20,12 @@ void freeShader(Shader *shader) {
 }
 
 /* uniform setter */
-void P(GLint loc, Camera *cam, State *objState) {
+void P(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     glUniformMatrix4fv(loc, 1, GL_FALSE, cam->perspective);
 }
 
-void MV(GLint loc, Camera *cam, State *objState) {
+void MV(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     State *camState = cam->state;
 
@@ -48,7 +49,7 @@ void MV(GLint loc, Camera *cam, State *objState) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVmat);
 }
 
-void MVP(GLint loc, Camera *cam, State *objState) {
+void MVP(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     State *state = cam->state;
 
@@ -76,7 +77,7 @@ void MVP(GLint loc, Camera *cam, State *objState) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVPmat);
 }
 
-void MVPnoTrans(GLint loc, Camera *cam, State *objState) {
+void MVPnoTrans(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     State *camState = cam->state;
 
@@ -98,7 +99,7 @@ void MVPnoTrans(GLint loc, Camera *cam, State *objState) {
 
 // buggy stuff here
 
-void objMV(GLint loc, Camera *cam, State *objState) {
+void objMV(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     float rotaQ[4];
     rotate3D(rotaQ, cam->state->angles);
@@ -117,7 +118,7 @@ void objMV(GLint loc, Camera *cam, State *objState) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, MV);
 }
 
-void objMVnoTrans(GLint loc, Camera *cam, State *objState) {
+void objMVnoTrans(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     float rotaQ[4];
     rotate3D(rotaQ, cam->state->angles);
@@ -129,10 +130,11 @@ void objMVnoTrans(GLint loc, Camera *cam, State *objState) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, orientation);
 }
 
-void gTime(GLint loc, GLfloat _time) {
-    glUniform1f(loc, _time);
+void camPos(GLint loc, Camera *cam, State *objState, double globalTime) {
+    glUniform3fv(loc, 1, cam->state->position);
 }
 
-void CamPos(GLint loc, Camera *cam, State *objState) {
-    glUniform3fv(loc, 1, cam->state->position);
+void gTime(GLint loc, Camera *cam, State *objState, double globalTime) {
+    glUniform1f(loc, globalTime);
+    watch("globalTime: %f\n", globalTime);
 }

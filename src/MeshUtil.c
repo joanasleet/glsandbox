@@ -27,6 +27,8 @@ GLuint genVao(uint32 type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat
         return sphereVAO(length, texRes, midX, midY, midZ, vertcount);
     case SKYDOME:
         return sphereVAO(length, texRes, midX, midY, midZ, vertcount);
+    case SCREEN_QUAD:
+        return screenQuadVAO(vertcount);
     default:
         err("Unknown vao type: %d", type);
         return 0;
@@ -378,8 +380,6 @@ GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, int3
 
 GLuint overlayVAO(int32 *vertcount) {
 
-    // return staticTextVAO("Hello OpenGL", 30, -1, 1, vertcount);
-
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
 
@@ -505,4 +505,27 @@ GLuint staticTextVAO(const char *text, GLfloat size, GLfloat x, GLfloat y, int32
     glEnableVertexAttribArray(1);
 
     return vao;
+}
+
+GLuint screenQuadVAO(int32 *vertcount) {
+
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
+
+    *vertcount = 4;
+
+    const GLfloat data[] = {
+
+        -1.0f, -1.0f, 0.0, 1.0f,
+        1.0f, -1.0f, 0.0, 1.0f,
+        1.0f, 1.0f, 0.0, 1.0f,
+        -1.0f, 1.0f, 0.0, 1.0f
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof (data), data, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    return vao;
+
 }

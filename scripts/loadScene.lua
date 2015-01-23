@@ -30,11 +30,21 @@ function unpackScene(s)
             table.insert(unpacked_scene, "shaders/debug.vert")
             table.insert(unpacked_scene, 2)
         end
+
+        -- collapse uniforms map
+        object.uniforms = {}
+        object.uniVarFuncs = {}
+        local count = 0
+        for varname, varfunc in pairs(object.uniformsMap) do
+            table.insert(object.uniforms, varname)
+            table.insert(object.uniVarFuncs, varfunc)
+            count = count + 1
+        end
         
         -- uniform callbacks
         uniVarFuncs = object.uniVarFuncs
         if uniVarFuncs then
-            count = #uniVarFuncs
+            --count = #uniVarFuncs
             if count then
                 for i=1, count do
                     table.insert(unpacked_scene, uniVarFuncs[count-i+1])
@@ -49,7 +59,7 @@ function unpackScene(s)
         --uniform variables
         uniforms = object.uniforms
         if uniforms then
-            count = #uniforms
+            --count = #uniforms
             if count then
                 for i=1, count do
                     table.insert(unpacked_scene, uniforms[count-i+1])

@@ -58,6 +58,8 @@ void preload(Object *obj, Engine *renderer) {
         }
     }
 
+
+
     /* cache uniform locations */
     GLint loc;
     const char *str;
@@ -100,13 +102,6 @@ void render(Object *obj, Engine *renderer) {
     /* set interpolated state */
     cam->state = &interpolatedState;
 
-    // special sun stuff
-    glUseProgram(1);
-    double t = glfwGetTime();
-    glUniform1f(glGetUniformLocation(1, "time"), t);
-    //double x = 1.0 - (0.5 * (cosf(0.1 * t) + 1.0));
-    //watch("x tex coord: %.10f\n", x);
-
     /*
      * update uniforms */
     GLint loc;
@@ -115,6 +110,8 @@ void render(Object *obj, Engine *renderer) {
     GLint program = shader->program;
     glUseProgram(program);
 
+    double globalTime = getGlobalTime();
+
     for (int i = 0; i < shader->uniformCount; ++i) {
         tempstr = (char *) getKey(shader->uniforms[i], program);
         loc = get(renderer->uniformCache, tempstr);
@@ -122,7 +119,7 @@ void render(Object *obj, Engine *renderer) {
 
         // TODO: interpolate object state
 
-        (*shader->setters[i])(loc, cam, obj->state);
+        (*shader->setters[i])(loc, cam, obj->state, globalTime);
     }
 
     /*

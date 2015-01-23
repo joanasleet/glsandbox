@@ -11,18 +11,31 @@
 #include <time.h>
 
 static double start, current, elapsed;
-// static struct timespec sleepPeriod;
+static double globalSynchedTime = 0.0;
 
 void startTimer() {
-    start = glfwGetTime();
+    start = globalSynchedTime;
 }
 
 double elapsedTime() {
-    current = glfwGetTime();
+
+    updateGlobalTime();
+
+    current = globalSynchedTime;
     elapsed = current - start;
     start = current;
+
     return elapsed;
 }
+
+double getGlobalTime() {
+    return globalSynchedTime;
+}
+
+void updateGlobalTime() {
+    globalSynchedTime = glfwGetTime();
+}
+
 
 void wait(long nanosec) {
 

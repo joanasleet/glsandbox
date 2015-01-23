@@ -2,16 +2,14 @@
 
 out vec4 color;
 
-in vec2 teTex;
-in vec4 tePos;
+in vec2 texcoord;
 in float height;
 
 layout (binding = 0) uniform sampler2D samplerDiff;
 
 void main() {
 
-    //color = vec4(0.1, 0.1, 0.12, 1.0);
-    float h = clamp(2 * height, 2 * height, 4 * height);
-    color = texture(samplerDiff, 50 * teTex);
+    float h = clamp(2.0 * height, 2.0 * height, 4.0 * height);
+    color = texture(samplerDiff, 50.0 * texcoord);
     color = vec4(h * color.xyz, 1.0);
 }
