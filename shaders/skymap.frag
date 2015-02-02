@@ -9,35 +9,43 @@ out vec4 color;
 uniform sampler2D skymap;
 uniform float gTime;
 
-uniform float timeScale = 0.5;
+uniform float timeScale = 0.01;
 
 void main() {
 
     /* sun position */
-    float x = maxHeight * cos(timeScale * gTime) * cos(timeScale * gTime * 0);
-    float y = maxHeight * cos(timeScale * gTime) * sin(timeScale * gTime * 0);
+    float x = maxHeight * cos(timeScale * gTime) * cos(timeScale * gTime * 1);
+    float y = maxHeight * cos(timeScale * gTime) * sin(timeScale * gTime * 1);
     float z = maxHeight * sin(timeScale * gTime);
     vec3 sunPos = vec3(x, z, -y);
 
-    /* sun color */
-    vec4 sunColor = vec4(1.0, 0.9, 0.7, 1.0);
-    vec4 riseColor = vec4(1.0, 0.2, 0.0, 1.0);
-    float sunSize = 20.0;
-    float dist = (1.0 / sunSize) * distance(sunPos, tePos.xyz);
-    float delta = 0.2;
-    float alpha = smoothstep(0.45 - delta, 0.45, dist);
-
-    float u = (z / (2.0 * maxHeight)); /* + 0.15; // cool black hole effect */
-    if (z < -dist) {
-        u = 0.0;
-    }
-
-    vec2 uv = vec2(u, 1.0 - height / (1.01 * maxHeight));
-
     /* sky color */
-    color = texture(skymap, uv);
+    float u = step(0.0, z) * (z / (2.0 * maxHeight));
+    float v = 1.0 - height / (1.01 * maxHeight);
+    color = texture(skymap, vec2(u, v));
 
-    /* draw sun and sky */
-    sunColor = mix(riseColor, sunColor, 2.0 * sunPos.y / maxHeight);
-    color = mix(sunColor, color, alpha);
+    float sunVertDist = distance(sunPos, tePos.xyz);
+
+    /* sun size */
+    float sunSize = 15.0;
+    float sunProxim = (1.0 / sunSize) * sunVertDist;
+    float sunAlpha = smoothstep(0.4, 0.5, sunProxim);
+
+    /* sun color */
+    vec4 sunColor = vec4(1.0, 1.0, 1.0, 1.0);
+    sunColor = mix(sunColor, vec4(1.0, 0.9, 0.0, 1.0),  sunAlpha);
+
+    /* rise/dawn color */
+    vec4 riseColor = vec4(1.0, 0.8, 0.8, 1.0);
+    sunColor = mix(sunColor, vec4(1.0, 0.2, 0.0, 1.0), 1.0 - min(1.0, z * z / maxHeight));
+
+    /* sun glow */
+    float glowSize = 2.0 * maxHeight;
+    float glowAlpha = mix(1.0, 3.0, (1.0 - sunVertDist / glowSize));
+    float glowSwitch = step(glowSize, sunVertDist);
+    color = (1.0 - glowSwitch) * glowAlpha * color + glowSwitch * color;
+
+    // blend sky with sun color
+    color = mix(sunColor, color, sunAlpha);
+
 }

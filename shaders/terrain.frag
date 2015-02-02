@@ -9,7 +9,7 @@ layout (binding = 0) uniform sampler2D samplerDiff;
 
 void main() {
 
-    float h = clamp(2.0 * height, 2.0 * height, 4.0 * height);
-    color = texture(samplerDiff, 50.0 * texcoord);
+    float h = 0.50 * clamp(height, 1.0, 3.0);
+    color = texture(samplerDiff, 25.0 * texcoord);
     color = vec4(h * color.xyz, 1.0);
 }

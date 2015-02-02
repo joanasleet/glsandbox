@@ -3,7 +3,7 @@ scene = {
     camera = {
         fov = 75,
         aspectRatio = 16/9,
-        position = {0, 2, -50}
+        position = {0, 2, 0}
     },
 
     objects = {
@@ -32,7 +32,7 @@ scene = {
                 texres = 25,
                 position = {0, 0, 0}
             },
-            material = {"textures/sand.png", "textures/hm3.png"},
+            material = {"textures/sandHD.jpg", "textures/desertHM.png"},
             uniformsMap = {
                 MVP     = Uniform.MVP
             },
@@ -41,6 +41,25 @@ scene = {
                 "shaders/terrain.frag",
                 "shaders/quad.tcs",
                 "shaders/terrain.tes"
+            }
+        },
+        {
+            name = "water",
+            mesh = {
+                type = MeshType.PLANE,
+                size = 200,
+                texres = 25,
+                position = {0, 1, 0}
+            },
+            --material = {"textures/sand.png", "textures/hm4.png"},
+            uniformsMap = {
+                MVP     = Uniform.MVP
+            },
+            shaders = {
+                "shaders/debug.vert",
+                "shaders/debug.frag"
+                --"shaders/quad.tcs",
+                --"shaders/terrain.tes"
             }
         }
     }

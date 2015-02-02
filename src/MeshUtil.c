@@ -330,7 +330,7 @@ GLuint cubeVAO(GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLflo
 // - test influence of parameters
 GLuint terrainVAO(GLfloat length, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount) {
 
-    const int patch_dim = 3;
+    const int patch_dim = 10;
     const int patch_verts = 4;
 
     const float plen = length / (float) patch_dim;

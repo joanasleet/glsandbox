@@ -2,6 +2,7 @@
 
 layout (quads, equal_spacing, cw) in;
 
+out vec3 tePos;
 out vec2 texcoord;
 out float height;
 
@@ -10,6 +11,7 @@ layout (binding = 1) uniform sampler2D samplerDisp;
 
 void main() {
 
+    /* calc vertex world position */
     float u = gl_TessCoord.x;
     float omu = 1.0 - u;
 
@@ -21,12 +23,23 @@ void main() {
         (u * omv * gl_in[1].gl_Position) +
         (u * v * gl_in[2].gl_Position) +
         (omu * v * gl_in[3].gl_Position);
+    /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ */
 
-    pos.y = texture(samplerDisp, gl_TessCoord.xy).z;
+    /* one to one sampling */
+    float a = 100.0;
+    float ah = a / 2.0;
+    vec4 texel = texture(samplerDisp, (pos.xz + vec2(ah, ah)) / a);
+    pos.y = texel.r + texel.g + texel.b;
+    /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ */
+
+    /* intensify height */
     pos.y = sqrt(pos.y * 5);
-    height = pos.y;
+    /* ~ ~ ~ ~ ~ ~ ~ ~ */
 
     gl_Position = MVP * pos;
 
+    /* set outputs */
     texcoord = gl_TessCoord.xy;
+    tePos = pos.xyz;
+    height = pos.y;
 }

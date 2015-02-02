@@ -7,6 +7,7 @@ void startTimer();
 double elapsedTime();
 double getGlobalTime();
 void updateGlobalTime();
+void pauseGlobalTime();
 
 void wait(long nanosec);
 

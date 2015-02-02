@@ -12,6 +12,7 @@
 
 static double start, current, elapsed;
 static double globalSynchedTime = 0.0;
+static uint8 paused = 0;
 
 void startTimer() {
     start = globalSynchedTime;
@@ -33,9 +34,14 @@ double getGlobalTime() {
 }
 
 void updateGlobalTime() {
-    globalSynchedTime = glfwGetTime();
+    if (!paused)
+        globalSynchedTime = glfwGetTime();
 }
 
+void pauseGlobalTime() {
+    paused = !paused;
+    glfwSetTime(globalSynchedTime);
+}
 
 void wait(long nanosec) {
 
