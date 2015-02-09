@@ -1,0 +1,67 @@
+#version 440
+
+layout (vertices = 4) out;
+
+uniform int minTessLvl = 5;
+uniform int maxTessLvl = 64;
+
+uniform float minDepth = 10.0;
+uniform float maxDepth = 50.0;
+
+uniform mat4 P;
+uniform mat4 MVP;
+uniform vec3 camPos;
+
+uniform float pixPerHeight = 1.0;
+
+float getPostProjectionSphereExtent(vec3 origin, float diameter) {
+    vec4 clipPos = MVP * vec4(origin, 1.0);
+    return abs(diameter * P[0][0] / clipPos.w);
+}
+
+float calcTessFactor(vec3 v0, vec3 v1) {
+    float e0 = distance(v0, v1);
+    vec3 m0 = (v0 + v1) / 2.0;
+    return max(10.0, pixPerHeight * getPostProjectionSphereExtent(m0, e0));
+}
+
+
+void main() {
+
+    /* edge sphere based */
+    if (gl_InvocationID == 0) {
+
+        vec3 v0 = gl_in[0].gl_Position.xyz;
+        vec3 v1 = gl_in[1].gl_Position.xyz;
+        vec3 v2 = gl_in[2].gl_Position.xyz;
+        vec3 v3 = gl_in[3].gl_Position.xyz;
+
+        gl_TessLevelOuter[0] = calcTessFactor(v3, v0); // left edge
+        gl_TessLevelOuter[1] = calcTessFactor(v2, v3); // bot edge
+        gl_TessLevelOuter[2] = calcTessFactor(v1, v2); // right edge
+        gl_TessLevelOuter[3] = calcTessFactor(v0, v1); // top edge
+
+        gl_TessLevelInner[0] = mix(gl_TessLevelOuter[0], gl_TessLevelOuter[2], 0.5);
+        gl_TessLevelInner[1] = mix(gl_TessLevelOuter[1], gl_TessLevelOuter[3], 0.5);
+    }
+
+    /* cam distance based
+    if (gl_InvocationID == 0) {
+
+        float camDist = distance(camPos, gl_in[0].gl_Position.xyz);
+        float depth = clamp( (camDist - minDepth) / (maxDepth - minDepth), 0.0, 1.0);
+
+        float tessLvl = mix(maxTessLvl, minTessLvl, depth);
+
+        gl_TessLevelOuter[0] = float(tessLvl);
+        gl_TessLevelOuter[1] = float(tessLvl);
+        gl_TessLevelOuter[2] = float(tessLvl);
+        gl_TessLevelOuter[3] = float(tessLvl);
+
+        gl_TessLevelInner[0] = int(tessLvl);
+        gl_TessLevelInner[1] = int(tessLvl);
+    }
+    */
+
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+}

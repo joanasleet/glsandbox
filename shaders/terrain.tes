@@ -26,7 +26,7 @@ void main() {
     /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ */
 
     /* one to one sampling */
-    float a = 100.0;
+    float a = 100.0; /* pass this as uniform */
     float ah = a / 2.0;
     vec4 texel = texture(samplerDisp, (pos.xz + vec2(ah, ah)) / a);
     pos.y = texel.r + texel.g + texel.b;

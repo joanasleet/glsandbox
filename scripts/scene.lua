@@ -34,7 +34,9 @@ scene = {
             },
             material = {"textures/sandHD.jpg", "textures/desertHM.png"},
             uniformsMap = {
-                MVP     = Uniform.MVP
+                P       = Uniform.P,
+                MVP     = Uniform.MVP,
+                camPos  = Uniform.camPos
             },
             shaders = {
                 "shaders/pass.vert",
@@ -49,7 +51,7 @@ scene = {
                 type = MeshType.PLANE,
                 size = 200,
                 texres = 25,
-                position = {0, 1, 0}
+                position = {0, 2, 0}
             },
             --material = {"textures/sand.png", "textures/hm4.png"},
             uniformsMap = {
