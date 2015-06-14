@@ -460,3 +460,4 @@ STBIDEF void stbi_install_YCbCr_to_RGB(stbi_YCbCr_to_RGB_run func);
              on 'test' only check type, not whether we support this variant
       0.50   first released version
 */
+

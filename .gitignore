@@ -5,5 +5,4 @@ nbproject/
 *.log
 cachegrind.*
 callgrind.*
-*.sublime-workspace
 gmon.out

@@ -112,7 +112,7 @@ void perspective(mat4 target, float near, float far, float fov, float ratio) {
 
     /* already transposed to column-major */
     float data[] = {
-        e00,   0,   0,     0,
+        e00, 0,   0,     0,
         0, e11,   0,     0,
         0,   0, e22, -1.0f,
         0,   0, e32,     0
@@ -133,7 +133,7 @@ void perspectiveInf(mat4 target, float near, float fov, float ratio) {
 
     /* already transposed to column-major */
     float data[] = {
-        e00,   0,   0,     0,
+        e00, 0,   0,     0,
         0, e11,   0,     0,
         0,   0, e22, -1.0f,
         0,   0, e32,     0
@@ -167,10 +167,10 @@ void rotateQ(mat4 target, quat q) {
 
     /* again, transposed */
     float data[] = {
-        1 - 2.0f * (yy + zz),   2.0f * (xy + wz),   2.0f * (xz - wy), 0,
-        2.0f * (xy - wz), 1 - 2.0f * (xx + zz),   2.0f * (yz + wx), 0,
-        2.0f * (xz + wy),   2.0f * (yz - wx), 1 - 2.0f * (xx + yy), 0,
-        0,         0,         0, 1
+        1 - 2.0f * (yy + zz),     2.0f * (xy + wz),     2.0f * (xz - wy), 0,
+            2.0f * (xy - wz), 1 - 2.0f * (xx + zz),     2.0f * (yz + wx), 0,
+            2.0f * (xz + wy),     2.0f * (yz - wx), 1 - 2.0f * (xx + yy), 0,
+                           0,                    0,                    0, 1
     };
 
     _setData(target, data);
@@ -294,3 +294,4 @@ double lerpStep(double from, double to, double alpha) {
 
     return (delta * alpha);
 }
+

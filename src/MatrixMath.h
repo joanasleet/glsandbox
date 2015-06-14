@@ -67,3 +67,4 @@ double lerpStep(double from, double to, double alpha);
 
 #endif  /* MATRIXMATH_H */
 
+

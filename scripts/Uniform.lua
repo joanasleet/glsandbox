@@ -3,18 +3,19 @@ local Uniform = {
 	-- world matrix
     P = 0,
     MV = 1,
-    MVP = 2,
-    MVPNoTrans = 3,
+    MVnoTrans = 2,
+    MVP = 3,
+    MVPNoTrans = 4,
 
     -- object matrix
-    objMV = 4,
-    objMVNoTrans = 5,
+    objMV = 5,
+    objMVNoTrans = 6,
 
     -- camera
-    camPos = 6,
+    camPos = 7,
 
     -- misc
-    gTime = 7
+    gTime = 8
 }
 
 return Uniform

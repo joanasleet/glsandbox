@@ -121,3 +121,4 @@ void screenshot() {
     sprintf(cmd, "rm -f %s", name);
     system(cmd);
 }
+

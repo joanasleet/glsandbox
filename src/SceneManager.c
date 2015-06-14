@@ -162,3 +162,4 @@ void reloadScene(Engine *renderer) {
     preloadObjects(renderer);
     log_info("%s", "- - - - - - - - - - - - - - - - - -");
 }
+

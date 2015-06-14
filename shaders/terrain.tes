@@ -2,12 +2,14 @@
 
 layout (quads, equal_spacing, cw) in;
 
+out vec3 teTC;
+out vec2 teUVg;
 out vec3 tePos;
-out vec2 texcoord;
 out float height;
 
+layout (binding = 0) uniform sampler2D terrain;
+
 uniform mat4 MVP;
-layout (binding = 1) uniform sampler2D samplerDisp;
 
 void main() {
 
@@ -25,21 +27,27 @@ void main() {
         (omu * v * gl_in[3].gl_Position);
     /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ */
 
+    /* normal */
+
+    /* ~ ~ ~ ~ */
+
     /* one to one sampling */
     float a = 100.0; /* pass this as uniform */
     float ah = a / 2.0;
-    vec4 texel = texture(samplerDisp, (pos.xz + vec2(ah, ah)) / a);
+    vec2 texuv = (pos.xz + vec2(ah, ah)) / a;
+    vec4 texel = texture(terrain, texuv );
     pos.y = texel.r + texel.g + texel.b;
     /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ */
 
     /* intensify height */
-    pos.y = sqrt(pos.y * 5);
+    pos.y = sqrt(pos.y * 15);
     /* ~ ~ ~ ~ ~ ~ ~ ~ */
 
     gl_Position = MVP * pos;
 
     /* set outputs */
-    texcoord = gl_TessCoord.xy;
+    teTC = gl_TessCoord;
+    teUVg = texuv;
     tePos = pos.xyz;
     height = pos.y;
 }

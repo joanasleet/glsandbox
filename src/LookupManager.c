@@ -41,6 +41,7 @@ GLenum ShaderType[] = {
 UniformSetter UniVarFuncs[] = {
     P,
     MV,
+    MVnoTrans,
     MVP,
     MVPnoTrans,
     objMV,

@@ -49,6 +49,22 @@ void MV(GLint loc, Camera *cam, State *objState, double globalTime) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVmat);
 }
 
+void MVnoTrans(GLint loc, Camera *cam, State *objState, double globalTime) {
+
+    State *camState = cam->state;
+
+    // orientation
+    float rotaQ[4];
+    rotate3D(rotaQ, camState->angles);
+    invertQ(rotaQ);
+
+    GLfloat orientation[16];
+    rotateQ(orientation, rotaQ);
+
+    // update uniform
+    glUniformMatrix4fv(loc, 1, GL_FALSE, orientation);
+}
+
 void MVP(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     State *state = cam->state;
@@ -136,5 +152,4 @@ void camPos(GLint loc, Camera *cam, State *objState, double globalTime) {
 
 void gTime(GLint loc, Camera *cam, State *objState, double globalTime) {
     glUniform1f(loc, globalTime);
-    watch("globalTime: %f\n", globalTime);
 }
