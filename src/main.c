@@ -1,7 +1,6 @@
 #include "Engine.h"
 #include "SceneManager.h"
 #include "Debugger.h"
-#include "Script.h"
 #include "MatrixMath.h"
 
 #include <unistd.h>

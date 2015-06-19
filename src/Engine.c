@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Debugger.h"
 #include "Timestep.h"
+#include "LuaScript.h"
 #include "ShaderUtil.h"
 #include "Deallocator.h"
 #include "InputManager.h"
@@ -14,6 +15,8 @@ static float renderAlpha = 0.0f;
 Engine *init() {
 
     Engine *renderer = (Engine *) malloc(sizeof (Engine));
+
+    config( renderer );
 
     renderer->context = newContext();
     renderer->mainCam = newCamera(0.0f, 0.0f, 0.0f);
@@ -41,6 +44,23 @@ Engine *init() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return renderer;
+}
+
+void config( Engine *renderer ) {
+
+    script *S;
+    lua( S, CONFIG );
+
+    pushKey( S, "engineConfig", "sceneScript" );
+
+    char *ssc;
+    popString( S, ssc );
+    log_info( "Scene file: %s", ssc );
+    free( ssc );
+
+    freeScript( S );
+
+    exit(0);
 }
 
 void preload(Object *obj, Engine *renderer) {

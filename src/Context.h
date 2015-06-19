@@ -20,8 +20,4 @@ void contextErrorCB(int code, const char* msg);
 void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
         GLsizei length, const GLchar *msg, const void* userParam);
 
-// TODO: should be part of the some other module
-double elapsedTime();
-void resetTimer();
-
 #endif	/* CONTEXT_H */

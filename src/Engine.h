@@ -7,7 +7,9 @@
 #include "Context.h"
 #include "ShaderCache.h"
 
-typedef struct Engine {
+#define CONFIG "scripts/config.lua"
+
+typedef struct {
 
     Object **objects;
     uint32 objectCount;
@@ -22,11 +24,12 @@ typedef struct Engine {
 /*
  *  primary API */
 Engine *init();
-void enterLoop(Engine *renderer);
-void terminate(Engine *renderer);
-void freeObjects(Engine *renderer);
+void enterLoop( Engine *renderer );
+void terminate( Engine *renderer );
+void freeObjects( Engine *renderer );
 
 /* engine intern */
+void config( Engine *renderer );
 void renderObjects(Engine *renderer);
 void preloadObjects(Engine *renderer);
 void exitIfNoObjects(Engine *renderer);

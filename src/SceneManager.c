@@ -1,6 +1,7 @@
 #include "common.h"
 
-#include "Script.h"
+//#include "Script.h"
+#include "LuaScript.h"
 #include "MeshUtil.h"
 #include "Debugger.h"
 #include "Material.h"
@@ -13,19 +14,21 @@ void loadScene(Engine *renderer) {
     return_guard(renderer, RVOID);
 
     log_info("%s", "- - - - - Loading Scene - - - - -");
-    execScript(SCENE_LOADER);
+    script *S;
+    lua( S, SCENE_LOADER );
 
     // camera
     Camera *cam = renderer->mainCam;
 
-    cam->fov = popFloat();
+    popFloat( S, cam->fov );
     cam->targetFov = cam->fov;
-    cam->aspectRatio = popFloat();
-    cam->state->position[0] = popFloat();
-    cam->state->position[1] = popFloat();
-    cam->state->position[2] = popFloat();
+    popFloat( S, cam->aspectRatio );
+    popFloat( S, cam->state->position[0] );
+    popFloat( S, cam->state->position[1] );
+    popFloat( S, cam->state->position[2] );
 
-    uint32 objectCount = (uint32) popInt();
+    uint32 objectCount = 0;
+    popInt( S, objectCount );
 
     log_info("<Object count %d>", objectCount);
     return_guard(objectCount, RVOID);
@@ -39,20 +42,35 @@ void loadScene(Engine *renderer) {
         Mesh *mesh = newMesh();
 
         /* object name */
-        log_info("<Adding object %s>", popString());
+        char * name;
+        popString( S, name );
+        log_info( "<Adding object %s>", name );
+        free( name );
 
         /* vao type */
-        uint32 vaoType = (uint32) popInt();
+        uint32 vaoType;
+        popInt( S, vaoType );
 
-        float size = popFloat();
-        float texres = popFloat();
-        float midX = popFloat();
-        float midY = popFloat();
-        float midZ = popFloat();
+        float size;
+        popFloat( S, size );
+
+        float texres;
+        popFloat( S, texres );
+
+        float midX;
+        popFloat( S, midX );
+
+        float midY;
+        popFloat( S, midY );
+
+        float midZ;
+        popFloat( S, midZ );
+
         mesh->vaoId = genVao(vaoType, size, texres, midX, midY, midZ, &(mesh->count));
 
         /* texture */
-        int32 texCount = popInt();
+        int32 texCount;
+        popInt( S, texCount );
 
         Material *mat = newMaterial();
 
@@ -66,18 +84,21 @@ void loadScene(Engine *renderer) {
             mat->textures = (Texture **) malloc(texCount * sizeof(Texture *));
 
             for (int32 i = 0; i < texCount; ++i) {
-                mat->textures[i] = newTex2D(popString());
+                char *tex;
+                popString( S, tex );
+                mat->textures[i] = newTex2D( tex );
+                free( tex );
             }
         }
         break;
         case 6: {
             const char *faces[6];
-            faces[0] = popString();
-            faces[1] = popString();
-            faces[2] = popString();
-            faces[3] = popString();
-            faces[4] = popString();
-            faces[5] = popString();
+            //faces[0] = popString();
+            //faces[1] = popString();
+            //faces[2] = popString();
+            //faces[3] = popString();
+            //faces[4] = popString();
+            //faces[5] = popString();
 
             mat->texCount = 1;
             mat->textures = (Texture **) malloc(sizeof(Texture *));
@@ -89,34 +110,37 @@ void loadScene(Engine *renderer) {
         }
 
         Shader *shader = newShader();
+        
         /* uniform count */
-        uint8 uniformCount = (uint8) popInt();
+        uint8 uniformCount;
+        popInt( S, uniformCount );
         shader->uniformCount = uniformCount;
 
         /* uniforms */
         shader->uniforms = (const char **) malloc(sizeof (const char *)*uniformCount);
 
-        const char *src;
-        char *dest;
         for (uint8 i = 0; i < uniformCount; i++) {
 
             /* i-th uniform variable */
-            src = popString();
+            char *univar;
+            popString( S, univar );
 
-            dest = (char *) malloc(sizeof (char) * (strlen(src) + 1));
-            shader->uniforms[i] = (const char *) strcpy(dest, src);
+            shader->uniforms[i] = (const char *) univar;
             log_info("<Uniform %s>", shader->uniforms[i]);
         }
 
         /* uniforms setter functions */
         UniformSetter *setters = (UniformSetter *) malloc(sizeof (UniformSetter) * uniformCount);
         for (uint8 i = 0; i < uniformCount; i++) {
-            setters[i] = UniVarFuncs[popInt()];
+            int indx = 0;
+            popInt( S, indx );
+            setters[i] = UniVarFuncs[indx];
         }
         shader->setters = setters;
 
         /* shader count */
-        uint8 stageCount = (uint8) popInt();
+        uint8 stageCount = 0;
+        popInt( S, stageCount );
         shader->stageCount = stageCount;
 
         /* shaders */
@@ -125,10 +149,10 @@ void loadScene(Engine *renderer) {
         for (uint8 i = 0; i < stageCount; i++) {
 
             /* i-th shader stage */
-            src = popString();
+            char *stage;
+            popString( S, stage );
 
-            dest = (char *) malloc(sizeof (char) * (strlen(src) + 1));
-            shader->stages[i] = (const char *) strcpy(dest, src);
+            shader->stages[i] = (const char *) stage;
             log_info("<Shader %s>", shader->stages[i]);
         }
 
@@ -143,7 +167,7 @@ void loadScene(Engine *renderer) {
         objects[j] = object;
     }
 
-    termScript();
+    freeScript( S );
 
     renderer->objectCount = objectCount;
     renderer->objects = objects;
