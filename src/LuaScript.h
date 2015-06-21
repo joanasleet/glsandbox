@@ -50,6 +50,19 @@ typedef lua_State script;
         lua_remove( script, -2 ); \
     } \
 
+// lua state with a table at the stacks top
+typedef lua_State table;
+
+// expects table at index -2
+#define putKeyInt( table, key, num ) \
+    lua_pushinteger( table, luaL_checkinteger( table, num ) ); \
+    lua_setfield( table, -2, key ); \
+
+// expects table at index -2
+#define putKeyString( table , key, str ) \
+    lua_pushstring( table, luaL_checkstring( table, str ) ); \
+    lua_setfield( table, -2, key ); \
+
 #define popVal( script, num ) if( script ) lua_pop( script, num )
 
 #define freeScript( script ) if( script ) lua_close( script )
