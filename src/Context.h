@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-#define newContext() (createContext(1280, 720, "OpenGL"))
-
 typedef struct {
     uint32 xRes;
     uint32 yRes;
@@ -12,7 +10,7 @@ typedef struct {
     GLFWwindow* win;
 } Context;
 
-Context* createContext(uint32 xres, uint32 yres, const char* title);
+Context* newContext(uint32 xres, uint32 yres, const char* title);
 
 void fps(double elapsed);
 void resizeCB(GLFWwindow* win, int w, int h);

@@ -1,6 +1,5 @@
 #include "common.h"
 
-//#include "Script.h"
 #include "LuaScript.h"
 #include "MeshUtil.h"
 #include "Debugger.h"
@@ -8,26 +7,25 @@
 #include "SceneManager.h"
 #include "LookupManager.h"
 
-#define SCENE_LOADER "scripts/loadScene.lua"
-
 void loadScene(Engine *renderer) {
     return_guard(renderer, RVOID);
 
     log_info("%s", "- - - - - Loading Scene - - - - -");
+
+    /* get scene script name */
+    script *config;
+    lua( config, CONFIG_SCRIPT );
+    pushTableKey( config, "engineConfig", "sceneScript" );
+    char* scene;
+    popString( config, scene );
+    freeScript( config );
+
+    /* read scene script */
     script *S;
-    lua( S, SCENE_LOADER );
-
-    // camera
-    Camera *cam = renderer->mainCam;
-
-    popFloat( S, cam->fov );
-    cam->targetFov = cam->fov;
-    popFloat( S, cam->aspectRatio );
-    popFloat( S, cam->state->position[0] );
-    popFloat( S, cam->state->position[1] );
-    popFloat( S, cam->state->position[2] );
+    lua( S, (const char *) scene );
 
     uint32 objectCount = 0;
+    pushTable( S, "scene" );
     popInt( S, objectCount );
 
     log_info("<Object count %d>", objectCount);

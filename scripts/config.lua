@@ -1,15 +1,14 @@
 engineConfig = {
 
-    -- scene
-    sceneScript = "scene.lua",
-    loadScript  = "loadScene.lua",
-
     -- context 
     resolutionX = 1280,
     resolutionY = 720,
     windowTitle = "IsoEngine",
 
     -- camera
+    posX = 0,
+    posY = 5,
+    posZ = 0,
     fieldOfView  = 75,
     acceleration = 0.01,
     turnSpeed    = 0.01,
@@ -21,7 +20,8 @@ engineConfig = {
     -- texture
     anisotropicLvl = 16
 
-
+    -- scene
+    sceneScript = "scene.lua",
 
     
 

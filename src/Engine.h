@@ -7,7 +7,7 @@
 #include "Context.h"
 #include "ShaderCache.h"
 
-#define CONFIG "scripts/config.lua"
+#define CONFIG_SCRIPT "scripts/config.lua"
 
 typedef struct {
 

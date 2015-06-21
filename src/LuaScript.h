@@ -20,35 +20,34 @@ typedef lua_State script;
     } \
 
 #define popInt( script, target ) \
-    if( script && !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ) { \
-        int num = lua_tointeger( script, -1 ); \
-        lua_pop( script, 1 ); \
-        target = num; \
-    } \
+    err_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
+    target = lua_tointeger( script, -1 ); \
+    lua_pop( script, 1 ); \
 
 #define popFloat( script, target ) \
-    if(  script && !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ) { \
-        double num = lua_tonumber( script, -1 ); \
-        lua_pop( script, 1 ); \
-        target = num; \
-    } \
+    err_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
+    target = lua_tonumber( script, -1 ); \
+    lua_pop( script, 1 ); \
 
 #define popString( script, target ) \
-    if( script && !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ) { \
-        size_t _strlen; \
-        const char* _src = lua_tolstring( script, -1, &_strlen ); \
-        target = malloc( sizeof( char ) * (_strlen+1) ); \
-        err_guard( target ); \
-        strcpy( target, _src ); \
-        lua_pop( script, 1 ); \
-    } \
+    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    size_t target##len; \
+    const char* target##val = lua_tolstring( script, -1, &target##len ); \
+    char target##temp[target##len+1]; \
+    strcpy( target##temp, target##val ); \
+    target = target##temp; \
+    lua_pop( script, 1 ); \
 
-#define pushKey( script, table, key ) \
-    if( script ) { \
-        lua_getglobal( script, table ); \
-        lua_getfield( script, -1, key ); \
-        lua_remove( script, -2 ); \
-    } \
+#define pushTable( script, table ) \
+    lua_getglobal( script, table ); \
+
+#define pushKey( script, key ) \
+    lua_getfield( script, -1, key ); \
+
+#define pushTableKey( script, table, key ) \
+    lua_getglobal( script, table ); \
+    lua_getfield( script, -1, key ); \
+    lua_remove( script, -2 ); \
 
 // lua state with a table at the stacks top
 typedef lua_State table;

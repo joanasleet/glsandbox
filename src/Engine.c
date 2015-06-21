@@ -18,14 +18,10 @@ Engine *init() {
 
     config( renderer );
 
-    renderer->context = newContext();
-    renderer->mainCam = newCamera(0.0f, 0.0f, 0.0f);
-
     renderer->shaderCache = newCache();
     renderer->uniformCache = newCache();
 
     glEnable(GL_DEPTH_TEST);
-
     glEnable(GL_CULL_FACE);
 
     GLFWwindow *window = renderer->context->win;
@@ -49,18 +45,70 @@ Engine *init() {
 void config( Engine *renderer ) {
 
     script *S;
-    lua( S, CONFIG );
+    lua( S, CONFIG_SCRIPT );
 
-    pushKey( S, "engineConfig", "sceneScript" );
+    /* get table by name */
+    pushTable( S, "engineConfig" );
 
-    char *ssc;
-    popString( S, ssc );
-    log_info( "Scene file: %s", ssc );
-    free( ssc );
+    /* context */
+    int xRes;
+    pushKey( S, "resolutionX" );
+    popInt( S, xRes );
+
+    int yRes;
+    pushKey( S, "resolutionY" );
+    popInt( S, yRes );
+
+    char *title;
+    pushKey( S, "windowTitle" );
+    popString( S, title );
+    
+    renderer->context = createContext( xRes, yRes, (const char*) title );
+
+    /* camera */
+    float posX;
+    pushKey( S, "posX" );
+    popInt( S, posX );
+
+    float posY;
+    pushKey( S, "posY" );
+    popInt( S, posY );
+
+    float posZ;
+    pushKey( S, "posZ" );
+    popInt( S, posZ );
+
+    Camera* cam = newCamera( posX, posY, posZ );
+    
+    pushKey( S, "fieldOfView" );
+    popFloat( S, cam->fov );
+    cam->fov = cam->targetFov;
+    
+    pushKey( S, "acceleration" );
+    popFloat( S, cam->state->accel );
+
+    float turnSpeed;
+    pushKey( S, "turnSpeed" );
+    popFloat( S, turnSpeed );
+
+    float near;
+    pushKey( S, "nearClip" );
+    popFloat( S, near );
+
+    float far;
+    pushKey( S, "farClip" );
+    popFloat( S, far );
+
+    pushKey( S, "aspectRatio" );
+    popFloat( S, cam->aspectRatio );
+    
+    float smoothing;
+    pushKey( S, "smoothing" );
+    popFloat( S, smoothing );
+
+    /* config done */
 
     freeScript( S );
-
-    exit(0);
 }
 
 void preload(Object *obj, Engine *renderer) {
@@ -77,8 +125,6 @@ void preload(Object *obj, Engine *renderer) {
             addShader(shaderStage, ShaderType[i], prog, renderer->shaderCache);
         }
     }
-
-
 
     /* cache uniform locations */
     GLint loc;

@@ -7,7 +7,7 @@
 
 extern Engine *renderer;
 
-Context *createContext(uint32 xRes, uint32 yRes, const char *title) {
+Context *newContext(uint32 xRes, uint32 yRes, const char *title) {
     log_info("%s", "- - - - - - - Loading Context - - - - - - -");
     Context *context = (Context *) malloc(sizeof (Context));
     context->xRes = xRes;
