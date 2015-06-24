@@ -1,32 +1,38 @@
+#include "Util.h"
 #include "Engine.h"
-#include "Debugger.h"
 #include "Timestep.h"
 #include "LuaScript.h"
 #include "ShaderUtil.h"
-#include "Deallocator.h"
 #include "InputManager.h"
 #include "LookupManager.h"
 
 #include <math.h>
 #include <string.h>
 
+#define MAX_KEY_LENGTH 15
+
 static float renderAlpha = 0.0f;
 
 Engine *init() {
 
-    Engine *renderer = (Engine *) malloc(sizeof (Engine));
+    Engine *renderer = alloc( Engine, 1 );
 
+    /* read config from script */
     config( renderer );
 
-    renderer->shaderCache = newCache();
-    renderer->uniformCache = newCache();
+    /* use lua table as cache */
+    renderer->shaderCache = luaL_newstate();
+    err_guard( renderer->shaderCache );
+    lua_newtable( renderer->shaderCache );
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    /* use lua table as cache */
+    renderer->uniformCache = luaL_newstate();
+    err_guard( renderer->uniformCache );
+    lua_newtable( renderer->uniformCache );
 
+    /* set window callbacks */
     GLFWwindow *window = renderer->context->win;
 
-    glClearColor(0.2, 0.2, 0.2, 1.0);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     glfwSetCursorEnterCallback(window, cursorEnterCB);
@@ -34,10 +40,13 @@ Engine *init() {
     glfwSetKeyCallback(window, keyCB);
     glfwSetWindowSizeCallback(window, resizeCB);
 
-    glEnable(GL_FRAMEBUFFER_SRGB);
-
+    /* set GL states */
     glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_FRAMEBUFFER_SRGB);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
 
     return renderer;
 }
@@ -48,67 +57,73 @@ void config( Engine *renderer ) {
     lua( S, CONFIG_SCRIPT );
 
     /* get table by name */
-    pushTable( S, "engineConfig" );
+    lua_getglobal( S, "engineConfig" );
 
     /* context */
     int xRes;
-    pushKey( S, "resolutionX" );
+    lua_getfield( S, -1, "resolutionX" );
     popInt( S, xRes );
 
     int yRes;
-    pushKey( S, "resolutionY" );
+    lua_getfield( S, -1, "resolutionY" );
     popInt( S, yRes );
 
     char *title;
-    pushKey( S, "windowTitle" );
+    lua_getfield( S, -1, "windowTitle" );
     popString( S, title );
     
-    renderer->context = createContext( xRes, yRes, (const char*) title );
+    renderer->context = newContext( xRes, yRes, (const char*) title );
 
     /* camera */
     float posX;
-    pushKey( S, "posX" );
+    lua_getfield( S, -1, "posX" );
     popInt( S, posX );
 
     float posY;
-    pushKey( S, "posY" );
+    lua_getfield( S, -1, "posY" );
     popInt( S, posY );
 
     float posZ;
-    pushKey( S, "posZ" );
+    lua_getfield( S, -1, "posZ" );
     popInt( S, posZ );
 
     Camera* cam = newCamera( posX, posY, posZ );
     
-    pushKey( S, "fieldOfView" );
+    lua_getfield( S, -1, "fieldOfView" );
     popFloat( S, cam->fov );
-    cam->fov = cam->targetFov;
+    cam->targetFov = cam->fov*0.8f;
     
-    pushKey( S, "acceleration" );
+    lua_getfield( S, -1, "acceleration" );
     popFloat( S, cam->state->accel );
 
     float turnSpeed;
-    pushKey( S, "turnSpeed" );
+    lua_getfield( S, -1, "turnSpeed" );
     popFloat( S, turnSpeed );
+    turnSpeed += 1.0f;
 
     float near;
-    pushKey( S, "nearClip" );
+    lua_getfield( S, -1, "nearClip" );
     popFloat( S, near );
+    near += 1.0f;
 
     float far;
-    pushKey( S, "farClip" );
+    lua_getfield( S, -1, "farClip" );
     popFloat( S, far );
+    far += 1.0f;
 
-    pushKey( S, "aspectRatio" );
+    lua_getfield( S, -1, "aspectRatio" );
     popFloat( S, cam->aspectRatio );
     
     float smoothing;
-    pushKey( S, "smoothing" );
+    lua_getfield( S, -1, "smoothing" );
     popFloat( S, smoothing );
+    smoothing += 1.0f;
+
+    renderer->mainCam = cam;
 
     /* config done */
 
-    freeScript( S );
+    lua_close( S );
 }
 
 void preload(Object *obj, Engine *renderer) {
@@ -120,26 +135,25 @@ void preload(Object *obj, Engine *renderer) {
     /* cache shaders */
     for (int i = 0; i < shader->stageCount; ++i) {
         shaderStage = shader->stages[i];
-
-        if (strlen(shaderStage) > 0) {
-            addShader(shaderStage, ShaderType[i], prog, renderer->shaderCache);
-        }
+        addShader(shaderStage, ShaderType[i], prog, renderer->shaderCache);
     }
 
     /* cache uniform locations */
-    GLint loc;
-    const char *str;
-    const char *key;
-
     for (int i = 0; i < shader->uniformCount; ++i) {
-        str = shader->uniforms[i];
+        const char *uniform = shader->uniforms[i];
 
-        loc = glGetUniformLocation(prog, str);
-        if (loc < 0)
-            log_warn("[PRELOAD] missing uniform '%s' in shader prog %i (loc: %i)", str, prog, loc);
-
-        key = getKey(str, prog);
-        cache(renderer->uniformCache, key, loc);
+        /* get uniform location */
+        GLint loc = glGetUniformLocation( prog, uniform );
+        if (loc < 0) {
+            log_warn("No uniform '%s' in shader prog %i (loc: %i)", uniform, prog, loc);
+        } else {
+            log_info( "<Uniform: %s ( loc: %d )>", uniform, loc );
+        }
+        /* cache Cache[key] = prog */
+        char key[MAX_KEY_LENGTH];
+        sprintf( key, "%d_%s", prog, uniform );
+        lua_pushinteger( renderer->uniformCache, prog );
+        lua_setfield( renderer->uniformCache, -2, ( const char * ) key );
     }
 }
 
@@ -170,8 +184,6 @@ void render(Object *obj, Engine *renderer) {
 
     /*
      * update uniforms */
-    GLint loc;
-    char *tempstr;
     Shader *shader = obj->shader;
     GLint program = shader->program;
     glUseProgram(program);
@@ -179,9 +191,15 @@ void render(Object *obj, Engine *renderer) {
     double globalTime = getGlobalTime();
 
     for (int i = 0; i < shader->uniformCount; ++i) {
-        tempstr = (char *) getKey(shader->uniforms[i], program);
-        loc = get(renderer->uniformCache, tempstr);
-        free(tempstr);
+
+        /* get uniform key */
+        char key[MAX_KEY_LENGTH];
+        sprintf( key, "%d_%s", program, shader->uniforms[i] );
+
+        /* get uniform location */
+        GLint loc = -1;
+        lua_getfield( renderer->uniformCache, -1, key );
+        popInt( renderer->uniformCache, loc );
 
         // TODO: interpolate object state
 
@@ -216,10 +234,6 @@ void render(Object *obj, Engine *renderer) {
     mesh->draw(mesh->mode, &mesh->first, mesh->count);
 }
 
-void exitIfNoObjects(Engine *renderer) {
-    exit_guard(renderer->objects[0]);
-}
-
 void preloadObjects(Engine *renderer) {
     log_info("%s", "- - - - - Preloading objects - - - - -");
     for (unsigned int i = 0; i < renderer->objectCount; ++i) {
@@ -237,8 +251,8 @@ void renderObjects(Engine *renderer) {
 void enterLoop(Engine *renderer) {
 
     exit_guard(renderer);
+    exit_guard(renderer->objects[0]);
 
-    exitIfNoObjects(renderer);
     preloadObjects(renderer);
 
     Camera *cam = renderer->mainCam;
@@ -274,16 +288,14 @@ void enterLoop(Engine *renderer) {
 
 void terminate(Engine *renderer) {
 
-    freeCache(renderer->shaderCache);
-    freeCache(renderer->uniformCache);
+    lua_close( renderer->shaderCache );
+    lua_close( renderer->uniformCache );
 
     freeObjects(renderer);
 
     free(renderer->context);
 
     freeCamera(renderer->mainCam);
-
-    deallocStores();
 
     free(renderer);
 

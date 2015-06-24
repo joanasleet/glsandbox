@@ -1,8 +1,9 @@
+#include "Util.h"
 #include "Object.h"
 
 Object *newObject() {
 
-    Object *obj = NEW(Object);
+    Object *obj = alloc( Object, 1 );
     return obj;
 }
 

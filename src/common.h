@@ -22,8 +22,6 @@
 #define TRUE 1
 #define FALSE 0
 
-#define NEW(type) ((type*) malloc(sizeof(type)))
-
 /*
  * unsigned number types */
 typedef unsigned char uint8;
@@ -39,5 +37,4 @@ typedef int int32;
 typedef long int64;
 
 #endif  /* COMMON_H */
-
 

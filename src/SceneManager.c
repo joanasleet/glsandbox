@@ -1,8 +1,8 @@
 #include "common.h"
 
+#include "Util.h"
 #include "LuaScript.h"
 #include "MeshUtil.h"
-#include "Debugger.h"
 #include "Material.h"
 #include "SceneManager.h"
 #include "LookupManager.h"
@@ -18,55 +18,82 @@ void loadScene(Engine *renderer) {
     pushTableKey( config, "engineConfig", "sceneScript" );
     char* scene;
     popString( config, scene );
-    freeScript( config );
+    lua_close( config );
 
-    /* read scene script */
+    /* load scene */
     script *S;
     lua( S, (const char *) scene );
 
-    uint32 objectCount = 0;
-    pushTable( S, "scene" );
-    popInt( S, objectCount );
+    /* push scene table */
+    lua_getglobal( S, "scene" );
 
+    /* push subtable */
+    lua_getfield( S, -1, "objects" );
+
+    /* get subtable size */
+    lua_len( S, -1 );
+    uint32 objectCount = 0;
+    popInt( S, objectCount );
     log_info("<Object count %d>", objectCount);
     return_guard(objectCount, RVOID);
 
-    // objects
-    Object **objects = (Object **) malloc(sizeof (Object *) * objectCount);
+    Object **objects = alloc( Object*, objectCount );
 
-    for (uint32 j = 0; j < objectCount; j++) {
+    /* traverse objects table */
+    for( int j = 0; j < objectCount; ++j ) {
 
         Object *object = newObject();
         Mesh *mesh = newMesh();
 
+        /* push object */
+        lua_geti( S, -1, j+1 );
+
         /* object name */
-        char * name;
+        lua_getfield( S, -1, "name" );
+        char *name;
         popString( S, name );
         log_info( "<Adding object %s>", name );
-        free( name );
 
-        /* vao type */
+        /* push mesh */
+        lua_getfield( S, -1, "mesh" );
+
+        lua_getfield( S, -1, "type" );
         uint32 vaoType;
         popInt( S, vaoType );
 
+        lua_getfield( S, -1, "size" );
         float size;
         popFloat( S, size );
 
+        lua_getfield( S, -1, "texres" );
         float texres;
         popFloat( S, texres );
 
+        lua_getfield( S, -1, "position" );
+
+        /* position[0] */
+        lua_geti( S, -1, 1 );
         float midX;
         popFloat( S, midX );
 
+        /* position[1] */
+        lua_geti( S, -1, 2 );
         float midY;
         popFloat( S, midY );
 
+        /* position[2] */
+        lua_geti( S, -1, 3 );
         float midZ;
         popFloat( S, midZ );
 
+        lua_pop( S, 2 );
+
         mesh->vaoId = genVao(vaoType, size, texres, midX, midY, midZ, &(mesh->count));
 
-        /* texture */
+        /* push material */
+        lua_getfield( S, -1, "material" );
+
+        lua_len( S, -1 );
         int32 texCount;
         popInt( S, texCount );
 
@@ -79,80 +106,120 @@ void loadScene(Engine *renderer) {
         case 4:
         case 5: {
             mat->texCount = (uint32) texCount;
-            mat->textures = (Texture **) malloc(texCount * sizeof(Texture *));
+            mat->textures = alloc( Texture*, texCount );
 
             for (int32 i = 0; i < texCount; ++i) {
+
+                /* get texture[1]...[texCount] */
+                lua_geti( S, -1, i+1 );
                 char *tex;
                 popString( S, tex );
                 mat->textures[i] = newTex2D( tex );
-                free( tex );
             }
         }
         break;
         case 6: {
             const char *faces[6];
-            //faces[0] = popString();
-            //faces[1] = popString();
-            //faces[2] = popString();
-            //faces[3] = popString();
-            //faces[4] = popString();
-            //faces[5] = popString();
+            
+            /* material[1]...[6] */
+            lua_geti( S, -1, 1 );
+            char *str1;
+            popString( S, str1 );
+            faces[0] = str1;
+
+            lua_geti( S, -1, 2 );
+            char *str2;
+            popString( S, str2 );
+            faces[1] = str2;
+
+            lua_geti( S, -1, 3 );
+            char *str3;
+            popString( S, str3 );
+            faces[2] = str3;
+
+            lua_geti( S, -1, 4 );
+            char *str4;
+            popString( S, str4 );
+            faces[3] = str4;
+
+            lua_geti( S, -1, 5 );
+            char *str5;
+            popString( S, str5 );
+            faces[4] = str5;
+
+            lua_geti( S, -1, 6 );
+            char *str6;
+            popString( S, str6 );
+            faces[5] = str6;
 
             mat->texCount = 1;
-            mat->textures = (Texture **) malloc(sizeof(Texture *));
+            mat->textures = alloc( Texture*, 1 );
             mat->textures[0] = cubeTexture((const char **) faces, 0, 0);
         }
         break;
         default:
             break;
         }
+        lua_pop( S, 1 );
+
+        /* push uniform map */
+        lua_getfield( S, -1, "uniformsMap" );
+
+        /* count uniformsMap entries */
+        uint8 uniformCount = 0;
+        lua_pushnil( S );
+        while( lua_next( S, -2 ) != 0 ) {
+            uniformCount++;
+            lua_pop( S, 1 );
+        }
 
         Shader *shader = newShader();
-        
-        /* uniform count */
-        uint8 uniformCount;
-        popInt( S, uniformCount );
         shader->uniformCount = uniformCount;
+        shader->uniforms = alloc( char*, uniformCount );
+        shader->setters = alloc( UniformSetter*, uniformCount );
 
-        /* uniforms */
-        shader->uniforms = (const char **) malloc(sizeof (const char *)*uniformCount);
+        /* read uniforms map */
+        int i = 0;
+        lua_pushnil( S );
+        while( lua_next( S, -2 ) != 0 ) {
 
-        for (uint8 i = 0; i < uniformCount; i++) {
+            /* uniform setter */
+            int type = -1;
+            popInt( S, type );
+            shader->setters[i] = UniVarFuncs[type];
+            
+            /* pop value, leave key */
 
-            /* i-th uniform variable */
+            /* uniform name */
             char *univar;
-            popString( S, univar );
+            getStringAlloc( S, univar );
+            shader->uniforms[i] = univar;
 
-            shader->uniforms[i] = (const char *) univar;
-            log_info("<Uniform %s>", shader->uniforms[i]);
+            i++;
         }
+        lua_pop( S, 1 );
 
-        /* uniforms setter functions */
-        UniformSetter *setters = (UniformSetter *) malloc(sizeof (UniformSetter) * uniformCount);
-        for (uint8 i = 0; i < uniformCount; i++) {
-            int indx = 0;
-            popInt( S, indx );
-            setters[i] = UniVarFuncs[indx];
-        }
-        shader->setters = setters;
+        /* push shaders subtable */
+        lua_getfield( S, -1, "shaders" );
 
-        /* shader count */
+        /* 
+         * shader stages */
+        lua_len( S, -1 );
         uint8 stageCount = 0;
         popInt( S, stageCount );
         shader->stageCount = stageCount;
+        shader->stages = alloc( char*, stageCount);
 
-        /* shaders */
-        shader->stages = (const char **) malloc(sizeof (const char *)*stageCount);
-
-        for (uint8 i = 0; i < stageCount; i++) {
+        /* read table values */
+        for( uint8 i = 0; i < stageCount; i++ ) {
 
             /* i-th shader stage */
+            lua_geti( S, -1, i+1 );
             char *stage;
-            popString( S, stage );
-
-            shader->stages[i] = (const char *) stage;
-            log_info("<Shader %s>", shader->stages[i]);
+            popStringAlloc( S, stage );
+            shader->stages[i] = stage;
         }
+        lua_pop( S, 1 );
 
         mesh->draw = drawArrays;
         mesh->mode = DrawMode[vaoType];
@@ -165,7 +232,7 @@ void loadScene(Engine *renderer) {
         objects[j] = object;
     }
 
-    freeScript( S );
+    lua_close( S );
 
     renderer->objectCount = objectCount;
     renderer->objects = objects;
@@ -176,12 +243,11 @@ void reloadScene(Engine *renderer) {
 
     log_info("%s", "- - - - - Reloading Scene - - - - -");
     freeObjects(renderer);
-    clearCache(renderer->shaderCache);
-    clearCache(renderer->uniformCache);
-    deallocStores();
+    lua_close(renderer->shaderCache);
+    lua_close(renderer->uniformCache);
 
     loadScene(renderer);
     preloadObjects(renderer);
-    log_info("%s", "- - - - - - - - - - - - - - - - - -");
+    log_info("%s", "- - - - - Done Reloading - - - - -");
 }
 

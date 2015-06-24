@@ -1,14 +1,21 @@
 #ifndef LUA_SCRIPT_H
 #define LUA_SCRIPT_H
 
+#include "Util.h"
 #include "common.h"
-#include "Debugger.h"
 
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 
 typedef lua_State script;
+
+#define lua_run( state, path )   \
+    luaL_openlibs( state );  \
+    if( luaL_dofile( state, path ) ) { \
+        err( "[SCRIPT] %s: %s\n", path, lua_tostring( state, -1 ) ); \
+        lua_close( state ); \
+    } \
 
 #define lua( state, path )   \
     state = luaL_newstate(); \
@@ -20,7 +27,7 @@ typedef lua_State script;
     } \
 
 #define popInt( script, target ) \
-    err_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
+    err_guard( !lua_isnil( script, -1 ) && lua_isinteger( script, -1 ) ); \
     target = lua_tointeger( script, -1 ); \
     lua_pop( script, 1 ); \
 
@@ -38,11 +45,28 @@ typedef lua_State script;
     target = target##temp; \
     lua_pop( script, 1 ); \
 
-#define pushTable( script, table ) \
-    lua_getglobal( script, table ); \
+#define popStringAlloc( script, target ) \
+    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    size_t target##len; \
+    const char* target##val = lua_tolstring( script, -1, &target##len ); \
+    target = alloc( char, target##len+1 ); \
+    strcpy( target, target##val ); \
+    lua_pop( script, 1 ); \
 
-#define pushKey( script, key ) \
-    lua_getfield( script, -1, key ); \
+#define getString( script, target ) \
+    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    size_t target##len; \
+    const char* target##val = lua_tolstring( script, -1, &target##len ); \
+    char target##temp[target##len+1]; \
+    strcpy( target##temp, target##val ); \
+    target = target##temp; \
+
+#define getStringAlloc( script, target ) \
+    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    size_t target##len; \
+    const char* target##val = lua_tolstring( script, -1, &target##len ); \
+    target = alloc( char, target##len+1 ); \
+    strcpy( target, target##val ); \
 
 #define pushTableKey( script, table, key ) \
     lua_getglobal( script, table ); \
@@ -51,6 +75,7 @@ typedef lua_State script;
 
 // lua state with a table at the stacks top
 typedef lua_State table;
+typedef lua_State Cache;
 
 // expects table at index -2
 #define putKeyInt( table, key, num ) \
@@ -61,9 +86,5 @@ typedef lua_State table;
 #define putKeyString( table , key, str ) \
     lua_pushstring( table, luaL_checkstring( table, str ) ); \
     lua_setfield( table, -2, key ); \
-
-#define popVal( script, num ) if( script ) lua_pop( script, num )
-
-#define freeScript( script ) if( script ) lua_close( script )
 
 #endif

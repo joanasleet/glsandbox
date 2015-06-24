@@ -1,9 +1,9 @@
 #include "Mesh.h"
-#include "Debugger.h"
+#include "Util.h"
 
 Mesh *newMesh() {
 
-    Mesh *mesh = NEW(Mesh);
+    Mesh *mesh = alloc( Mesh, 1 );
     return_guard(mesh, NULL);
     mesh->first = 0;
     return mesh;

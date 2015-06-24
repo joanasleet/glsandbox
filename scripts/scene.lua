@@ -1,10 +1,7 @@
-scene = {
+MeshType = require "scripts.MeshType"
+Uniform  = require "scripts.Uniform"
 
-    camera = {
-        fov = 75,
-        aspectRatio = 16/9,
-        position = {0, 10, 0}
-    },
+scene = {
 
     objects = {
         --{
@@ -60,17 +57,13 @@ scene = {
                 "textures/nm.png"
             },
             uniformsMap = {
-                P       = Uniform.P,
-                MV      = Uniform.MVnoTrans,
-                MVP     = Uniform.MVP,
-                camPos  = Uniform.camPos
+                MVP     = Uniform.MVP
             },
             shaders = {
                 "shaders/pass.vert",
                 "shaders/terrain.frag",
                 "shaders/quad.tcs",
                 "shaders/terrain.tes"
-                --"shaders/drawNormals.geo"
             }
         }
     }

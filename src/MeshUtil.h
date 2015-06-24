@@ -2,7 +2,6 @@
 #define GLHELPER_H
 
 #include "common.h"
-#include "Deallocator.h"
 
 #define BUFFER_OFFSET(offset) ((void *) (offset))
 
@@ -15,7 +14,6 @@
     GLuint name; \
     glGenBuffers(1, &name); \
     glBindBuffer(target, name); \
-    storeVbo(name); \
      
 /* vao factory */
 GLuint genVao(uint32 type, GLfloat length, GLfloat texRes, GLfloat midX, GLfloat midY, GLfloat midZ, int32 *vertcount);

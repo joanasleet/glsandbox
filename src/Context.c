@@ -1,8 +1,7 @@
-#include "Context.h"
+#include "Util.h"
 #include "Camera.h"
-#include "Debugger.h"
 #include "Engine.h"
-
+#include "Context.h"
 #include "LookupManager.h"
 
 extern Engine *renderer;
@@ -76,7 +75,7 @@ void fps(double elapsed) {
 
     if (freq > 0.5) {
         char title[25];
-        snprintf(title, 25, "OpenGL @ %.2f", (double) frames / freq);
+        snprintf( title, 25, "OpenGL @ %.2f", (double) frames / freq );
         glfwSetWindowTitle(renderer->context->win, title);
         frames = 0;
         freq = 0.0;

@@ -1,8 +1,8 @@
 #include "Camera.h"
 
+#include "Util.h"
 #include "Engine.h"
 #include "Context.h"
-#include "Debugger.h"
 #include "SceneManager.h"
 
 #include <time.h>
@@ -14,11 +14,11 @@ static float baseUpVec[] = {0.0f, 1.0f, 0.0f};
 static float baseRightVec[] = {1.0f, 0.0f, 0.0f};
 static float baseForwardVec[] = {0.0f, 0.0f, -1.0f};
 
-#define SMOOTH_FACTOR (1.0 / 10.0)
+#define SMOOTHING (1.0 / 10.0)
 
 Camera *newCamera(float x, float y, float z) {
 
-    Camera *cam = NEW(Camera);
+    Camera *cam = alloc( Camera, 1 );
 
     exit_guard(cam);
 
@@ -43,8 +43,8 @@ void updateCam(Camera *cam) {
 
     // calc & update angle velocity
     float newAngleVel[] = {
-        lerpStep(state->angles[0], state->targetAngles[0], SMOOTH_FACTOR),
-        lerpStep(state->angles[1], state->targetAngles[1], SMOOTH_FACTOR),
+        lerpStep(state->angles[0], state->targetAngles[0], SMOOTHING),
+        lerpStep(state->angles[1], state->targetAngles[1], SMOOTHING),
         0.0f
     };
     setVec3(state->angleVelocity, newAngleVel);
@@ -63,9 +63,9 @@ void updateCam(Camera *cam) {
 
     // calc & update velocity
     float newVel[] = {
-        state->velocity[0] + lerpStep(state->velocity[0], state->targetVelocity[0], SMOOTH_FACTOR),
-        state->velocity[1] + lerpStep(state->velocity[1], state->targetVelocity[1], SMOOTH_FACTOR),
-        state->velocity[2] + lerpStep(state->velocity[2], state->targetVelocity[2], SMOOTH_FACTOR)
+        state->velocity[0] + lerpStep(state->velocity[0], state->targetVelocity[0], SMOOTHING),
+        state->velocity[1] + lerpStep(state->velocity[1], state->targetVelocity[1], SMOOTHING),
+        state->velocity[2] + lerpStep(state->velocity[2], state->targetVelocity[2], SMOOTHING)
     };
     setVec3(state->velocity, newVel);
     setPosition(state->position, state, 1.0f);
@@ -74,7 +74,7 @@ void updateCam(Camera *cam) {
     //watch("Velocity: (%.2f, %.2f, %.2f)\n", newVel[0], newVel[1], newVel[2]);
 
     // calc & store perspective
-    cam->fov += lerpStep(cam->fov, cam->targetFov, SMOOTH_FACTOR);
+    cam->fov += lerpStep(cam->fov, cam->targetFov, SMOOTHING);
     perspectiveInf(cam->perspective, NEAR_PLANE, cam->fov, cam->aspectRatio);
 }
 

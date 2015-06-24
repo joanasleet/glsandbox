@@ -1,10 +1,10 @@
+#include "Util.h"
 #include "Shader.h"
-#include "Debugger.h"
 #include "MatrixMath.h"
 
 Shader *newShader() {
 
-    Shader *shader = NEW(Shader);
+    Shader *shader = alloc( Shader, 1 );
     shader->program = glCreateProgram();
     return shader;
 }
@@ -81,13 +81,14 @@ void MVP(GLint loc, Camera *cam, State *objState, double globalTime) {
     GLfloat translation[16];
     translate(translation, -state->position[0], -state->position[1], -state->position[2]);
 
-
     GLfloat temp[16];
     mult(cam->perspective, orientation, temp);
-
+    
     // (perspective * orientation) * translation
     GLfloat MVPmat[16];
     mult(temp, translation, MVPmat);
+
+    printMat( MVPmat );
 
     // update uniform
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVPmat);

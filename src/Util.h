@@ -13,9 +13,9 @@
 #define ERR_LOG_NAME "err.log"
 #define INFO_LOG_NAME "info.log"
 
-static FILE *errlog;
-static FILE *infolog;
-static FILE *watchlog;
+extern FILE *errlog;
+extern FILE *infolog;
+extern FILE *watchlog;
 
 #define RVOID
 
@@ -53,7 +53,7 @@ static FILE *watchlog;
 
 /*
  * Prints and calls function */
-#define info_call(f) do { info(#f); f; } while(0)
+#define info_call(f) do { info("%s", #f); f; } while(0)
 
 /*
  * Prints formatted info string to the scrolling log. */
@@ -136,7 +136,7 @@ static FILE *watchlog;
 /* * * * * * * * * * * * *
  * allocation utilities  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#define alloc(type, n) ((type*) malloc(sizeof(type) * (size_t)n))
+#define alloc(type, n) (malloc( sizeof(type) * (size_t)n ))
 #define ralloc(ptr, type, n) (realloc(ptr, sizeof(type) * (size_t)n)
 
 /* * * * * * * * * * * * * * *

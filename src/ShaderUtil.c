@@ -1,31 +1,32 @@
+#include "Util.h"
 #include "ShaderUtil.h"
-#include "Debugger.h"
-#include "Deallocator.h"
-
-#include <stdio.h>
 
 void addShader(const char *srcFile, GLenum type, GLuint prog, Cache *shaderCache) {
 
-    GLuint shaderId = get(shaderCache, srcFile);
+    /* check for cached shaderId */
+    GLuint shaderId = 0;
+    lua_getfield( shaderCache, -1, srcFile );
+    popInt( shaderCache, shaderId );
 
     if (!shaderId) {
         shaderId = compileShader(srcFile, glCreateShader(type));
-        cache(shaderCache, srcFile, shaderId);
-        storeShader(shaderId);
+
+        /* cache shaderId */
+        lua_pushinteger( shaderCache, shaderId );
+        lua_setfield( shaderCache, -2, srcFile );
     }
 
+    /* add shader to gpu program */
     GLsizei logSize = 0;
-
     log_info("<Adding shader %s (id: %d)> to <program (id: %d)>", srcFile, shaderId, prog);
     glAttachShader(prog, shaderId);
     glLinkProgram(prog);
 
+    /* check errors */
     glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logSize);
     char logMsg[logSize];
     glGetProgramInfoLog(prog, logSize, &logSize, logMsg);
-    if (logSize > 0) {
-        log_err("%s", logMsg);
-    }
+    if (logSize > 0) log_err("%s", logMsg);
 }
 
 GLuint compileShader(const char *srcFile, GLuint shaderId) {
@@ -42,10 +43,7 @@ GLuint compileShader(const char *srcFile, GLuint shaderId) {
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logSize);
     char logMsg[logSize];
     glGetShaderInfoLog(shaderId, logSize, &logSize, logMsg);
-    if (logSize > 0) {
-        log_err("%s", logMsg);
-    }
-
+    if (logSize > 0) log_err("%s", logMsg);
     return shaderId;
 }
 

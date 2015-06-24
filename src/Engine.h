@@ -5,8 +5,9 @@
 #include "Object.h"
 #include "Camera.h"
 #include "Context.h"
-#include "ShaderCache.h"
+#include "LuaScript.h"
 
+#define DEPS_SCRIPT "scripts/deps.lua"
 #define CONFIG_SCRIPT "scripts/config.lua"
 
 typedef struct {
@@ -32,7 +33,6 @@ void freeObjects( Engine *renderer );
 void config( Engine *renderer );
 void renderObjects(Engine *renderer);
 void preloadObjects(Engine *renderer);
-void exitIfNoObjects(Engine *renderer);
 void render(Object *obj, Engine *renderer);
 void preload(Object *obj, Engine *renderer);
 void renderLerp(State *prevState, State *currState);

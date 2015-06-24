@@ -1,10 +1,10 @@
-#include "common.h"
-
+#include "Util.h"
 #include "State.h"
+#include "common.h"
 
 State *newState() {
 
-    State *state = NEW(State);
+    State *state = alloc( State, 1 );
 
     state->up = vec3New(0.0f, 0.0f, 0.0f);
     state->right = vec3New(0.0f, 0.0f, 0.0f);

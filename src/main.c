@@ -1,7 +1,7 @@
+#include "Util.h"
 #include "Engine.h"
-#include "SceneManager.h"
-#include "Debugger.h"
 #include "MatrixMath.h"
+#include "SceneManager.h"
 
 #include <unistd.h>
 #include <string.h>
@@ -12,15 +12,8 @@ FILE *watchlog;
 
 Engine *renderer;
 
-/* progress TODO:
-- add shader uniforms defaults
-- better architecture
-- atmospheric scattering
- */
-
 int main(int argc, char **argv) {
 
-    clear_syserr();
     clear_logs();
 
     log_info("%s\n", "- - - - - - - - - - Log Start - - - - - - - - - -");

@@ -1,6 +1,5 @@
+#include "Util.h"
 #include "Material.h"
-#include "Debugger.h"
-#include "Deallocator.h"
 
 #include "stb_image.h"
 
@@ -8,7 +7,7 @@ Texture *nullTex = NULL;
 
 Material *newMaterial() {
 
-    Material *material = (Material *) malloc(sizeof (Material));
+    Material *material = alloc( Material, 1 );
     return_guard(material, NULL);
 
     material->texCount = 0;
@@ -100,7 +99,7 @@ Texture *nullTexture() {
 
     if (nullTex) return nullTex;
 
-    nullTex = (Texture *) malloc(sizeof (Texture));
+    nullTex = alloc( Texture, 1 );
     return_guard(nullTex, NULL);
 
     glGenTextures(1, &nullTex->id);
@@ -109,7 +108,6 @@ Texture *nullTexture() {
     nullTex->width = 0;
     nullTex->height = 0;
 
-    storeBuffer(nullTex);
     return nullTex;
 }
 
@@ -134,16 +132,11 @@ Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
     for (int face = 0; face < 6; face++) {
         if (!allSame) {
             faceData = getData(cubeFaces[face], &w, &h);
-
-            /* * * * * * * * * * * * * * * * * * *
-             * cant find a good model to unify   *
-             * cubemaps with textues, so buffers *
-             * like these are still freed        *
-             * * * * * * * * * * * * * * * * * * */
-            storeBuffer(faceData);
+            texture->data = NULL;
         }
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB_ALPHA, w, h, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, faceData);
+        free( faceData );
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
