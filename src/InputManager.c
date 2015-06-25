@@ -35,18 +35,9 @@ void cursorEnterCB(GLFWwindow *win, int enter) {
 
 void scrollCB(GLFWwindow *win, double xoffset, double yoffset) {
 
-
     State *camState = renderer->mainCam->state;
 
-    if (camState->accel > 1.0f) {
-        camState->accel += 1.0f * yoffset;
-    } else if (camState->accel > 0.1f) {
-        camState->accel += 0.1f * yoffset;
-    } else {
-        camState->accel += 0.01f * yoffset;
-    }
-
-    camState->accel = MAX(camState->accel, 0.01f);
+    camState->accel *= pow( 1.15f, yoffset );
 }
 
 void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
@@ -176,7 +167,7 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     case GLFW_KEY_C:
 
         if (action == GLFW_PRESS && !cam->mouseGrab) {
-            glfwSetCursorPos(win, renderer->context->xRes / 2.0f, renderer->context->yRes / 2.0f);
+            glfwSetCursorPos(win, renderer->context->xRes/2.0f, renderer->context->yRes/2.0f);
             glfwSetCursorPosCallback(win, cursorCB);
             glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             cam->mouseGrab = 1;

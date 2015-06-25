@@ -266,7 +266,7 @@ void _printM(mat4 A, const char *name) {
 
     printf("mat4 %s =\n", name);
     for (int i = 0; i < 4; ++i) {
-        printf("| %.5f \t%.5f \t%.5f \t%.5f |\n", A[i], A[4 + i], A[8 + i], A[12 + i]);
+        printf("| %f \t%f \t%f \t%f |\n", A[i], A[4 + i], A[8 + i], A[12 + i]);
     }
     printf("\n");
 }

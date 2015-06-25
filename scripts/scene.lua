@@ -46,9 +46,9 @@ scene = {
             name = "terrain",
             mesh = {
                 type = MeshType.TERRAIN,
-                size = 100,
-                texres = 1,
-                position = {0, 0, 0}
+                size = 100.0,
+                texres = 1.0,
+                position = {0.0, 0.0, 0.0}
             },
             material = {
                 "textures/shm.png",
@@ -64,6 +64,23 @@ scene = {
                 "shaders/terrain.frag",
                 "shaders/quad.tcs",
                 "shaders/terrain.tes"
+            }
+        },
+        {
+            name = "quad",
+            mesh = {
+                type = MeshType.SCREEN_QUAD,
+                size = 1,
+                texres = 1,
+                position = { 0, 0, 0 }
+            },
+            material = {},
+            uniformsMap = {
+                MVP = Uniform.MVP
+            },
+            shaders = {
+                "shaders/debug.vert",
+                "shaders/debug.frag"
             }
         }
     }

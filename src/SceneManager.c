@@ -45,7 +45,7 @@ void loadScene(Engine *renderer) {
         Object *object = newObject();
         Mesh *mesh = newMesh();
 
-        /* push object */
+        /* push object[j] */
         lua_geti( S, -1, j+1 );
 
         /* object name */
@@ -230,6 +230,9 @@ void loadScene(Engine *renderer) {
         object->mats = mat;
 
         objects[j] = object;
+
+        /* pop objects[j] */
+        lua_pop( S, 1 );
     }
 
     lua_close( S );

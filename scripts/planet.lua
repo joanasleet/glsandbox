@@ -1,10 +1,7 @@
-scene = {
+MeshType = require "scripts.MeshType"
+Uniform  = require "scripts.Uniform"
 
-    camera = {
-        fov = 75,
-        aspectRatio = 16/9,
-        position = {0, 10.0 , 0}
-    },
+scene = {
 
     objects = {
         {
@@ -15,9 +12,11 @@ scene = {
                 texres = 1,
                 position = {0, 0, 0}
             },
-            --material = {"textures/sky.png"},
-            uniforms = {"MVP", "v3CameraPos"},
-            uniVarFuncs = {Uniform.ModelViewPerspective, Uniform.CamPos},
+            material = {},
+            uniformsMap = {
+                MVP = Uniform.MVP,
+                v3CameraPos = Uniform.camPos
+            },
             shaders = {
                 "shaders/pass.vert",
                 "shaders/sphereAtmoScat.frag",
@@ -33,14 +32,43 @@ scene = {
                 texres = 1,
                 position = {0, 0, 0}
             },
-            material = {"textures/ground.jpg"},
-            uniforms = {"MVP"},
-            uniVarFuncs = {Uniform.ModelViewPerspective},
+            material = {
+                "textures/cliff.jpg",
+                "textures/grass.png",
+                "textures/multitex.png"
+            },
+            uniformsMap = {
+                MVP = Uniform.MVP
+            },
             shaders = {
                 "shaders/pass.vert",
                 "shaders/tex.frag",
                 "shaders/quad.tcs",
                 "shaders/sphereOUT.tes"
+            }
+        },
+        {
+            name = "space",
+            mesh = {
+                type = MeshType.CUBEMAP,
+                size = 1000,
+                texres = 1,
+                position = {0, 0, 0}
+            },
+            material = {
+                "textures/space/jajspace2_right.jpg",
+                "textures/space/jajspace2_left.jpg",
+                "textures/space/jajspace2_top.jpg",
+                "textures/space/jajspace2_top.jpg",
+                "textures/space/jajspace2_front.jpg",
+                "textures/space/jajspace2_back.jpg"
+            },
+            uniformsMap = {
+                MVP = Uniform.MVPNoTrans
+            },
+            shaders = {
+                "shaders/cubemap.vert",
+                "shaders/cubemap.frag"
             }
         }
         -- {

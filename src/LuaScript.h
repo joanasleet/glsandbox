@@ -27,17 +27,17 @@ typedef lua_State script;
     } \
 
 #define popInt( script, target ) \
-    err_guard( !lua_isnil( script, -1 ) && lua_isinteger( script, -1 ) ); \
+    warn_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
     target = lua_tointeger( script, -1 ); \
     lua_pop( script, 1 ); \
 
 #define popFloat( script, target ) \
-    err_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
+    warn_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
     target = lua_tonumber( script, -1 ); \
     lua_pop( script, 1 ); \
 
 #define popString( script, target ) \
-    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    warn_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
     size_t target##len; \
     const char* target##val = lua_tolstring( script, -1, &target##len ); \
     char target##temp[target##len+1]; \
@@ -46,7 +46,7 @@ typedef lua_State script;
     lua_pop( script, 1 ); \
 
 #define popStringAlloc( script, target ) \
-    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    warn_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
     size_t target##len; \
     const char* target##val = lua_tolstring( script, -1, &target##len ); \
     target = alloc( char, target##len+1 ); \
@@ -54,7 +54,7 @@ typedef lua_State script;
     lua_pop( script, 1 ); \
 
 #define getString( script, target ) \
-    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    warn_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
     size_t target##len; \
     const char* target##val = lua_tolstring( script, -1, &target##len ); \
     char target##temp[target##len+1]; \
@@ -62,7 +62,7 @@ typedef lua_State script;
     target = target##temp; \
 
 #define getStringAlloc( script, target ) \
-    err_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
+    warn_guard( !lua_isnil( script, -1 ) && lua_isstring( script, -1 ) ); \
     size_t target##len; \
     const char* target##val = lua_tolstring( script, -1, &target##len ); \
     target = alloc( char, target##len+1 ); \

@@ -34,11 +34,10 @@ Engine *init() {
     GLFWwindow *window = renderer->context->win;
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
     glfwSetCursorEnterCallback(window, cursorEnterCB);
+    glfwSetWindowSizeCallback(window, resizeCB);
     glfwSetScrollCallback(window, scrollCB);
     glfwSetKeyCallback(window, keyCB);
-    glfwSetWindowSizeCallback(window, resizeCB);
 
     /* set GL states */
     glEnable(GL_BLEND);
@@ -77,21 +76,21 @@ void config( Engine *renderer ) {
     /* camera */
     float posX;
     lua_getfield( S, -1, "posX" );
-    popInt( S, posX );
+    popFloat( S, posX );
 
     float posY;
     lua_getfield( S, -1, "posY" );
-    popInt( S, posY );
+    popFloat( S, posY );
 
     float posZ;
     lua_getfield( S, -1, "posZ" );
-    popInt( S, posZ );
+    popFloat( S, posZ );
 
     Camera* cam = newCamera( posX, posY, posZ );
     
     lua_getfield( S, -1, "fieldOfView" );
     popFloat( S, cam->fov );
-    cam->targetFov = cam->fov*0.8f;
+    cam->targetFov = cam->fov;
     
     lua_getfield( S, -1, "acceleration" );
     popFloat( S, cam->state->accel );
@@ -152,7 +151,7 @@ void preload(Object *obj, Engine *renderer) {
         /* cache Cache[key] = prog */
         char key[MAX_KEY_LENGTH];
         sprintf( key, "%d_%s", prog, uniform );
-        lua_pushinteger( renderer->uniformCache, prog );
+        lua_pushinteger( renderer->uniformCache, loc );
         lua_setfield( renderer->uniformCache, -2, ( const char * ) key );
     }
 }

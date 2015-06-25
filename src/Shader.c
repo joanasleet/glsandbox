@@ -88,8 +88,6 @@ void MVP(GLint loc, Camera *cam, State *objState, double globalTime) {
     GLfloat MVPmat[16];
     mult(temp, translation, MVPmat);
 
-    printMat( MVPmat );
-
     // update uniform
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVPmat);
 }

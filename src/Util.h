@@ -34,7 +34,7 @@ extern FILE *watchlog;
 /*
  * Prints error upon failed expression. */
 #define err_guard(exp) do { if(!(exp)) { err("[Guard] Assertion failed: (%s)", #exp); } } while(0)
-
+#define warn_guard(exp) do { if(!(exp)) { warn("[Guard] Assertion failed: (%s)", #exp); } } while(0)
 /*
  * Exits upon failed expression. */
 #define exit_guard(exp) do { if(!(exp)) { err("[Guard] Assertion failed: (%s)", #exp); exit(EXIT_FAILURE); } } while(0)
