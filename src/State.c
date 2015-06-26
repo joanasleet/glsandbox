@@ -1,24 +1,25 @@
 #include "Util.h"
 #include "State.h"
 #include "common.h"
+#include "MatrixMath.h"
 
 State *newState() {
 
     State *state = alloc( State, 1 );
 
-    state->up = vec3New(0.0f, 0.0f, 0.0f);
-    state->right = vec3New(0.0f, 0.0f, 0.0f);
-    state->forward = vec3New(0.0f, 0.0f, 0.0f);
-
     state->accel = 0.0f;
 
-    state->position = vec3New(0.0f, 0.0f, 0.0f);
-    state->velocity = vec3New(0.0f, 0.0f, 0.0f);
-    state->targetVelocity = vec3New(0.0f, 0.0f, 0.0f);
+    nullVec( state->up );
+    nullVec( state->right );
+    nullVec( state->forward );
 
-    state->angles = vec3New(0.0f, 0.0f, 0.0f);
-    state->targetAngles = vec3New(0.0f, 0.0f, 0.0f);
-    state->angleVelocity = vec3New(0.0f, 0.0f, 0.0f);
+    nullVec( state->position );
+    nullVec( state->velocity );
+    nullVec( state->targetVelocity );
+
+    nullVec( state->angles );
+    nullVec( state->targetAngles );
+    nullVec( state->angleVelocity );
 
     return state;
 }
@@ -35,21 +36,4 @@ void setPosition(vec3 target, State *state, float alpha) {
     target[0] = state->position[0] + (state->forward[0] * state->velocity[2] + state->right[0] * state->velocity[0] + state->up[0] * state->velocity[1]) * alpha;
     target[1] = state->position[1] + (state->forward[1] * state->velocity[2] + state->right[1] * state->velocity[0] + state->up[1] * state->velocity[1]) * alpha;
     target[2] = state->position[2] + (state->forward[2] * state->velocity[2] + state->right[2] * state->velocity[0] + state->up[2] * state->velocity[1]) * alpha;
-}
-
-void freeState(State *state) {
-
-    free(state->up);
-    free(state->right);
-    free(state->forward);
-
-    free(state->position);
-    free(state->velocity);
-    free(state->targetVelocity);
-
-    free(state->angles);
-    free(state->targetAngles);
-    free(state->angleVelocity);
-
-    free(state);
 }

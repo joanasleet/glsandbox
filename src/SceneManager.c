@@ -1,9 +1,8 @@
 #include "common.h"
 
 #include "Util.h"
-#include "LuaScript.h"
-#include "MeshUtil.h"
 #include "Material.h"
+#include "LuaScript.h"
 #include "SceneManager.h"
 #include "LookupManager.h"
 
@@ -88,7 +87,7 @@ void loadScene(Engine *renderer) {
 
         lua_pop( S, 2 );
 
-        mesh->vaoId = genVao(vaoType, size, texres, midX, midY, midZ, &(mesh->count));
+        VaoFuncs[vaoType]( size, texres, midX, midY, midZ, mesh );
 
         /* push material */
         lua_getfield( S, -1, "material" );

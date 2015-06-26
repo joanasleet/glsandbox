@@ -14,6 +14,16 @@
 
 #define quatToMat(quat, mat) (rotateQ(mat, quat))
 
+#define nullVec( vec3 ) \
+    vec3[0] = 0; \
+    vec3[1] = 0; \
+    vec3[2] = 0; \
+
+#define setVec3( target, source ) \
+    target[0] = source[0]; \
+    target[1] = source[1]; \
+    target[2] = source[2]; \
+
 typedef float *vec3;
 typedef float *vec4;
 typedef float *quat;
@@ -21,15 +31,7 @@ typedef float *mat4;
 
 /* [ vector ] */
 
-vec3 vec3New(float x, float y, float z);
-vec4 vec4New(float x, float y, float z, float w);
-
-void setVec3(vec3 target, vec3 source);
-
 /* [ matrix ] */
-
-mat4 mat4New();
-
 void add(mat4 A, mat4 B, mat4 target);
 void sub(mat4 A, mat4 B, mat4 target);
 void mult(mat4 A, mat4 B, mat4 target);
@@ -47,9 +49,6 @@ void rotateQ(mat4 target, quat q);
 void rotate3D(quat target, vec3 angles);
 
 /* [ quaternion ] */
-
-quat quatNew();
-
 void setQuat(quat q, float angle, float x, float y, float z);
 void multQ(quat q, quat r, quat target);
 void normQ(quat q);
@@ -61,10 +60,8 @@ void _printM(mat4 A, const char *name);
 void _printQ(quat q, const char *name);
 
 /* [ interpolation ] */
-
 float lerpStepf(float from, float to, float alpha);
 double lerpStep(double from, double to, double alpha);
 
-#endif  /* MATRIXMATH_H */
-
+#endif
 

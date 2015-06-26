@@ -50,6 +50,17 @@ UniformSetter UniVarFuncs[] = {
     gTime
 };
 
+/* vao generator */
+VaoFunc VaoFuncs[] = {
+    planeVAO,
+    cubeVAO,
+    sphereVAO,
+    cubeMapVAO,
+    overlayVAO,
+    terrainVAO,
+    sphereVAO      /* skydome */
+};
+
 /* draw call */
 GLuint DrawMode[] = {
     GL_QUADS,   /* PLANE */

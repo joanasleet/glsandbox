@@ -171,12 +171,12 @@ void render(Object *obj, Engine *renderer) {
     /* setup position */
     float position[3];
     setPosition(position, oldState, renderAlpha);
-    interpolatedState.position = position;
+    setVec3( interpolatedState.position, position );
 
     /* setup angles */
     float angles[3];
     setAngles(angles, oldState, renderAlpha);
-    interpolatedState.angles = angles;
+    setVec3( interpolatedState.angles, angles );
 
     /* set interpolated state */
     cam->state = &interpolatedState;

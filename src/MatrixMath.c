@@ -1,39 +1,8 @@
 #include "MatrixMath.h"
 
-vec3 vec3New(float x, float y, float z) {
-    vec3 vector = (vec3) malloc(sizeof(float) * 3);
-    vector[0] = x;
-    vector[1] = y;
-    vector[2] = z;
-    return vector;
-}
 
-vec4 vec4New(float x, float y, float z, float w) {
-    vec4 vector = (vec4) malloc(sizeof(float) * 4);
-    vector[0] = x;
-    vector[1] = y;
-    vector[2] = z;
-    vector[3] = w;
-    return vector;
-}
-
-void setVec3(vec3 target, vec3 source) {
-
-    target[0] = source[0];
-    target[1] = source[1];
-    target[2] = source[2];
-}
-
-/* # # # # # # # # # # # # # # # # # # # # # # # # # # # #
- * # # # # # # # # # # #  Matrix # # # # # # # # # # # # #
- * # # # # # # # # # # # # # # # # # # # # # # # # # # # # */
-
-mat4 mat4New() {
-
-    mat4 matrix = (mat4) malloc(sizeof (float) * 16);
-
-    return matrix;
-}
+/*
+ * matrix stuff */
 
 void add(mat4 A, mat4 B, mat4 target) {
 
@@ -110,7 +79,7 @@ void perspective(mat4 target, float near, float far, float fov, float ratio) {
     float e22 = -1.0f * (far + near) / z_d;
     float e32 = -2.0f * near * far / z_d;
 
-    /* already transposed to column-major */
+    /* transposed to column-major */
     float data[] = {
         e00, 0,   0,     0,
         0, e11,   0,     0,
@@ -131,7 +100,7 @@ void perspectiveInf(mat4 target, float near, float fov, float ratio) {
     float e22 = -1.0f;
     float e32 = -2.0f * near;
 
-    /* already transposed to column-major */
+    /* transposed to column-major */
     float data[] = {
         e00, 0,   0,     0,
         0, e11,   0,     0,
@@ -165,7 +134,7 @@ void rotateQ(mat4 target, quat q) {
     float wz = q[0] * q[3];
     float yz = q[2] * q[3];
 
-    /* again, transposed */
+    /* transposed to column-major */
     float data[] = {
         1 - 2.0f * (yy + zz),     2.0f * (xy + wz),     2.0f * (xz - wy), 0,
             2.0f * (xy - wz), 1 - 2.0f * (xx + zz),     2.0f * (yz + wx), 0,
@@ -201,16 +170,8 @@ void rotate3D(quat target, vec3 angles) {
 }
 
 
-/* # # # # # # # # # # # # # # # # # # # # # # # # # # # #
- * # # # # # # # # # # # Quaternions # # # # # # # # # # #
- * # # # # # # # # # # # # # # # # # # # # # # # # # # # # */
-
-quat quatNew() {
-
-    float *versor = (float *) malloc(sizeof(float) * 4);
-
-    return versor;
-}
+/*
+ * quaternion stuff */
 
 void setQuat(quat target, float angle, float x, float y, float z) {
 
@@ -221,7 +182,6 @@ void setQuat(quat target, float angle, float x, float y, float z) {
     target[2] = sinf(teta) * y;
     target[3] = sinf(teta) * z;
 }
-
 
 void multQ(quat q, quat r, quat target) {
 
@@ -235,7 +195,7 @@ void normQ(quat q) {
 
     float norm = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
 
-    /* return if of unit length */
+    /* return if unit length */
     if ( (norm - 1.0f) < 0.00001f ) return;
 
     norm = sqrtf(norm);

@@ -12,9 +12,17 @@ Shader *newShader() {
 void freeShader(Shader *shader) {
 
     glDeleteProgram(shader->program);
+
+    for( int i=0; i<shader->stageCount; ++i )
+        free( ( char* ) shader->stages[i] );
+
     free(shader->stages);
-    free(shader->setters);
+
+    for( int i=0; i<shader->uniformCount; ++i )
+        free( ( char* ) shader->uniforms[i] );
+
     free(shader->uniforms);
+    free(shader->setters);
 
     free(shader);
 }

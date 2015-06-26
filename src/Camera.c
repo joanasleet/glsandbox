@@ -32,8 +32,6 @@ Camera *newCamera(float x, float y, float z) {
     cam->mouseGrab = 0;
     cam->wireframe = 0;
 
-    cam->perspective = mat4New();
-
     return cam;
 }
 
@@ -80,8 +78,7 @@ void updateCam(Camera *cam) {
 
 void freeCamera(Camera *cam) {
 
-    freeState(cam->state);
-    free(cam->perspective);
+    free(cam->state);
     free(cam);
 }
 

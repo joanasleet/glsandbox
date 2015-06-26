@@ -1,8 +1,8 @@
 engineConfig = {
 
     -- context 
-    resolutionX = 1280,
-    resolutionY = 720,
+    resolutionX = 1920,
+    resolutionY = 1080,
     windowTitle = "IsoEngine",
 
     -- camera

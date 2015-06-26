@@ -5,24 +5,22 @@
 
 typedef struct {
 
-    vec3 up;
-    vec3 right;
-    vec3 forward;
-
     float accel;
 
-    vec3 position;
-    vec3 velocity;
-    vec3 targetVelocity;
+    float up[3];
+    float right[3];
+    float forward[3];
 
-    vec3 angles;
-    vec3 targetAngles;
-    vec3 angleVelocity;
+    float position[3];
+    float velocity[3];
+    float targetVelocity[3];
 
+    float angles[3];
+    float targetAngles[3];
+    float angleVelocity[3];
 } State;
 
 State *newState();
-void freeState(State *state);
 
 void setAngles(vec3 target, State *src, float alpha);
 void setPosition(vec3 target, State *src, float alpha);
@@ -30,5 +28,5 @@ void setPosition(vec3 target, State *src, float alpha);
 void setVelocity(State *state);
 void setAngleVelocity(State *state);
 
-
 #endif
+

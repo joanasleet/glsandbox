@@ -1,6 +1,7 @@
 #ifndef LOOKUPMANAGER_H
 #define LOOKUPMANAGER_H
 
+#include "Mesh.h"
 #include "common.h"
 #include "Shader.h"
 
@@ -14,6 +15,9 @@ extern GLenum ShaderType[];
 
 /* uniforms */
 extern UniformSetter UniVarFuncs[];
+
+/* vao generator */
+extern VaoFunc VaoFuncs[];
 
 /* draw call */
 extern GLuint DrawMode[];

@@ -10,7 +10,7 @@ Object *newObject() {
 void freeObject(Object *obj) {
 
     freeMesh(obj->mesh);
-    freeState(obj->state);
+    free(obj->state);
     freeShader(obj->shader);
     freeMaterial(obj->mats);
 

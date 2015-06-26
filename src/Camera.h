@@ -30,7 +30,7 @@ typedef struct {
     float aspectRatio;
 
     /* perspective storage */
-    mat4 perspective;
+    float perspective[16];
 
 } Camera;
 

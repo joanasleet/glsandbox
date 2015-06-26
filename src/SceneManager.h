@@ -6,6 +6,5 @@
 void loadScene(Engine* renderer);
 void reloadScene(Engine* renderer);
 
-#endif	/* SCENEMANAGER_H */
-
+#endif
 
