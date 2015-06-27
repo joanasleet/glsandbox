@@ -11,11 +11,8 @@
 typedef struct {
 
     Mesh *mesh;
-
     State *state;
-
     Shader *shader;
-
     Material *mats;
 
 } Object;
@@ -24,3 +21,4 @@ Object *newObject();
 void freeObject(Object *obj);
 
 #endif
+

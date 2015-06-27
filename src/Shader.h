@@ -5,6 +5,7 @@
 
 #include "State.h"
 #include "Camera.h"
+#include "LuaScript.h"
 
 typedef void (*UniformSetter)(GLint, Camera *, State *, double);
 
@@ -21,7 +22,10 @@ typedef struct {
 
 } Shader;
 
+/* main */
 Shader *newShader();
+void addShader(const char* source, GLenum type, GLuint prog, Cache* cache);
+GLuint compileShader(const char* source, GLuint shaderId);
 void freeShader(Shader *shader);
 
 /* uniforms setter */
@@ -39,4 +43,8 @@ void objMVnoTrans(GLint loc, Camera *cam, State *objState, double globalTime);
 /* misc */
 void gTime(GLint loc, Camera *cam, State *objState, double globalTime);
 
+/* helper */
+char* bufferFile(const char* path);
+
 #endif
+

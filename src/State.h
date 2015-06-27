@@ -15,6 +15,7 @@ typedef struct {
     float velocity[3];
     float targetVelocity[3];
 
+    // TODO: use quaternion and multiply in deltas
     float angles[3];
     float targetAngles[3];
     float angleVelocity[3];

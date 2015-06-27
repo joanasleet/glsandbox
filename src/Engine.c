@@ -2,7 +2,6 @@
 #include "Engine.h"
 #include "Timestep.h"
 #include "LuaScript.h"
-#include "ShaderUtil.h"
 #include "InputManager.h"
 #include "LookupManager.h"
 

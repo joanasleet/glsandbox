@@ -1,7 +1,6 @@
 #include "Mesh.h"
 #include "Util.h"
 #include "string.h"
-#include "LookupManager.h"
 
 #define IARATIO 0.5625f
 #define ASCII_OFFSET 32
@@ -313,7 +312,6 @@ void cubeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat 
         1.0f, 0.0f, 0.0f,
         1.0f, 0.0f, 0.0f,
         1.0f, 0.0f, 0.0f
-    glDeleteBuffers( 1, &( mesh->vboId ) );
     };
     glBufferData(GL_ARRAY_BUFFER, sizeof (vboData), vboData, GL_STATIC_DRAW);
 

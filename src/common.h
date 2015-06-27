@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-
+#include <string.h>
 #include <math.h>
 
 /* GLEW */
@@ -24,6 +24,7 @@
 
 /*
  * unsigned number types */
+// TODO: replace with stdtype ? or something
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
@@ -31,10 +32,11 @@ typedef unsigned long uint64;
 
 /*
  * signed number types */
+// TODO: replace with stdtype ? or something
 typedef signed char int8;
 typedef short int16;
 typedef int int32;
 typedef long int64;
 
-#endif  /* COMMON_H */
+#endif
 

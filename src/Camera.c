@@ -68,7 +68,7 @@ void updateCam(Camera *cam) {
     setVec3(state->velocity, newVel);
     setPosition(state->position, state, 1.0f);
 
-    watch("Position: (%.1f, %.1f, %.1f)\n\n", state->position[0], state->position[1], state->position[2]);
+    //watch("Position: (%.1f, %.1f, %.1f)\n\n", state->position[0], state->position[1], state->position[2]);
     //watch("Velocity: (%.2f, %.2f, %.2f)\n", newVel[0], newVel[1], newVel[2]);
 
     // calc & store perspective
@@ -87,34 +87,33 @@ void screenshot() {
     unsigned int x = renderer->context->xRes;
     unsigned int y = renderer->context->yRes;
 
-    unsigned char *buffer = (unsigned char *) malloc(sizeof (unsigned char) * x * y * 3);
-    glReadPixels(0, 0, x, y, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+    unsigned char *buffer = malloc(sizeof (unsigned char) * x * y * 3);
+    err_guard( buffer );
+    glReadPixels(0, 0, x, y, GL_SRGB, GL_UNSIGNED_BYTE, buffer);
 
-    char name[1024];
+    char name[25];
     long int t = time(NULL);
-    sprintf(name, "screenshot_%ld.raw", t);
+    sprintf( name, "s%ld.raw", t );
 
-    FILE *target = fopen(name, "wb");
-    if (!target) {
-        fprintf(stderr, "Failed to open file %s", name);
-        exit(EXIT_FAILURE);
-    }
+    FILE *outputPNG = fopen(name, "wb");
+    err_guard( outputPNG );
 
     int start_of_row;
     int bytes_in_row = x * 3;
     int bytes_left = x * y * 3;
     while (bytes_left > 0) {
         start_of_row = bytes_left - bytes_in_row;
-        fwrite(&buffer[start_of_row], 1, bytes_in_row, target);
+        fwrite(&buffer[start_of_row], 1, bytes_in_row, outputPNG );
         bytes_left -= bytes_in_row;
     }
-    fclose(target);
+    fclose( outputPNG );
     free(buffer);
 
-    char cmd[2048];
-    sprintf(cmd, "convert -depth 8 -size %ix%i rgb:screenshot_%ld.raw screenshots/screenshot_%ld.png", x, y, t, t);
+    char cmd[120];
 
+    sprintf(cmd, "convert -depth 8 -size %ix%i rgb:s%ld.raw screenshots/s%ld.png", x, y, t, t);
     system(cmd);
+
     sprintf(cmd, "rm -f %s", name);
     system(cmd);
 }
