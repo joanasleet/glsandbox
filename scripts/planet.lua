@@ -14,7 +14,8 @@ scene = {
             },
             material = {},
             uniformsMap = {
-                MVP = Uniform.MVP,
+                gTime       = Uniform.gTime,
+                MVP         = Uniform.MVP,
                 v3CameraPos = Uniform.camPos
             },
             shaders = {
@@ -33,8 +34,8 @@ scene = {
                 position = {0, 0, 0}
             },
             material = {
-                "textures/cliff.jpg",
                 "textures/grass.png",
+                "textures/cliff.jpg",
                 "textures/multitex.png"
             },
             uniformsMap = {

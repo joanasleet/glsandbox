@@ -9,7 +9,6 @@ in float rad;
 out vec4 color;
 
 //uniform float time;
-const float sunSize = 5.0;
 
 in vec4 teColor;
 in vec4 teSecColor;
@@ -24,25 +23,11 @@ vec4 skyColor() {
     float fCos = dot(v3LightPos, v3Direction) / length(v3Direction);
     float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos * fCos) / pow(1.0 + g2 - 2.0 * g * fCos, 1.5);
     vec4 fcolor = teColor + fMiePhase * teSecColor;
-    //fcolor.a = fcolor.b;
+    //fcolor.a = fcolor.b; // makes atmosphere grey and ugly
     return fcolor;
 }
 
 void main() {
 
-    // sky
     color = skyColor();
-
-    /* ~ ~ ~ ~ ~ ~ sun ~ ~ ~ ~ ~ ~ ~ */
-    vec4 sunColor = vec4(1.0, 1.0, 0.2, 1.0);
-    vec4 sunInnerColor = vec4(1.0, 1.0, 1.0, 1.0);
-    float dist = (1.0 / sunSize) * distance(v3LightPos, tePos.xyz);
-    float delta = 0.6;
-    float edge = 1.0;
-    float alpha = smoothstep(edge - delta, edge, dist);
-    sunColor = mix(sunInnerColor, sunColor, alpha);
-    /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ */
-
-    /* mix sky and sun */
-    //color = mix(sunColor, color, alpha);
 }

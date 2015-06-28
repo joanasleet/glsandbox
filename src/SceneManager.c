@@ -245,8 +245,8 @@ void reloadScene(Engine *renderer) {
 
     log_info("%s", "- - - - - Reloading Scene - - - - -");
     freeObjects(renderer);
-    lua_close(renderer->shaderCache);
-    lua_close(renderer->uniformCache);
+    //lua_close(renderer->shaderCache);
+    //lua_close(renderer->uniformCache);
 
     loadScene(renderer);
     preloadObjects(renderer);

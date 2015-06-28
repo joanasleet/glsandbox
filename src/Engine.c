@@ -87,27 +87,28 @@ void config( Engine *renderer ) {
 
     Camera* cam = newCamera( posX, posY, posZ );
     
+    float fov;
     lua_getfield( S, -1, "fieldOfView" );
-    popFloat( S, cam->fov );
-    cam->targetFov = cam->fov;
+    popFloat( S, fov );
+    cam->fov[0] = cam->fov[1] = defaultFov = fov;
     
     lua_getfield( S, -1, "acceleration" );
     popFloat( S, cam->state->accel );
 
-    float turnSpeed;
-    lua_getfield( S, -1, "turnSpeed" );
-    popFloat( S, turnSpeed );
-    turnSpeed += 1.0f;
+    float sensitivity;
+    lua_getfield( S, -1, "sensitivity" );
+    popFloat( S, sensitivity );
+    cam->sensitivity = sensitivity;
 
     float near;
     lua_getfield( S, -1, "nearClip" );
     popFloat( S, near );
-    near += 1.0f;
+    cam->nearClip = near;
 
     float far;
     lua_getfield( S, -1, "farClip" );
     popFloat( S, far );
-    far += 1.0f;
+    cam->farClip = far;
 
     lua_getfield( S, -1, "aspectRatio" );
     popFloat( S, cam->aspectRatio );
@@ -115,7 +116,7 @@ void config( Engine *renderer ) {
     float smoothing;
     lua_getfield( S, -1, "smoothing" );
     popFloat( S, smoothing );
-    smoothing += 1.0f;
+    cam->smoothing = smoothing;
 
     renderer->mainCam = cam;
 

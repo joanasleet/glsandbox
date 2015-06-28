@@ -3,17 +3,21 @@
 layout (quads, equal_spacing, cw) in;
 
 uniform mat4 MVP;
-uniform float time = 0.0;
+uniform float gTime = 0.0;
 
 /* scattering constants */
 uniform vec3 v3CameraPos;
 
-vec3 v3InvWavelength = vec3(1.0 / pow(0.650, 4.0), 1.0 / pow(0.570, 4.0), 1.0 / pow(0.475, 4.0));
+const float f1 = 0.650;
+const float f2 = 0.570;
+const float f3 = 0.475;
+
+vec3 v3InvWavelength = vec3(1.0 / pow( f1, 4.0), 1.0 / pow( f2, 4.0), 1.0 / pow( f3, 4.0));
 float fCameraHeight = length(v3CameraPos);
 float fOuterRadius = 10.25;
 float radius = fOuterRadius;
 float fInnerRadius = 10.0;
-float fESun = 10.0;
+float fESun = 5.0;
 float fKr = 0.0025;
 float fKm = 0.0010;
 float fPI = 3.141592654;
@@ -25,21 +29,21 @@ float fScale = 1.0 / (fOuterRadius - fInnerRadius);
 float fScaleDepth = 0.25;
 float fScaleOverScaleDepth = fScale / fScaleDepth;
 
-const int nSamples = 2;
-const float fSamples = 2.0;
+const int nSamples = 20;
+const float fSamples = float( nSamples );
 
 vec3 sunPosition(float time) {
-    const float timeScaleSun = 0.5;
+    const float timeScaleSun = 0.01;
     float t = time;
     vec3 sunPos = vec3(0.0, 0.0, -radius);
-    float x = radius * sin(timeScaleSun * t) * cos(timeScaleSun * t );
-    float y = radius * sin(timeScaleSun * t) * sin(timeScaleSun * t);
-    float z = radius * cos(timeScaleSun * t);
-    sunPos = vec3(x, y, -z);
+    float x = radius * cos(timeScaleSun * t) * cos(timeScaleSun * t );
+    float y = radius * cos(timeScaleSun * t) * sin(timeScaleSun * t);
+    float z = radius * sin(timeScaleSun * t);
+    sunPos = vec3(x, z, -y);
     return sunPos;
 }
 
-vec3 v3LightPos = normalize(sunPosition(time));
+vec3 v3LightPos = normalize(sunPosition(gTime));
 
 out vec3 v3Direction;
 out vec4 teColor;

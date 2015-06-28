@@ -6,16 +6,12 @@
 #include "State.h"
 #include "MatrixMath.h"
 
-#define FOV (75.0f)
-
-#define ACCEL (0.01f)
-#define TURN_SPEED (0.1f)
-
-#define NEAR_PLANE (0.01f)
-#define FAR_PLANE (10000.0f)
-#define ASPECT_RATIO (16.0f / 9.0f)
+extern float defaultFov;
 
 typedef struct {
+
+    float smoothing;
+    float sensitivity;
 
     /* control flags */
     uint8 wireframe;
@@ -25,9 +21,12 @@ typedef struct {
     State *state;
 
     /* perspective params */
-    float fov;
-    float targetFov;
+    float fov[2];
     float aspectRatio;
+
+    /* clip planes */
+    float nearClip;
+    float farClip;
 
     /* perspective storage */
     float perspective[16];
