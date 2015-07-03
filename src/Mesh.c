@@ -29,7 +29,7 @@ void drawArrays(GLenum mode, GLint *first, GLsizei count) {
 }
 
 void drawElements(GLenum mode, GLint *first, GLsizei count) {
-    glDrawElements(mode, count, GL_UNSIGNED_INT, (GLvoid *) first);
+    glDrawElements(mode, count, GL_UNSIGNED_INT, BUFFER_OFFSET( sizeof(GLint) * first[0] ) );
 }
 
 /*
@@ -81,7 +81,7 @@ void planeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat
     glEnableVertexAttribArray(2);
 }
 
-void cubeMapVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+void cubeInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -136,73 +136,7 @@ void cubeMapVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
     glEnableVertexAttribArray(0);
 }
 
-void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
-
-    /*
-     * TODO: generate without tesselation */
-    cubeVAO( size, texres, midx, midy, midz, mesh );
-    glPatchParameteri(GL_PATCH_VERTICES, 4);
-}
-
-// TODO: implement midpoint positioning - needs different equation to solve 
-void circleVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
-
-    VAO(vao);
-    VBO(vbo, GL_ARRAY_BUFFER);
-
-    mesh->vaoId = vao;
-    mesh->vboId = vbo;
-
-    float radius = size;
-
-    int n = 1000;
-
-    int vertices = n * 2 + 1;
-    mesh->count = vertices;
-
-    int dsize = 4 * vertices;
-    int hsize = 2 * (2 * n);
-    float data[dsize];
-
-    float y = 0.0f;
-    float x = -radius;
-    float xstep = (2.0f * radius) / (n - 1);
-
-    // triangle fan ref point
-    data[0] = 0.0f;
-    data[1] = 0.0f;
-    data[2] = 0.0f;
-    data[3] = 1.0f;
-
-    for (int i = 4; i <= hsize; i += 4) {
-
-        y = sqrtf( abs(radius * radius - x * x) );
-        //fprintf(stderr, "[x = %f]\t[y = %f]\n", x, y);
-
-        // upper sphere
-        data[i] = x;
-        data[i + 1] = y;
-        data[i + 2] = 0.0f;
-        data[i + 3] = 1.0f;
-
-        // lower sphere
-        data[dsize - i] = x;
-        data[dsize - i + 1] = -y;
-        data[dsize - i + 2] = 0.0f;
-        data[dsize - i + 3] = 1.0f;
-
-        x += xstep;
-    }
-    glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), data, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    glEnableVertexAttribArray(0);
-
-    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*16));
-    //glEnableVertexAttribArray(1);
-}
-
-void cubeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -324,6 +258,143 @@ void cubeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat 
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * (96 + 48)));
     glEnableVertexAttribArray(2);
 }
+
+void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+
+    VAO( vao );
+    VBO( vbo, GL_ARRAY_BUFFER );
+    VBO( eab, GL_ELEMENT_ARRAY_BUFFER );
+
+    mesh->vaoId = vao;
+    mesh->vboId = vbo;
+    mesh->eabId = eab;
+
+    // three conjoined, orthogonal golden rectangles = icosahedron
+    //
+    // -------
+    // |     |
+    // |     |  b
+    // |     | 
+    // -------
+    //    a    
+    //
+    //    a : b = 1 : 1.618    =  golden ratio 
+
+    const float a = size/2.0f;
+    const float b = 1.618034f * a;
+
+    const float data[] = {
+         midx-a, midy+b, midz, 1.0f,
+         midx+a, midy+b, midz, 1.0f,
+         midx-a, midy-b, midz, 1.0f,
+         midx+a, midy-b, midz, 1.0f,
+
+         midx, midy-a, midz+b, 1.0f,
+         midx, midy+a, midz+b, 1.0f,
+         midx, midy-a, midz-b, 1.0f,
+         midx, midy+a, midz-b, 1.0f,
+
+         midx+b, midy, midz-a, 1.0f,
+         midx+b, midy, midz+a, 1.0f,
+         midx-b, midy, midz-a, 1.0f,
+         midx-b, midy, midz+a, 1.0f
+    };
+    glBufferData( GL_ARRAY_BUFFER, sizeof( data ), data, GL_STATIC_DRAW );
+
+    // base isosahedron
+    const unsigned int indices[] = {
+        0, 11,  5,
+        0,  5,  1,
+        0,  1,  7,
+        0,  7, 10,
+        0, 10, 11,
+
+        1,   5, 9,
+        5,  11, 4,
+        11, 10, 2,
+        10,  7, 6,
+        7,   1, 8,
+
+        3, 9, 4,
+        3, 4, 2,
+        3, 2, 6,
+        3, 6, 8,
+        3, 8, 9,
+
+        4, 9,  5,
+        2, 4, 11,
+        6, 2, 10,
+        8, 6,  7,
+        9, 8,  1
+    };
+
+    // increase resolution
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( indices ), indices, GL_STATIC_DRAW );
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    mesh->count = 60;
+}
+
+// TODO: implement midpoint positioning - needs different equation to solve 
+void circleVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+
+    VAO(vao);
+    VBO(vbo, GL_ARRAY_BUFFER);
+
+    mesh->vaoId = vao;
+    mesh->vboId = vbo;
+
+    float radius = size;
+
+    int n = 1000;
+
+    int vertices = n * 2 + 1;
+    mesh->count = vertices;
+
+    int dsize = 4 * vertices;
+    int hsize = 2 * (2 * n);
+    float data[dsize];
+
+    float y = 0.0f;
+    float x = -radius;
+    float xstep = (2.0f * radius) / (n - 1);
+
+    // triangle fan ref point
+    data[0] = 0.0f;
+    data[1] = 0.0f;
+    data[2] = 0.0f;
+    data[3] = 1.0f;
+
+    for (int i = 4; i <= hsize; i += 4) {
+
+        y = sqrtf( abs(radius * radius - x * x) );
+        //fprintf(stderr, "[x = %f]\t[y = %f]\n", x, y);
+
+        // upper sphere
+        data[i] = x;
+        data[i + 1] = y;
+        data[i + 2] = 0.0f;
+        data[i + 3] = 1.0f;
+
+        // lower sphere
+        data[dsize - i] = x;
+        data[dsize - i + 1] = -y;
+        data[dsize - i + 2] = 0.0f;
+        data[dsize - i + 3] = 1.0f;
+
+        x += xstep;
+    }
+    glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(0);
+
+    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*16));
+    //glEnableVertexAttribArray(1);
+}
+
 
 void terrainVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
 

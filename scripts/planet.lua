@@ -4,27 +4,27 @@ Uniform  = require "scripts.Uniform"
 scene = {
 
     objects = {
-        {
-            name = "atmosphere",
-            mesh = {
-                type = MeshType.SPHERE,
-                size = 1,
-                texres = 1,
-                position = {0, 0, 0}
-            },
-            material = {},
-            uniformsMap = {
-                gTime       = Uniform.gTime,
-                MVP         = Uniform.MVP,
-                v3CameraPos = Uniform.camPos
-            },
-            shaders = {
-                "shaders/pass.vert",
-                "shaders/sphereAtmoScat.frag",
-                "shaders/quad.tcs",
-                "shaders/sphereAtmoScat.tes"
-            }
-        },
+        --{
+        --    name = "atmosphere",
+        --    mesh = {
+        --        type = MeshType.SPHERE,
+        --        size = 1,
+        --        texres = 1,
+        --        position = {0, 0, 0}
+        --    },
+        --    material = {},
+        --    uniformsMap = {
+        --        gTime       = Uniform.gTime,
+        --        MVP         = Uniform.MVP,
+        --        v3CameraPos = Uniform.camPos
+        --    },
+        --    shaders = {
+        --        "shaders/pass.vert",
+        --        "shaders/sphereAtmoScat.frag",
+        --        "shaders/quad.tcs",
+        --        "shaders/sphereAtmoScat.tes"
+        --    }
+        --},
         {
             name = "earth",
             mesh = {
@@ -34,44 +34,42 @@ scene = {
                 position = {0, 0, 0}
             },
             material = {
-                "textures/grass.png",
-                "textures/cliff.jpg",
-                "textures/multitex.png"
+                --"textures/grass.png",
+                --"textures/cliff.jpg",
+                --"textures/multitex.png"
             },
             uniformsMap = {
                 MVP = Uniform.MVP
             },
             shaders = {
-                "shaders/pass.vert",
-                "shaders/tex.frag",
-                "shaders/quad.tcs",
-                "shaders/sphereOUT.tes"
-            }
-        },
-        {
-            name = "space",
-            mesh = {
-                type = MeshType.CUBEMAP,
-                size = 1000,
-                texres = 1,
-                position = {0, 0, 0}
-            },
-            material = {
-                "textures/space/jajspace2_right.jpg",
-                "textures/space/jajspace2_left.jpg",
-                "textures/space/jajspace2_top.jpg",
-                "textures/space/jajspace2_top.jpg",
-                "textures/space/jajspace2_front.jpg",
-                "textures/space/jajspace2_back.jpg"
-            },
-            uniformsMap = {
-                MVP = Uniform.MVPNoTrans
-            },
-            shaders = {
-                "shaders/cubemap.vert",
-                "shaders/cubemap.frag"
+                "shaders/debug.vert",
+                "shaders/debug.frag"
             }
         }
+        --{
+        --    name = "space",
+        --    mesh = {
+        --        type = MeshType.CUBEIN,
+        --        size = 1000,
+        --        texres = 1,
+        --        position = {0, 0, 0}
+        --    },
+        --    material = {
+        --        "textures/space/jajspace2_right.jpg",
+        --        "textures/space/jajspace2_left.jpg",
+        --        "textures/space/jajspace2_top.jpg",
+        --        "textures/space/jajspace2_top.jpg",
+        --        "textures/space/jajspace2_front.jpg",
+        --        "textures/space/jajspace2_back.jpg"
+        --    },
+        --    uniformsMap = {
+        --        MVP = Uniform.MVPNoTrans
+        --    },
+        --    shaders = {
+        --        "shaders/cubemap.vert",
+        --        "shaders/cubemap.frag"
+        --    }
+        --}
         -- {
         --     name = "terrain",
         --     mesh = {

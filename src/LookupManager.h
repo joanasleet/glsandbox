@@ -21,6 +21,7 @@ extern VaoFunc VaoFuncs[];
 
 /* draw call */
 extern GLuint DrawMode[];
-extern enum { PLANE, CUBE, SPHERE, CUBEMAP, OVERLAY, TERRAIN, SKYDOME, SCREEN_QUAD } VaoType;
+extern DrawFunc DrawFuncs[];
 
 #endif
+

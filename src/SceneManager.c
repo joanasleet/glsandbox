@@ -220,7 +220,7 @@ void loadScene(Engine *renderer) {
         }
         lua_pop( S, 1 );
 
-        mesh->draw = drawArrays;
+        mesh->draw = DrawFuncs[vaoType];
         mesh->mode = DrawMode[vaoType];
 
         object->mesh = mesh;

@@ -53,22 +53,28 @@ UniformSetter UniVarFuncs[] = {
 /* vao generator */
 VaoFunc VaoFuncs[] = {
     planeVAO,
-    cubeVAO,
     sphereVAO,
-    cubeMapVAO,
+    cubeInVAO,
+    cubeOutVAO,
     overlayVAO,
-    terrainVAO,
-    sphereVAO      /* skydome */
+    terrainVAO
 };
 
 /* draw call */
+DrawFunc DrawFuncs[] = {
+    drawArrays,     /* PLANE */
+    drawElements,   /* SPHERE */
+    drawArrays,     /* CUBEIN */
+    drawArrays,     /* CUBEOUT */
+    drawArrays,     /* OVERLAY */
+    drawArrays      /* TERRAIN */
+};
+
 GLuint DrawMode[] = {
-    GL_QUADS,   /* PLANE */
-    GL_QUADS,   /* CUBE */
-    GL_PATCHES, /* SPHERE */
-    GL_QUADS,   /* CUBEMAP */
-    GL_QUADS,   /* OVERLAY */
-    GL_PATCHES, /* TERRAIN */
-    GL_PATCHES, /* SKYDOME */
-    GL_QUADS    /* SCREEN_QUAD */
+    GL_QUADS,       /* PLANE */
+    GL_TRIANGLES,   /* SPHERE */
+    GL_QUADS,       /* CUBEIN */
+    GL_QUADS,       /* CUBEOUT */
+    GL_QUADS,       /* OVERLAY */
+    GL_PATCHES      /* TERRAIN */
 };
