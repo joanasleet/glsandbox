@@ -1,11 +1,9 @@
-#include "Camera.h"
-
+#include <time.h>
 #include "Util.h"
 #include "Engine.h"
+#include "Camera.h"
 #include "Context.h"
 #include "SceneManager.h"
-
-#include <time.h>
 
 extern Engine *renderer;
 

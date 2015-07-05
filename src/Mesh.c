@@ -259,6 +259,10 @@ void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
     glEnableVertexAttribArray(2);
 }
 
+void refineSphere( float data, int lvl ) {
+
+}
+
 void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
 
     VAO( vao );
@@ -283,6 +287,7 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
     const float a = size/2.0f;
     const float b = 1.618034f * a;
 
+    // base icosahedron data
     const float data[] = {
          midx-a, midy+b, midz, 1.0f,
          midx+a, midy+b, midz, 1.0f,
@@ -299,9 +304,8 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
          midx-b, midy, midz-a, 1.0f,
          midx-b, midy, midz+a, 1.0f
     };
-    glBufferData( GL_ARRAY_BUFFER, sizeof( data ), data, GL_STATIC_DRAW );
 
-    // base isosahedron
+    // base icosahedron
     const unsigned int indices[] = {
         0, 11,  5,
         0,  5,  1,
@@ -328,8 +332,21 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
         9, 8,  1
     };
 
-    // increase resolution
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( indices ), indices, GL_STATIC_DRAW );
+    // do refinement
+    const int res = 2;
+    int vertices = 20 * powf( 4, res ) * 3;
+
+    // this could fail for higher res
+    GLfloat finalData[vertices*4];
+
+    for( int i = 0; i < res; ++i ) {
+
+        // generate data and indices
+    }
+
+    // send final data
+    glBufferData( GL_ARRAY_BUFFER, sizeof( GLfloat ) * ( vertices*4 ), finalData, GL_STATIC_DRAW );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLuint ) * ( vertices ), finalIndices, GL_STATIC_DRAW );
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
