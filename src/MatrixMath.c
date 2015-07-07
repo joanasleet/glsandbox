@@ -2,6 +2,23 @@
 
 
 /*
+ * vector stuff */
+
+void vec3add( vec3 a, vec3 b, vec3 target ) {
+
+    target[0] = a[0] + b[0];
+    target[1] = a[1] + b[1];
+    target[2] = a[2] + b[2];
+}
+
+void vec3scale( float s, vec3 target ) {
+
+    target[0] *= s;
+    target[1] *= s;
+    target[2] *= s;
+}
+
+/*
  * matrix stuff */
 
 void add(mat4 A, mat4 B, mat4 target) {

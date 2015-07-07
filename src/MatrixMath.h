@@ -30,6 +30,8 @@ typedef float *quat;
 typedef float *mat4;
 
 /* [ vector ] */
+void vec3add( vec3 a, vec3 b, vec3 target );
+void vec3scale( float s, vec3 target );
 
 /* [ matrix ] */
 void add(mat4 A, mat4 B, mat4 target);

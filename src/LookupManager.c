@@ -63,7 +63,7 @@ VaoFunc VaoFuncs[] = {
 /* draw call */
 DrawFunc DrawFuncs[] = {
     drawArrays,     /* PLANE */
-    drawElements,   /* SPHERE */
+    drawArrays,   /* SPHERE */
     drawArrays,     /* CUBEIN */
     drawArrays,     /* CUBEOUT */
     drawArrays,     /* OVERLAY */

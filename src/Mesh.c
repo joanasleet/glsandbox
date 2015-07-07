@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "Util.h"
 #include "string.h"
+#include "MatrixMath.h"
 
 #define IARATIO 0.5625f
 #define ASCII_OFFSET 32
@@ -259,9 +260,19 @@ void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
     glEnableVertexAttribArray(2);
 }
 
-void refineSphere( float data, int lvl ) {
-
-}
+#define WRITE_TRIANGLE( A, B, C, target, indx ) \
+    target[indx+0] = A[0]; \
+    target[indx+1] = A[1]; \
+    target[indx+2] = A[2]; \
+    target[indx+3] = 1.0f; \
+    target[indx+4] = B[0]; \
+    target[indx+5] = B[1]; \
+    target[indx+6] = B[2]; \
+    target[indx+7] = 1.0f; \
+    target[indx+8] = C[0]; \
+    target[indx+9] = C[1]; \
+    target[indx+10] = C[2]; \
+    target[indx+11] = 1.0f; \
 
 void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
 
@@ -284,11 +295,11 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
     //
     //    a : b = 1 : 1.618    =  golden ratio 
 
-    const float a = size/2.0f;
+    const float a = 1.0f;
     const float b = 1.618034f * a;
 
     // base icosahedron data
-    const float data[] = {
+    const float baseData[] = {
          midx-a, midy+b, midz, 1.0f,
          midx+a, midy+b, midz, 1.0f,
          midx-a, midy-b, midz, 1.0f,
@@ -304,6 +315,10 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
          midx-b, midy, midz-a, 1.0f,
          midx-b, midy, midz+a, 1.0f
     };
+
+//    for( int i = 0; i<4*3; ++i ) {
+//        log_info( "vertex %d: ( %.1f, %.1f, %.1f, %.1f )", i, baseData[4*i], baseData[4*i+1], baseData[4*i+2], baseData[4*i+3] );
+//    }
 
     // base icosahedron
     const unsigned int indices[] = {
@@ -331,27 +346,133 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
         8, 6,  7,
         9, 8,  1
     };
+    // TODO: check winding order !!
 
-    // do refinement
-    const int res = 2;
-    int vertices = 20 * powf( 4, res ) * 3;
+    /* base triangles */
+    const int bsize = 20;
 
-    // this could fail for higher res
-    GLfloat finalData[vertices*4];
+    /* vertices per triangle */
+    const int vpt = 3;
 
-    for( int i = 0; i < res; ++i ) {
+    /* base vertex component count */
+    const int vcomps = 4;
 
-        // generate data and indices
+    /* new triangles per triangle */
+    const int rtria = 4;
+
+    /* refinement level */
+    const int res = 1;
+
+    /*  vertices = 20 base triangles * 4 per refinement * 3 vertices per
+     *  triangle */
+    int vertices = bsize * vpt * powf( rtria, res );
+    int dsize = vertices*vcomps;
+    GLfloat finalData[vertices*vcomps];
+
+    /* write with gaps between triangles
+     * inside buffer get smaller with 
+     * higher iteration */
+    int tgap = powf( rtria, res );
+    log_info( "TriangleGap = %d", tgap );
+
+    /* per triangle */
+    for( int t = 0; t < bsize; t++ ) { 
+
+        //log_info( "Triangle %d", t );
+
+        /* per vertex */
+        for( int v = 0; v < vpt; ++v ) {
+
+            //log_info( "\tVertex %d", v );
+
+            int indx = indices[vpt*t+v];
+
+            /* per component */
+            for( int c = 0; c < vcomps; ++c ) {
+                int bi = vcomps*indx+c;  
+                GLfloat vc = baseData[bi];
+                //log_info( "\t\tbaseData[%d] = %f", bi, vc );
+                finalData[tgap*vcomps*vpt*t+vcomps*v+c] = vc;
+            }
+        }
+    }
+    // everything correct so far
+ 
+    /* interation size */
+    int isize = bsize;
+
+    /* do refinement */
+    for( int r = 0; r < res; ++r ) {
+
+        // TODO
+        /* calc new triangle data */
+        /* iterate over vertex count */
+        for( int t = 0; t < isize; ++t ) {
+
+            /*              B
+             *             /\
+             *            /  \
+             *           /    \
+             *          /      \
+             *       a /________\ b
+             *        /\        /\
+             *       /  \      /  \
+             *      /    \    /    \
+             *     /      \  /      \
+             *    /        \/        \
+             *  A --------- c -------- C
+             */
+            
+            int tindx = tgap*vcomps*vpt*t;
+
+            GLfloat A[] = { finalData[tindx+0], finalData[tindx+1], finalData[tindx+2]  /* omit +3 */ };
+            GLfloat B[] = { finalData[tindx+4], finalData[tindx+5], finalData[tindx+6]  /* omit +7 */ };
+            GLfloat C[] = { finalData[tindx+8], finalData[tindx+9], finalData[tindx+10] /* omit +11 */};
+
+            GLfloat a[3];
+            vec3add( A, B, a ); // calc midpoint
+            vec3scale( 0.5f, a ); // = ( A + B ) / 2
+
+            GLfloat b[3];
+            vec3add( B, C, b );
+            vec3scale( 0.5f, b );
+
+            GLfloat c[3];
+            vec3add( C, A, c );
+            vec3scale( 0.5f, c );
+
+            // TODO: spheric displacement
+            
+            /* write into buffer */
+            int wtgap = tgap / rtria;
+            WRITE_TRIANGLE( A, c, a, finalData, wtgap*vcomps*vpt*t*1 );
+            WRITE_TRIANGLE( a, b, B, finalData, wtgap*vcomps*vpt*t*2 );
+            WRITE_TRIANGLE( b, c, C, finalData, wtgap*vcomps*vpt*t*3 );
+            WRITE_TRIANGLE( c, b, a, finalData, wtgap*vcomps*vpt*t*4 );
+        }
+        isize = bsize * powf( rtria, r+1 );
+        tgap /= rtria;
+
+        for( int i=0; i<vertices; i++ ) {
+            int idx = vcomps*i;
+            log_info( "vertex %d (idx=%d): ( %.1f, %.1f, %.1f, %.1f )", 
+                    i, 
+                    idx,
+                    finalData[idx+0], 
+                    finalData[idx+1], 
+                    finalData[idx+2], 
+                    finalData[idx+3] );
+        }
     }
 
-    // send final data
-    glBufferData( GL_ARRAY_BUFFER, sizeof( GLfloat ) * ( vertices*4 ), finalData, GL_STATIC_DRAW );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLuint ) * ( vertices ), finalIndices, GL_STATIC_DRAW );
+    /* send data to gpu */
+    glBufferData( GL_ARRAY_BUFFER, sizeof( GLfloat ) * dsize, finalData, GL_STATIC_DRAW );
 
+    /* set data format */
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    mesh->count = 60;
+    mesh->count = vertices;
 }
 
 // TODO: implement midpoint positioning - needs different equation to solve 
