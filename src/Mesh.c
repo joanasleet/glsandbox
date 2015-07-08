@@ -278,11 +278,12 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
 
     VAO( vao );
     VBO( vbo, GL_ARRAY_BUFFER );
-    VBO( eab, GL_ELEMENT_ARRAY_BUFFER );
 
     mesh->vaoId = vao;
     mesh->vboId = vbo;
-    mesh->eabId = eab;
+
+    /* mid vertex */
+    GLfloat midV[] = { midx, midy, midz };
 
     // three conjoined, orthogonal golden rectangles = icosahedron
     //
@@ -316,10 +317,6 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
          midx-b, midy, midz+a, 1.0f
     };
 
-//    for( int i = 0; i<4*3; ++i ) {
-//        log_info( "vertex %d: ( %.1f, %.1f, %.1f, %.1f )", i, baseData[4*i], baseData[4*i+1], baseData[4*i+2], baseData[4*i+3] );
-//    }
-
     // base icosahedron
     const unsigned int indices[] = {
         0, 11,  5,
@@ -346,7 +343,6 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
         8, 6,  7,
         9, 8,  1
     };
-    // TODO: check winding order !!
 
     /* base triangles */
     const int bsize = 20;
@@ -361,19 +357,25 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
     const int rtria = 4;
 
     /* refinement level */
-    const int res = 1;
+    // TODO: causes winding order to flip on odd/equal levels
+    const int res = 6;
 
     /*  vertices = 20 base triangles * 4 per refinement * 3 vertices per
      *  triangle */
     int vertices = bsize * vpt * powf( rtria, res );
     int dsize = vertices*vcomps;
-    GLfloat finalData[vertices*vcomps];
+
+    GLfloat *finalData;
+    GLfloat stackData[vertices*vcomps];
+    finalData = stackData;
+    if( res > 6 )
+        finalData = alloc( GLfloat, vertices*vcomps );
 
     /* write with gaps between triangles
      * inside buffer get smaller with 
      * higher iteration */
     int tgap = powf( rtria, res );
-    log_info( "TriangleGap = %d", tgap );
+    //log_info( "TriangleGap = %d", tgap );
 
     /* per triangle */
     for( int t = 0; t < bsize; t++ ) { 
@@ -425,13 +427,20 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
             
             int tindx = tgap*vcomps*vpt*t;
 
+            /* original triangle vertices */
             GLfloat A[] = { finalData[tindx+0], finalData[tindx+1], finalData[tindx+2]  /* omit +3 */ };
             GLfloat B[] = { finalData[tindx+4], finalData[tindx+5], finalData[tindx+6]  /* omit +7 */ };
             GLfloat C[] = { finalData[tindx+8], finalData[tindx+9], finalData[tindx+10] /* omit +11 */};
 
+            //printVec3( A );
+            //printVec3( B );
+            //printVec3( C );
+            //printf( "- - - - - - - - - -\n" );
+
+            /* new triangle vertices = midpoint of two original vertices */
             GLfloat a[3];
-            vec3add( A, B, a ); // calc midpoint
-            vec3scale( 0.5f, a ); // = ( A + B ) / 2
+            vec3add( A, B, a );
+            vec3scale( 0.5f, a );
 
             GLfloat b[3];
             vec3add( B, C, b );
@@ -441,28 +450,37 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
             vec3add( C, A, c );
             vec3scale( 0.5f, c );
 
-            // TODO: spheric displacement
+            /* spherical displacement */
+            // OutputVec = midV + radius*normalize( InputVec - midV )
+            sphereMap( A, midV, size );
+            sphereMap( B, midV, size );
+            sphereMap( C, midV, size );
+            sphereMap( a, midV, size );
+            sphereMap( b, midV, size );
+            sphereMap( c, midV, size );
             
             /* write into buffer */
             int wtgap = tgap / rtria;
-            WRITE_TRIANGLE( A, c, a, finalData, wtgap*vcomps*vpt*t*1 );
-            WRITE_TRIANGLE( a, b, B, finalData, wtgap*vcomps*vpt*t*2 );
-            WRITE_TRIANGLE( b, c, C, finalData, wtgap*vcomps*vpt*t*3 );
-            WRITE_TRIANGLE( c, b, a, finalData, wtgap*vcomps*vpt*t*4 );
+            //log_info( "Write Index: %d", wtgap*vcomps*vpt*t );
+            WRITE_TRIANGLE( A, c, a, finalData, tindx );
+            WRITE_TRIANGLE( a, b, B, finalData, tindx+wtgap*vcomps*vpt*1 );
+            WRITE_TRIANGLE( b, c, C, finalData, tindx+wtgap*vcomps*vpt*2 );
+            WRITE_TRIANGLE( c, b, a, finalData, tindx+wtgap*vcomps*vpt*3 );
         }
         isize = bsize * powf( rtria, r+1 );
         tgap /= rtria;
 
-        for( int i=0; i<vertices; i++ ) {
-            int idx = vcomps*i;
-            log_info( "vertex %d (idx=%d): ( %.1f, %.1f, %.1f, %.1f )", 
-                    i, 
-                    idx,
-                    finalData[idx+0], 
-                    finalData[idx+1], 
-                    finalData[idx+2], 
-                    finalData[idx+3] );
-        }
+        //for( int i=0; i<vertices; i++ ) {
+        //    int idx = vcomps*i;
+        //    log_info( "vertex %d (idx=%d): ( %.1f, %.1f, %.1f, %.1f )", 
+        //            i, 
+        //            idx,
+        //            finalData[idx+0], 
+        //            finalData[idx+1], 
+        //            finalData[idx+2], 
+        //            finalData[idx+3] );
+        //    if( (i+1)%3 == 0 ) log_info( "%s", " " );
+        //}
     }
 
     /* send data to gpu */

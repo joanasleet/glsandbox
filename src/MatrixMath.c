@@ -11,11 +11,32 @@ void vec3add( vec3 a, vec3 b, vec3 target ) {
     target[2] = a[2] + b[2];
 }
 
+void vec3sub( vec3 a, vec3 b, vec3 target ) {
+
+    target[0] = a[0] - b[0];
+    target[1] = a[1] - b[1];
+    target[2] = a[2] - b[2];
+}
+
 void vec3scale( float s, vec3 target ) {
 
     target[0] *= s;
     target[1] *= s;
     target[2] *= s;
+}
+
+float vec3norm( vec3 v ) {
+
+    return sqrtf( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+}
+
+void vec3normalize( vec3 v ) {
+
+    float norm = vec3norm( v );
+
+    v[0] /= norm;
+    v[1] /= norm;
+    v[2] /= norm;
 }
 
 /*
@@ -250,6 +271,10 @@ void _printM(mat4 A, const char *name) {
 
 void _printQ(quat q, const char *name) {
     printf("\nquat %s = (%.5f,\t%.5f,\t%.5f,\t%.5f)\n", name, q[0], q[1], q[2], q[3]);
+}
+
+void _printVec3(vec3 v, const char *name) {
+    printf( "\nvec3 %s = (%.1f,\t%.1f,\t%.1f)\n", name, v[0], v[1], v[2] );
 }
 
 float lerpStepf(float from, float to, float alpha) {

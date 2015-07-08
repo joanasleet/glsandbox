@@ -11,6 +11,7 @@
 
 #define printMat(m) (_printM(m, #m))
 #define printQuat(q) (_printQ(q, #q))
+#define printVec3(v) (_printVec3( v, #v ))
 
 #define quatToMat(quat, mat) (rotateQ(mat, quat))
 
@@ -24,6 +25,12 @@
     target[1] = source[1]; \
     target[2] = source[2]; \
 
+#define sphereMap( target, origin, radius ) \
+    vec3sub( target, origin, target );      \
+    vec3normalize( target );                \
+    vec3scale( radius, target );            \
+    vec3add( origin, target, target );      \
+
 typedef float *vec3;
 typedef float *vec4;
 typedef float *quat;
@@ -31,7 +38,10 @@ typedef float *mat4;
 
 /* [ vector ] */
 void vec3add( vec3 a, vec3 b, vec3 target );
+void vec3sub( vec3 a, vec3 b, vec3 target );
 void vec3scale( float s, vec3 target );
+void vec3normalize( vec3 v );
+float vec3norm( vec3 v );
 
 /* [ matrix ] */
 void add(mat4 A, mat4 B, mat4 target);
@@ -60,6 +70,7 @@ void invertQ(quat q);
 void _setData(mat4 target, float *data);
 void _printM(mat4 A, const char *name);
 void _printQ(quat q, const char *name);
+void _printVec3(vec3 v, const char *name);
 
 /* [ interpolation ] */
 float lerpStepf(float from, float to, float alpha);
