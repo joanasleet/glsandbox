@@ -29,14 +29,11 @@ scene = {
             name = "earth",
             mesh = {
                 type = MeshType.SPHERE,
-                size = 1,
+                size = 10,
                 texres = 1,
                 position = {0, 0, 0}
             },
             material = {
-                --"textures/grass.png",
-                --"textures/cliff.jpg",
-                --"textures/multitex.png"
             },
             uniformsMap = {
                 MVP = Uniform.MVP
@@ -44,6 +41,25 @@ scene = {
             shaders = {
                 "shaders/debug.vert",
                 "shaders/debug.frag"
+            }
+        },
+        {
+            name = "athmosphere",
+            mesh = {
+                type = MeshType.SPHERE,
+                size = 10.25,
+                texres = 1,
+                position = {0, 0, 0}
+            },
+            material = {},
+            uniformsMap = {
+                MVP     = Uniform.MVP,
+                camPos  = Uniform.camPos,
+                gTime   = Uniform.gTime
+            },
+            shaders = {
+                "shaders/athmosphere.vert",
+                "shaders/athmosphere.frag"
             }
         }
         --{

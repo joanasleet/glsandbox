@@ -261,16 +261,16 @@ void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
 }
 
 #define WRITE_TRIANGLE( A, B, C, target, indx ) \
-    target[indx+0] = A[0]; \
-    target[indx+1] = A[1]; \
-    target[indx+2] = A[2]; \
-    target[indx+3] = 1.0f; \
-    target[indx+4] = B[0]; \
-    target[indx+5] = B[1]; \
-    target[indx+6] = B[2]; \
-    target[indx+7] = 1.0f; \
-    target[indx+8] = C[0]; \
-    target[indx+9] = C[1]; \
+    target[indx+0]  = A[0]; \
+    target[indx+1]  = A[1]; \
+    target[indx+2]  = A[2]; \
+    target[indx+3]  = 1.0f; \
+    target[indx+4]  = B[0]; \
+    target[indx+5]  = B[1]; \
+    target[indx+6]  = B[2]; \
+    target[indx+7]  = 1.0f; \
+    target[indx+8]  = C[0]; \
+    target[indx+9]  = C[1]; \
     target[indx+10] = C[2]; \
     target[indx+11] = 1.0f; \
 
@@ -358,47 +358,34 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
 
     /* refinement level */
     // TODO: causes winding order to flip on odd/equal levels
-    const int res = 6;
+    const int res = 7;
 
     /*  vertices = 20 base triangles * 4 per refinement * 3 vertices per
      *  triangle */
     int vertices = bsize * vpt * powf( rtria, res );
     int dsize = vertices*vcomps;
 
-    GLfloat *finalData;
-    GLfloat stackData[vertices*vcomps];
-    finalData = stackData;
-    if( res > 6 )
-        finalData = alloc( GLfloat, vertices*vcomps );
+    GLfloat *finalData = alloc( GLfloat, vertices*vcomps );
 
     /* write with gaps between triangles
      * inside buffer get smaller with 
      * higher iteration */
     int tgap = powf( rtria, res );
-    //log_info( "TriangleGap = %d", tgap );
 
-    /* per triangle */
+    /* triangle */
     for( int t = 0; t < bsize; t++ ) { 
 
-        //log_info( "Triangle %d", t );
-
-        /* per vertex */
+        /* vertex */
         for( int v = 0; v < vpt; ++v ) {
-
-            //log_info( "\tVertex %d", v );
 
             int indx = indices[vpt*t+v];
 
-            /* per component */
+            /* component */
             for( int c = 0; c < vcomps; ++c ) {
-                int bi = vcomps*indx+c;  
-                GLfloat vc = baseData[bi];
-                //log_info( "\t\tbaseData[%d] = %f", bi, vc );
-                finalData[tgap*vcomps*vpt*t+vcomps*v+c] = vc;
+                finalData[tgap*vcomps*vpt*t+vcomps*v+c] = baseData[vcomps*indx+c];
             }
         }
     }
-    // everything correct so far
  
     /* interation size */
     int isize = bsize;
@@ -406,9 +393,7 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
     /* do refinement */
     for( int r = 0; r < res; ++r ) {
 
-        // TODO
         /* calc new triangle data */
-        /* iterate over vertex count */
         for( int t = 0; t < isize; ++t ) {
 
             /*              B
@@ -461,7 +446,6 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
             
             /* write into buffer */
             int wtgap = tgap / rtria;
-            //log_info( "Write Index: %d", wtgap*vcomps*vpt*t );
             WRITE_TRIANGLE( A, c, a, finalData, tindx );
             WRITE_TRIANGLE( a, b, B, finalData, tindx+wtgap*vcomps*vpt*1 );
             WRITE_TRIANGLE( b, c, C, finalData, tindx+wtgap*vcomps*vpt*2 );
@@ -469,22 +453,11 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
         }
         isize = bsize * powf( rtria, r+1 );
         tgap /= rtria;
-
-        //for( int i=0; i<vertices; i++ ) {
-        //    int idx = vcomps*i;
-        //    log_info( "vertex %d (idx=%d): ( %.1f, %.1f, %.1f, %.1f )", 
-        //            i, 
-        //            idx,
-        //            finalData[idx+0], 
-        //            finalData[idx+1], 
-        //            finalData[idx+2], 
-        //            finalData[idx+3] );
-        //    if( (i+1)%3 == 0 ) log_info( "%s", " " );
-        //}
     }
 
     /* send data to gpu */
     glBufferData( GL_ARRAY_BUFFER, sizeof( GLfloat ) * dsize, finalData, GL_STATIC_DRAW );
+    free( finalData );
 
     /* set data format */
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -550,7 +523,6 @@ void circleVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
     //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat)*16));
     //glEnableVertexAttribArray(1);
 }
-
 
 void terrainVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
 
