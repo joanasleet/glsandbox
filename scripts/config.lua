@@ -6,9 +6,9 @@ engineConfig = {
     windowTitle = "IsoEngine",
 
     -- camera
-    posX = 1,
+    posX = 0,
     posY = 0,
-    posZ = 4,
+    posZ = 25,
     fieldOfView  = 75,
     acceleration = 0.01,
     sensitivity  = 0.01,

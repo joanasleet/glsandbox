@@ -358,7 +358,7 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
 
     /* refinement level */
     // TODO: causes winding order to flip on odd/equal levels
-    const int res = 7;
+    const int res = 8;
 
     /*  vertices = 20 base triangles * 4 per refinement * 3 vertices per
      *  triangle */
@@ -413,6 +413,35 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
             int tindx = tgap*vcomps*vpt*t;
 
             /* original triangle vertices */
+            //GLfloat A[3], B[3], C[3];
+            //if( r % 2 == 1 ) {
+
+            //    A[0] = finalData[tindx+0];
+            //    A[1] = finalData[tindx+1];
+            //    A[2] = finalData[tindx+2];
+
+            //    C[0] = finalData[tindx+4];
+            //    C[1] = finalData[tindx+5];
+            //    C[2] = finalData[tindx+6];
+
+            //    B[0] = finalData[tindx+8];
+            //    B[1] = finalData[tindx+9];
+            //    B[2] = finalData[tindx+10];
+            //} else {
+
+            //    A[0] = finalData[tindx+0];
+            //    A[1] = finalData[tindx+1];
+            //    A[2] = finalData[tindx+2];
+
+            //    B[0] = finalData[tindx+4];
+            //    B[1] = finalData[tindx+5];
+            //    B[2] = finalData[tindx+6];
+
+            //    C[0] = finalData[tindx+8];
+            //    C[1] = finalData[tindx+9];
+            //    C[2] = finalData[tindx+10];
+            //}
+
             GLfloat A[] = { finalData[tindx+0], finalData[tindx+1], finalData[tindx+2]  /* omit +3 */ };
             GLfloat B[] = { finalData[tindx+4], finalData[tindx+5], finalData[tindx+6]  /* omit +7 */ };
             GLfloat C[] = { finalData[tindx+8], finalData[tindx+9], finalData[tindx+10] /* omit +11 */};
@@ -446,10 +475,23 @@ void sphereVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
             
             /* write into buffer */
             int wtgap = tgap / rtria;
-            WRITE_TRIANGLE( A, c, a, finalData, tindx );
-            WRITE_TRIANGLE( a, b, B, finalData, tindx+wtgap*vcomps*vpt*1 );
-            WRITE_TRIANGLE( b, c, C, finalData, tindx+wtgap*vcomps*vpt*2 );
-            WRITE_TRIANGLE( c, b, a, finalData, tindx+wtgap*vcomps*vpt*3 );
+            WRITE_TRIANGLE( A, a, c, finalData, tindx );
+            WRITE_TRIANGLE( a, B, b, finalData, tindx+wtgap*vcomps*vpt*1 );
+            WRITE_TRIANGLE( b, C, c, finalData, tindx+wtgap*vcomps*vpt*2 );
+            WRITE_TRIANGLE( c, a, b, finalData, tindx+wtgap*vcomps*vpt*3 );
+            //if( r%2 == 1) {
+
+            //    WRITE_TRIANGLE( A, a, c, finalData, tindx );
+            //    WRITE_TRIANGLE( a, B, b, finalData, tindx+wtgap*vcomps*vpt*1 );
+            //    WRITE_TRIANGLE( b, C, c, finalData, tindx+wtgap*vcomps*vpt*2 );
+            //    WRITE_TRIANGLE( c, a, b, finalData, tindx+wtgap*vcomps*vpt*3 );
+            //} else {
+
+            //    WRITE_TRIANGLE( A, c, a, finalData, tindx );
+            //    WRITE_TRIANGLE( a, b, B, finalData, tindx+wtgap*vcomps*vpt*1 );
+            //    WRITE_TRIANGLE( b, c, C, finalData, tindx+wtgap*vcomps*vpt*2 );
+            //    WRITE_TRIANGLE( c, b, a, finalData, tindx+wtgap*vcomps*vpt*3 );
+            //}
         }
         isize = bsize * powf( rtria, r+1 );
         tgap /= rtria;
