@@ -1,6 +1,5 @@
 #include "MatrixMath.h"
 
-
 /*
  * vector stuff */
 
@@ -37,6 +36,17 @@ void vec3normalize( vec3 v ) {
     v[0] /= norm;
     v[1] /= norm;
     v[2] /= norm;
+}
+
+float vec3dot( vec3 a, vec3 b ) {
+    return ( a[0]*b[0] + a[1]*b[1] + a[2]*b[2] );
+}
+
+void vec3cross( vec3 a, vec3 b, vec3 target ) {
+
+    target[0] = a[1]*b[2] - a[2]*b[1];
+    target[1] = a[2]*b[0] - a[0]*b[2];
+    target[2] = a[0]*b[1] - a[1]*b[0];
 }
 
 /*

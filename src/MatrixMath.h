@@ -37,11 +37,14 @@ typedef float *quat;
 typedef float *mat4;
 
 /* [ vector ] */
+float vec3norm( vec3 v );
+float vec3dot( vec3 a, vec3 b );
+
+void vec3normalize( vec3 v );
+void vec3scale( float s, vec3 target );
 void vec3add( vec3 a, vec3 b, vec3 target );
 void vec3sub( vec3 a, vec3 b, vec3 target );
-void vec3scale( float s, vec3 target );
-void vec3normalize( vec3 v );
-float vec3norm( vec3 v );
+void vec3cross( vec3 a, vec3 b, vec3 target );
 
 /* [ matrix ] */
 void add(mat4 A, mat4 B, mat4 target);
