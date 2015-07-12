@@ -1,7 +1,10 @@
 #include "Util.h"
 #include "Material.h"
+#include "Engine.h"
 
 #include "stb_image.h"
+
+extern Engine *renderer;
 
 Texture *nullTex = NULL;
 
@@ -30,12 +33,28 @@ void freeMaterial(Material *mat) {
 // NOTE: mipmaps might be wrong for height maps ?!
 
 Texture *createTexture(const char *file, GLenum target, uint8 genMipMaps) {
-    Texture *texture = (Texture *) malloc(sizeof (Texture));
+
+    Texture *texture = alloc( Texture, 1 );
     return_guard(texture, NULL);
 
     glGenTextures(1, &texture->id);
     texture->target = target;
-    texture->data = getData(file, &(texture->width), &(texture->height));
+
+    /* check if tex data is cached */
+    lua_getfield( renderer->textureCache, -1, file );
+    uint8 *data = lua_touserdata( renderer->textureCache, -1 );
+    lua_pop( renderer->textureCache, 1 );
+
+    if( !data ) {
+
+        data = getData(file, &(texture->width), &(texture->height));
+
+        /* textureCache[file] = data */
+        lua_pushlightuserdata( renderer->textureCache, ( void* ) data );
+        lua_setfield( renderer->textureCache, -2, file );
+    }
+
+    texture->data = data;
 
     glBindTexture(target, texture->id);
 
@@ -113,7 +132,7 @@ Texture *nullTexture() {
 
 Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
 
-    Texture *texture = (Texture *) malloc(sizeof (Texture));
+    Texture *texture = alloc( Texture, 1 );
     return_guard(texture, NULL);
 
     glGenTextures(1, &texture->id);
@@ -121,22 +140,27 @@ Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
     glBindTexture(texture->target, texture->id);
     texture->data = NULL;
 
-    int w, h;
-    uint8 *faceData;
-
-    if (allSame) {
-        faceData = getData(cubeFaces[0], &w, &h);
-        texture->data = faceData;
-    }
-
     for (int face = 0; face < 6; face++) {
-        if (!allSame) {
-            faceData = getData(cubeFaces[face], &w, &h);
-            texture->data = NULL;
+
+        int w, h;
+        const char *file = cubeFaces[face];
+
+        /* check if tex data is cached */
+        lua_getfield( renderer->textureCache, -1, file );
+        uint8 *faceData = lua_touserdata( renderer->textureCache, -1 );
+        lua_pop( renderer->textureCache, 1 );
+
+        if( !faceData ) {
+
+            faceData = getData( file, &w, &h );
+
+            /* textureCache[file] = data */
+            lua_pushlightuserdata( renderer->textureCache, ( void* ) faceData );
+            lua_setfield( renderer->textureCache, -2, file );
         }
+
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB_ALPHA, w, h, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, faceData);
-        free( faceData );
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

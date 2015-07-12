@@ -20,6 +20,8 @@ typedef struct {
 
     Cache *shaderCache;
     Cache *uniformCache;
+
+    Cache *textureCache;
 } Engine;
 
 /*

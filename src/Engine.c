@@ -19,15 +19,20 @@ Engine *init() {
     /* read config from script */
     config( renderer );
 
-    /* use lua table as cache */
+    /* lua table as shader cache */
     renderer->shaderCache = luaL_newstate();
     err_guard( renderer->shaderCache );
     lua_newtable( renderer->shaderCache );
 
-    /* use lua table as cache */
+    /* lua table as uniform cache */
     renderer->uniformCache = luaL_newstate();
     err_guard( renderer->uniformCache );
     lua_newtable( renderer->uniformCache );
+
+    /* lua table as texture cache */
+    renderer->textureCache = luaL_newstate();
+    err_guard( renderer->textureCache );
+    lua_newtable( renderer->textureCache );
 
     /* set window callbacks */
     GLFWwindow *window = renderer->context->win;
@@ -289,6 +294,7 @@ void terminate(Engine *renderer) {
 
     lua_close( renderer->shaderCache );
     lua_close( renderer->uniformCache );
+    lua_close( renderer->textureCache );
 
     freeObjects(renderer);
 
