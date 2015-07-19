@@ -12,6 +12,7 @@ extern const char *ERR_SEVERITY[];
 
 /* GL */
 extern GLenum ShaderType[];
+extern const char* ShaderName[];
 
 /* uniforms */
 extern UniformSetter UniVarFuncs[];

@@ -33,7 +33,7 @@ void loadScene(Engine *renderer) {
     lua_len( S, -1 );
     uint32 objectCount = 0;
     popInt( S, objectCount );
-    log_info("<Object count %d>", objectCount);
+    log_info("<Objects: %d >", objectCount);
     return_guard(objectCount, RVOID);
 
     Object **objects = alloc( Object*, objectCount );
@@ -51,7 +51,7 @@ void loadScene(Engine *renderer) {
         lua_getfield( S, -1, "name" );
         char *name;
         popString( S, name );
-        log_info( "<Adding object %s>", name );
+        log_info( "  <Object: %s >", name );
 
         /* push mesh */
         lua_getfield( S, -1, "mesh" );
@@ -59,14 +59,17 @@ void loadScene(Engine *renderer) {
         lua_getfield( S, -1, "type" );
         uint32 vaoType;
         popInt( S, vaoType );
+        log_info( "    <Type: %d>", vaoType );
 
         lua_getfield( S, -1, "size" );
         float size;
         popFloat( S, size );
+        log_info( "    <Size: %.1f>", size );
 
         lua_getfield( S, -1, "texres" );
         float texres;
         popFloat( S, texres );
+        log_info( "    <TexRes: %.1f>", texres );
 
         lua_getfield( S, -1, "position" );
 
@@ -84,6 +87,7 @@ void loadScene(Engine *renderer) {
         lua_geti( S, -1, 3 );
         float midZ;
         popFloat( S, midZ );
+        log_info( "    <Position: ( %.1f, %.1f, %.1f )>", midX, midY, midZ );
 
         lua_pop( S, 2 );
 
@@ -97,6 +101,7 @@ void loadScene(Engine *renderer) {
         popInt( S, texCount );
 
         Material *mat = newMaterial();
+        log_info( "    <Material: %d >", texCount );
 
         switch (texCount) {
         case 1:
@@ -113,6 +118,7 @@ void loadScene(Engine *renderer) {
                 lua_geti( S, -1, i+1 );
                 char *tex;
                 popString( S, tex );
+                log_info( "      < %s >", tex );
                 mat->textures[i] = newTex2D( tex );
             }
         }
@@ -124,31 +130,37 @@ void loadScene(Engine *renderer) {
             lua_geti( S, -1, 1 );
             char *str1;
             popString( S, str1 );
+            log_info( "      < %s >", str1 );
             faces[0] = str1;
 
             lua_geti( S, -1, 2 );
             char *str2;
             popString( S, str2 );
+            log_info( "      < %s >", str2 );
             faces[1] = str2;
 
             lua_geti( S, -1, 3 );
             char *str3;
             popString( S, str3 );
+            log_info( "      < %s >", str3 );
             faces[2] = str3;
 
             lua_geti( S, -1, 4 );
             char *str4;
             popString( S, str4 );
+            log_info( "      < %s >", str4 );
             faces[3] = str4;
 
             lua_geti( S, -1, 5 );
             char *str5;
             popString( S, str5 );
+            log_info( "      < %s >", str5 );
             faces[4] = str5;
 
             lua_geti( S, -1, 6 );
             char *str6;
             popString( S, str6 );
+            log_info( "      < %s >", str6 );
             faces[5] = str6;
 
             mat->texCount = 1;
@@ -171,6 +183,7 @@ void loadScene(Engine *renderer) {
             uniformCount++;
             lua_pop( S, 1 );
         }
+        log_info( "    <Uniforms: %d>", uniformCount );
 
         Shader *shader = newShader();
         shader->uniformCount = uniformCount;
@@ -194,6 +207,7 @@ void loadScene(Engine *renderer) {
             getStringAlloc( S, univar );
             shader->uniforms[i] = univar;
 
+            log_info( "      <%s: %d>", univar, type );
             i++;
         }
         lua_pop( S, 1 );
@@ -207,6 +221,7 @@ void loadScene(Engine *renderer) {
         uint8 stageCount = 0;
         popInt( S, stageCount );
         shader->stageCount = stageCount;
+        log_info( "    <Shader: %d>", stageCount );
         shader->stages = alloc( char*, stageCount);
 
         /* read table values */
@@ -216,6 +231,7 @@ void loadScene(Engine *renderer) {
             lua_geti( S, -1, i+1 );
             char *stage;
             popStringAlloc( S, stage );
+            log_info( "      <%s: %s>", ShaderName[i], stage );
             shader->stages[i] = stage;
         }
         lua_pop( S, 1 );

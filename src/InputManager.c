@@ -18,12 +18,6 @@ void cursorCB(GLFWwindow *win, double xpos, double ypos) {
     cam->state->targetAngles[0] += ((xres / 2.0) - xpos) * sens;
     cam->state->targetAngles[1] += ((yres / 2.0) - ypos) * sens;
 
-    // if (cam->targetX > 360.0) cam->targetX -= 360.0;
-    // if (cam->targetX < 0.0) cam->targetX += 360.0;
-
-    // if (cam->targetY > 360.0) cam->targetY -= 360.0;
-    // if (cam->targetY < 0.0) cam->targetY += 360.0;
-
     glfwSetCursorPos(win, (xres / 2.0f), (yres / 2.0f));
 }
 
@@ -36,7 +30,6 @@ void cursorEnterCB(GLFWwindow *win, int enter) {
 void scrollCB(GLFWwindow *win, double xoffset, double yoffset) {
 
     State *camState = renderer->mainCam->state;
-
     camState->accel *= pow( 1.15f, yoffset );
 }
 
@@ -152,8 +145,31 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
         }
         break;
 
-    // zoom in
+    // roll camera
     case GLFW_KEY_E:
+
+        if (action == GLFW_PRESS) {
+            cam->state->targetAngles[2] += 2.0f;
+        } else if (action == GLFW_RELEASE) {
+            /* nothing */
+        } else {
+            cam->state->targetAngles[2] += 2.0f;
+        }
+        break;
+
+    case GLFW_KEY_Q:
+
+        if (action == GLFW_PRESS) {
+            cam->state->targetAngles[2] -= 2.0f;
+        } else if (action == GLFW_RELEASE) {
+            /* nothing */
+        } else {
+            cam->state->targetAngles[2] -= 2.0f;
+        }
+        break;
+
+    // zoom in
+    case GLFW_KEY_F:
 
         if (action == GLFW_PRESS) {
             cam->fov[1] = defaultFov - 50.0f;

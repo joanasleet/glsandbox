@@ -9,21 +9,13 @@
 #define PI (3.141592f)
 #define RAD(x) (x * PI / 180.0f)
 
-#define printMat(m) (_printM(m, #m))
-#define printQuat(q) (_printQ(q, #q))
-#define printVec3(v) (_printVec3( v, #v ))
+#define printBuf( b, n, r, c ) ( _printBuffer( b, #b, n, r, c ) )
 
-#define quatToMat(quat, mat) (rotateQ(mat, quat))
+#define setBuf( b, n, val ) \
+    for( int _i=0; _i<n; ++_i ) b[_i] = val; \
 
-#define nullVec( vec3 ) \
-    vec3[0] = 0; \
-    vec3[1] = 0; \
-    vec3[2] = 0; \
-
-#define setVec3( target, source ) \
-    target[0] = source[0]; \
-    target[1] = source[1]; \
-    target[2] = source[2]; \
+#define cpyBuf( trgt, src, n ) \
+    for( int _i=0; _i<n; ++_i ) trgt[_i] = src[_i]; \
 
 #define sphereMap( target, origin, radius ) \
     vec3sub( target, origin, target );      \
@@ -47,33 +39,26 @@ void vec3sub( vec3 a, vec3 b, vec3 target );
 void vec3cross( vec3 a, vec3 b, vec3 target );
 
 /* [ matrix ] */
-void add(mat4 A, mat4 B, mat4 target);
-void sub(mat4 A, mat4 B, mat4 target);
-void mult(mat4 A, mat4 B, mat4 target);
-void multMatVec4(mat4 A, vec4 v, vec4 target);
-void multMatVec3(mat4 A, vec3 v, vec3 target);
+void mat4add(mat4 A, mat4 B, mat4 target);
+void mat4sub(mat4 A, mat4 B, mat4 target);
+void mat4mult(mat4 A, mat4 B, mat4 target);
+void mat4multVec4(mat4 A, vec4 v, vec4 target);
+void mat4multVec3(mat4 A, vec3 v, vec3 target);
 
-void scale(mat4 target, float x, float y, float z);
-void translate(mat4 target, float x, float y, float z);
+void mat4scale(mat4 target, float x, float y, float z);
+void mat4trans(mat4 target, float x, float y, float z);
+void mat4rotate(mat4 target, float angle, float x, float y, float z);
+void mat4persp(mat4 target, float near, float far, float fovx, float ratio);
+void mat4perspinf(mat4 target, float near, float fov, float ratio);
 
-void perspective(mat4 target, float near, float far, float fovx, float ratio);
-void perspectiveInf(mat4 target, float near, float fov, float ratio);
-
-void rotate(mat4 target, float angle, float x, float y, float z);
-void rotateQ(mat4 target, quat q);
 void rotate3D(quat target, vec3 angles);
 
 /* [ quaternion ] */
-void setQuat(quat q, float angle, float x, float y, float z);
-void multQ(quat q, quat r, quat target);
-void normQ(quat q);
-void invertQ(quat q);
-
-/* private helper */
-void _setData(mat4 target, float *data);
-void _printM(mat4 A, const char *name);
-void _printQ(quat q, const char *name);
-void _printVec3(vec3 v, const char *name);
+void quatInv(quat q);
+void quatNorm(quat q);
+void quatToMat(mat4 target, quat q);
+void quatMult(quat q, quat r, quat target);
+void quatSet(quat q, float angle, float x, float y, float z);
 
 /* [ interpolation ] */
 float lerpStepf(float from, float to, float alpha);

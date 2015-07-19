@@ -81,23 +81,22 @@ void P(GLint loc, Camera *cam, State *objState, double globalTime) {
 
 void MV(GLint loc, Camera *cam, State *objState, double globalTime) {
 
-    State *camState = cam->state;
+    State *state = cam->state;
 
     // orientation
-    float rotaQ[4];
-    rotate3D(rotaQ, camState->angles);
-    invertQ(rotaQ);
+    float rotaQ[] = { state->orientation[0], state->orientation[1], state->orientation[2], state->orientation[3] };
+    quatInv(rotaQ);
 
     GLfloat orientation[16];
-    rotateQ(orientation, rotaQ);
+    quatToMat(orientation, rotaQ);
 
     // translation
     GLfloat translation[16];
-    translate(translation, -camState->position[0], -camState->position[1], -camState->position[2]);
+    mat4trans(translation, -state->position[0], -state->position[1], -state->position[2]);
 
     // ModelView
     GLfloat MVmat[16];
-    mult(orientation, translation, MVmat);
+    mat4mult(orientation, translation, MVmat);
 
     // update uniform
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVmat);
@@ -105,15 +104,15 @@ void MV(GLint loc, Camera *cam, State *objState, double globalTime) {
 
 void MVnoTrans(GLint loc, Camera *cam, State *objState, double globalTime) {
 
-    State *camState = cam->state;
+    State *state = cam->state;
 
     // orientation
     float rotaQ[4];
-    rotate3D(rotaQ, camState->angles);
-    invertQ(rotaQ);
+    rotate3D(rotaQ, state->angles);
+    quatInv(rotaQ);
 
     GLfloat orientation[16];
-    rotateQ(orientation, rotaQ);
+    quatToMat(orientation, rotaQ);
 
     // update uniform
     glUniformMatrix4fv(loc, 1, GL_FALSE, orientation);
@@ -124,23 +123,22 @@ void MVP(GLint loc, Camera *cam, State *objState, double globalTime) {
     State *state = cam->state;
 
     // orientation
-    float rotaQ[4];
-    rotate3D(rotaQ, state->angles);
-    invertQ(rotaQ);
+    float rotaQ[] = { state->orientation[0], state->orientation[1], state->orientation[2], state->orientation[3] };
+    quatInv(rotaQ);
 
     GLfloat orientation[16];
-    rotateQ(orientation, rotaQ);
+    quatToMat(orientation, rotaQ);
 
     // translation
     GLfloat translation[16];
-    translate(translation, -state->position[0], -state->position[1], -state->position[2]);
+    mat4trans(translation, -state->position[0], -state->position[1], -state->position[2]);
 
     GLfloat temp[16];
-    mult(cam->perspective, orientation, temp);
+    mat4mult(cam->perspective, orientation, temp);
     
     // (perspective * orientation) * translation
     GLfloat MVPmat[16];
-    mult(temp, translation, MVPmat);
+    mat4mult(temp, translation, MVPmat);
 
     // update uniform
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVPmat);
@@ -151,16 +149,16 @@ void MVPnoTrans(GLint loc, Camera *cam, State *objState, double globalTime) {
     State *camState = cam->state;
 
     // orientation
-    float rotaQ[4];
-    rotate3D(rotaQ, camState->angles);
-    invertQ(rotaQ);
+    float rotaQ[] = { camState->orientation[0], camState->orientation[1], camState->orientation[2], camState->orientation[3] };
+    //rotate3D(rotaQ, camState->angles);
+    quatInv(rotaQ);
 
     GLfloat orientation[16];
-    rotateQ(orientation, rotaQ);
+    quatToMat(orientation, rotaQ);
 
     // ModelViewPerspective
     float MVP[16];
-    mult(cam->perspective, orientation, MVP);
+    mat4mult(cam->perspective, orientation, MVP);
 
     // update uniform
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVP);
@@ -172,17 +170,17 @@ void objMV(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     float rotaQ[4];
     rotate3D(rotaQ, cam->state->angles);
-    invertQ(rotaQ);
+    quatInv(rotaQ);
 
     GLfloat orientation[16];
-    rotateQ(orientation, rotaQ);
+    quatToMat(orientation, rotaQ);
 
     float translation[16];
     vec3 pos = objState->position;
-    translate(translation, pos[0], pos[1], pos[2]);
+    mat4trans(translation, pos[0], pos[1], pos[2]);
 
     float MV[16];
-    mult(orientation, translation, MV);
+    mat4mult(orientation, translation, MV);
 
     glUniformMatrix4fv(loc, 1, GL_FALSE, MV);
 }
@@ -191,10 +189,10 @@ void objMVnoTrans(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     float rotaQ[4];
     rotate3D(rotaQ, cam->state->angles);
-    invertQ(rotaQ);
+    quatInv(rotaQ);
 
     GLfloat orientation[16];
-    rotateQ(orientation, rotaQ);
+    quatToMat(orientation, rotaQ);
 
     glUniformMatrix4fv(loc, 1, GL_FALSE, orientation);
 }

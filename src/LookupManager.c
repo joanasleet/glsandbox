@@ -37,6 +37,16 @@ GLenum ShaderType[] = {
     GL_COMPUTE_SHADER
 };
 
+/* shader stage strings */
+const char* ShaderName[] = {
+    "Vertex",
+    "Fragment",
+    "TesselationCont",
+    "TesselationEval",
+    "Geometry",
+    "Compute"
+};
+
 /* uniforms */
 UniformSetter UniVarFuncs[] = {
     P,

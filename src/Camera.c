@@ -25,6 +25,23 @@ Camera *newCamera(float x, float y, float z) {
     cam->state->position[1] = y;
     cam->state->position[2] = z;
 
+    cam->state->up[0] = 0.0f;
+    cam->state->up[1] = 1.0f;
+    cam->state->up[2] = 0.0f;
+
+    cam->state->right[0] = 1.0f;
+    cam->state->right[1] = 0.0f;
+    cam->state->right[2] = 0.0f;
+
+    cam->state->forward[0] = 0.0f;
+    cam->state->forward[1] = 0.0f;
+    cam->state->forward[2] = -1.0f;
+
+    cam->state->orientation[0] = 1.0f;
+    cam->state->orientation[1] = 0.0f;
+    cam->state->orientation[2] = 0.0f;
+    cam->state->orientation[3] = 0.0f;
+
     cam->mouseGrab = 0;
     cam->wireframe = 0;
 
@@ -35,25 +52,32 @@ void updateCam(Camera *cam) {
 
     State *state = cam->state;
 
-    // calc & update angle velocity
+    /* calc & update angle velocity */
     float newAngleVel[] = {
         lerpStep(state->angles[0], state->targetAngles[0], cam->smoothing ),
         lerpStep(state->angles[1], state->targetAngles[1], cam->smoothing ),
-        0.0f
+        lerpStep(state->angles[2], state->targetAngles[2], cam->smoothing )
     };
-    setVec3(state->angleVelocity, newAngleVel);
-    setAngles(state->angles, state, 1.0f);
+    cpyBuf( state->angleVelocity, newAngleVel, 3 );
+    calcAngles( state->angles, state, 1.0f );
+    calcOrientation( state->orientation, state, 1.0f );
 
     // calc rotation
-    float rotaQuaternion[4];
-    rotate3D(rotaQuaternion, state->angles);
     GLfloat rotaMatrix[16];
-    rotateQ(rotaMatrix, rotaQuaternion);
+    quatToMat(rotaMatrix, state->orientation);
 
     // update orientation vectors
-    multMatVec3(rotaMatrix, baseUpVec, state->up);
-    multMatVec3(rotaMatrix, baseRightVec, state->right);
-    multMatVec3(rotaMatrix, baseForwardVec, state->forward);
+    float up[3];
+    mat4multVec3(rotaMatrix, baseUpVec, up );
+    cpyBuf( state->up, up, 3 );
+
+    float right[3];
+    mat4multVec3(rotaMatrix, baseRightVec, right );
+    cpyBuf( state->right, right, 3 );
+
+    float forward[3];
+    mat4multVec3(rotaMatrix, baseForwardVec, forward );
+    cpyBuf( state->forward, forward, 3 );
 
     // calc & update velocity
     float newVel[] = {
@@ -61,12 +85,12 @@ void updateCam(Camera *cam) {
         state->velocity[1] + lerpStep(state->velocity[1], state->targetVelocity[1], cam->smoothing ),
         state->velocity[2] + lerpStep(state->velocity[2], state->targetVelocity[2], cam->smoothing )
     };
-    setVec3(state->velocity, newVel);
-    setPosition(state->position, state, 1.0f);
+    cpyBuf( state->velocity, newVel, 3 );
+    calcPosition( state->position, state, 1.0f);
 
     // calc & store perspective
     cam->fov[0] += lerpStep( cam->fov[0], cam->fov[1], cam->smoothing );
-    perspectiveInf(cam->perspective, cam->nearClip, cam->fov[0], cam->aspectRatio);
+    mat4perspinf(cam->perspective, cam->nearClip, cam->fov[0], cam->aspectRatio);
 }
 
 void freeCamera(Camera *cam) {

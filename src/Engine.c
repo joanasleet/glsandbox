@@ -168,20 +168,20 @@ void render(Object *obj, Engine *renderer) {
     Camera *cam = renderer->mainCam;
 
     /* save old state */
-    State *oldState = cam->state;
+    State *state = cam->state;
 
     /* setup interpolated state */
     State interpolatedState;
 
     /* setup position */
     float position[3];
-    setPosition(position, oldState, renderAlpha);
-    setVec3( interpolatedState.position, position );
+    calcPosition( position, state, renderAlpha );
+    cpyBuf( interpolatedState.position, position, 3 );
 
-    /* setup angles */
-    float angles[3];
-    setAngles(angles, oldState, renderAlpha);
-    setVec3( interpolatedState.angles, angles );
+    /* setup orientation */
+    float orientation[4];
+    calcOrientation( orientation, state, renderAlpha);
+    cpyBuf( interpolatedState.orientation, orientation, 4 );
 
     /* set interpolated state */
     cam->state = &interpolatedState;
@@ -212,7 +212,7 @@ void render(Object *obj, Engine *renderer) {
 
     /*
      * reset old state */
-    cam->state = oldState;
+    cam->state = state;
 
     /*
      * bind materials */

@@ -95,7 +95,7 @@ void debugCB(GLenum source, GLenum type, GLuint id, GLenum severity,
         sev_i = 3;
     }
 
-    log_info("[%s %s %s] (id: %u)\n\"%s\"",
+    log_warn("[%s %s %s] (id: %u)\n\"%s\"",
              ERR_SOURCE[src_i], ERR_TYPE[type_i], ERR_SEVERITY[sev_i], id, msg);
     fflush(stderr);
 }

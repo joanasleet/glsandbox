@@ -16,6 +16,7 @@ typedef struct {
     float targetVelocity[3];
 
     // TODO: use quaternion and multiply in deltas
+    float orientation[4];
     float angles[3];
     float targetAngles[3];
     float angleVelocity[3];
@@ -23,11 +24,9 @@ typedef struct {
 
 State *newState();
 
-void setAngles(vec3 target, State *src, float alpha);
-void setPosition(vec3 target, State *src, float alpha);
-
-void setVelocity(State *state);
-void setAngleVelocity(State *state);
+void calcAngles( vec3 target, State *src, float alpha );
+void calcPosition( quat target, State *src, float alpha);
+void calcOrientation( vec3 target, State *src, float alpha);
 
 #endif
 

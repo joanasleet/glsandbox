@@ -87,19 +87,19 @@ uint8 *getData(const char *file, int *width, int *height) {
 
     if (width && height) {
         data = stbi_load(file, width, height, &texCompr, 4);
-        log_info("<Texture %s>: %i x %i (%i) ", file, *width, *height, texCompr);
+        log_warn("<Texture %s>: %i x %i (%i) ", file, *width, *height, texCompr);
     } else if (width && !height) {
         int h;
         data = stbi_load(file, width, &h, &texCompr, 4);
-        log_info("<Texture %s>: %i x %i (%i) ", file, *width, h, texCompr);
+        log_warn("<Texture %s>: %i x %i (%i) ", file, *width, h, texCompr);
     } else if (!width && height) {
         int w;
         data = stbi_load(file, &w, height, &texCompr, 4);
-        log_info("<Texture %s>: %i x %i (%i) ", file, w, *height, texCompr);
+        log_warn("<Texture %s>: %i x %i (%i) ", file, w, *height, texCompr);
     } else {
         int w, h;
         data = stbi_load(file, &w, &h, &texCompr, 4);
-        log_info("<Texture %s>: %i x %i (%i) ", file, w, h, texCompr);
+        log_warn("<Texture %s>: %i x %i (%i) ", file, w, h, texCompr);
     }
 
     return_guard(data, NULL);

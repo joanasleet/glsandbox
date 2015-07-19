@@ -52,21 +52,21 @@ void vec3cross( vec3 a, vec3 b, vec3 target ) {
 /*
  * matrix stuff */
 
-void add(mat4 A, mat4 B, mat4 target) {
+void mat4add(mat4 A, mat4 B, mat4 target) {
 
     for (int i = 0; i < 16; ++i) {
         target[i] = A[i] + B[i];
     }
 }
 
-void sub(mat4 A, mat4 B, mat4 target) {
+void mat4sub(mat4 A, mat4 B, mat4 target) {
 
     for (int i = 0; i < 16; ++i) {
         target[i] = A[i] - B[i];
     }
 }
 
-void mult(mat4 A, mat4 B, mat4 target) {
+void mat4mult(mat4 A, mat4 B, mat4 target) {
 
     /* iterates over the columns of B */
     for (int i = 0; i < 4; ++i) {
@@ -79,7 +79,7 @@ void mult(mat4 A, mat4 B, mat4 target) {
     }
 }
 
-void multMatVec4(mat4 A, vec4 v, vec4 target) {
+void mat4multVec4(mat4 A, vec4 v, vec4 target) {
 
     target[0] = A[0] * v[0] + A[4] * v[1] + A[8] * v[2] + A[12] * v[3];
     target[1] = A[1] * v[0] + A[5] * v[1] + A[9] * v[2] + A[13] * v[3];
@@ -87,14 +87,14 @@ void multMatVec4(mat4 A, vec4 v, vec4 target) {
     target[3] = A[3] * v[0] + A[7] * v[1] + A[11] * v[2] + A[15] * v[3];
 }
 
-void multMatVec3(mat4 A, vec3 v, vec3 target) {
+void mat4multVec3(mat4 A, vec3 v, vec3 target) {
 
     target[0] = A[0] * v[0] + A[4] * v[1] +  A[8] * v[2] + A[12];
     target[1] = A[1] * v[0] + A[5] * v[1] +  A[9] * v[2] + A[13];
     target[2] = A[2] * v[0] + A[6] * v[1] + A[10] * v[2] + A[14];
 }
 
-void scale(mat4 target, float x, float y, float z) {
+void mat4scale(mat4 target, float x, float y, float z) {
 
     float data[] = {
         x, 0, 0, 0,
@@ -103,10 +103,10 @@ void scale(mat4 target, float x, float y, float z) {
         0, 0, 0, 1
     };
 
-    _setData(target, data);
+    cpyBuf( target, data, 16 );
 }
 
-void translate(mat4 target, float x, float y, float z) {
+void mat4trans(mat4 target, float x, float y, float z) {
 
     float data[] = {
         1, 0, 0, 0,
@@ -115,10 +115,10 @@ void translate(mat4 target, float x, float y, float z) {
         x, y, z, 1
     };
 
-    _setData(target, data);
+    cpyBuf( target, data, 16 );
 }
 
-void perspective(mat4 target, float near, float far, float fov, float ratio) {
+void mat4persp(mat4 target, float near, float far, float fov, float ratio) {
 
     float z_d = far - near;
 
@@ -135,10 +135,10 @@ void perspective(mat4 target, float near, float far, float fov, float ratio) {
         0,   0, e32,     0
     };
 
-    _setData(target, data);
+    cpyBuf( target, data, 16 );
 }
 
-void perspectiveInf(mat4 target, float near, float fov, float ratio) {
+void mat4perspinf(mat4 target, float near, float fov, float ratio) {
 
     /* here, e22 and e32 are derived from taking the
      * limit of original e22 and e32 to infinity */
@@ -156,20 +156,44 @@ void perspectiveInf(mat4 target, float near, float fov, float ratio) {
         0,   0, e32,     0
     };
 
-    _setData(target, data);
+    cpyBuf( target, data, 16 );
 }
 
-void rotate(mat4 target, float angle, float x, float y, float z) {
+void mat4rotate(mat4 target, float angle, float x, float y, float z) {
 
     float q[4];
-    setQuat(q, angle, x, y, z);
+    quatSet( q, angle, x, y, z );
 
-    rotateQ(target, q);
+    quatToMat( target, q );
 }
 
-void rotateQ(mat4 target, quat q) {
+void rotate3D(quat target, vec3 angles) {
 
-    normQ(q);
+    float quatX[4], quatY[4], quatZ[4];
+
+    // make quat for every axis
+    quatSet(quatY, angles[1], 1, 0, 0);
+    quatSet(quatX, angles[0], 0, 1, 0);
+    quatSet(quatZ, angles[2], 0, 0, -1);
+
+    // X * Y
+    float quatXY[4];
+    quatMult(quatX, quatY, quatXY);
+
+    // XY * Z
+    float quatXYZ[4];
+    quatMult(quatXY, quatZ, quatXYZ);
+
+    // write to target quat
+    cpyBuf( target, quatXYZ, 4 );
+}
+
+/*
+ * quaternion stuff */
+
+void quatToMat(mat4 target, quat q) {
+
+    quatNorm(q);
 
     float xx = q[1] * q[1];
     float yy = q[2] * q[2];
@@ -190,38 +214,10 @@ void rotateQ(mat4 target, quat q) {
                            0,                    0,                    0, 1
     };
 
-    _setData(target, data);
+    cpyBuf( target, data, 16 );
 }
 
-void rotate3D(quat target, vec3 angles) {
-
-    float quatX[4], quatY[4], quatZ[4];
-
-    // make quat for every axis
-    setQuat(quatY, angles[1], 1, 0, 0);
-    setQuat(quatX, angles[0], 0, 1, 0);
-    setQuat(quatZ, angles[2], 0, 0, -1);
-
-    // X * Y
-    float quatXY[4];
-    multQ(quatX, quatY, quatXY);
-
-    // XY * Z
-    float quatXYZ[4];
-    multQ(quatXY, quatZ, quatXYZ);
-
-    // write to target quat
-    target[0] = quatXYZ[0];
-    target[1] = quatXYZ[1];
-    target[2] = quatXYZ[2];
-    target[3] = quatXYZ[3];
-}
-
-
-/*
- * quaternion stuff */
-
-void setQuat(quat target, float angle, float x, float y, float z) {
+void quatSet(quat target, float angle, float x, float y, float z) {
 
     float teta = RAD(angle / 2.0f);
 
@@ -231,7 +227,7 @@ void setQuat(quat target, float angle, float x, float y, float z) {
     target[3] = sinf(teta) * z;
 }
 
-void multQ(quat q, quat r, quat target) {
+void quatMult(quat q, quat r, quat target) {
 
     target[0] = r[0] * q[0] - r[1] * q[1] - r[2] * q[2] - r[3] * q[3];
     target[1] = r[0] * q[1] + r[1] * q[0] - r[2] * q[3] + r[3] * q[2];
@@ -239,7 +235,7 @@ void multQ(quat q, quat r, quat target) {
     target[3] = r[0] * q[3] - r[1] * q[2] + r[2] * q[1] + r[3] * q[0];
 }
 
-void normQ(quat q) {
+void quatNorm(quat q) {
 
     float norm = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
 
@@ -254,7 +250,7 @@ void normQ(quat q) {
     q[3] /= norm;
 }
 
-void invertQ(quat q) {
+void quatInv(quat q) {
 
     /* invert axis only */
     q[1] *= -1.0f;
@@ -263,28 +259,23 @@ void invertQ(quat q) {
 }
 
 /* private helper */
-void _setData(mat4 target, float *data) {
+void _printBuffer( float* buff, const char* name, int n, int rows, int cols ) {
 
-    for (int i = 0; i < 16; ++i) {
-        target[i] = data[i];
+    printf( "%s =%c", name, ( rows <= 1 ) ? ' ' : '\n' );
+
+    for( int r=0; r<rows; ++r ) {
+        for( int c=0; c<cols; ++c ) {
+            
+            if( n-- == 0 ) {
+                
+                printf( "\n" );
+                return;
+            }
+
+            printf( "%.1f\t, ", buff[rows*r+c] );
+        }
+        printf( "\n" );
     }
-}
-
-void _printM(mat4 A, const char *name) {
-
-    printf("mat4 %s =\n", name);
-    for (int i = 0; i < 4; ++i) {
-        printf("| %f \t%f \t%f \t%f |\n", A[i], A[4 + i], A[8 + i], A[12 + i]);
-    }
-    printf("\n");
-}
-
-void _printQ(quat q, const char *name) {
-    printf("\nquat %s = (%.5f,\t%.5f,\t%.5f,\t%.5f)\n", name, q[0], q[1], q[2], q[3]);
-}
-
-void _printVec3(vec3 v, const char *name) {
-    printf( "\nvec3 %s = (%.1f,\t%.1f,\t%.1f)\n", name, v[0], v[1], v[2] );
 }
 
 float lerpStepf(float from, float to, float alpha) {
