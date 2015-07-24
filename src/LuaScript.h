@@ -26,6 +26,10 @@ typedef lua_State script;
         lua_close( state ); \
     } \
 
+#define getInt( script, target ) \
+    warn_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
+    target = lua_tointeger( script, -1 ); \
+
 #define popInt( script, target ) \
     warn_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
     target = lua_tointeger( script, -1 ); \

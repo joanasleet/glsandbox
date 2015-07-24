@@ -38,7 +38,9 @@ void loadScene(Engine *renderer) {
 
     Object **objects = alloc( Object*, objectCount );
 
-    /* traverse objects table */
+    /* render targets */
+
+    /* objects */
     for( int j = 0; j < objectCount; ++j ) {
 
         Object *object = newObject();
@@ -51,7 +53,7 @@ void loadScene(Engine *renderer) {
         lua_getfield( S, -1, "name" );
         char *name;
         popString( S, name );
-        log_info( "  <Object: %s >", name );
+        log_info( "<Object: %s >", name );
 
         /* push mesh */
         lua_getfield( S, -1, "mesh" );
@@ -59,17 +61,17 @@ void loadScene(Engine *renderer) {
         lua_getfield( S, -1, "type" );
         uint32 vaoType;
         popInt( S, vaoType );
-        log_info( "    <Type: %d>", vaoType );
+        log_info( "<Type: %d>", vaoType );
 
         lua_getfield( S, -1, "size" );
         float size;
         popFloat( S, size );
-        log_info( "    <Size: %.1f>", size );
+        log_info( "<Size: %.1f>", size );
 
         lua_getfield( S, -1, "texres" );
         float texres;
         popFloat( S, texres );
-        log_info( "    <TexRes: %.1f>", texres );
+        log_info( "<TexRes: %.1f>", texres );
 
         lua_getfield( S, -1, "position" );
 
@@ -87,7 +89,7 @@ void loadScene(Engine *renderer) {
         lua_geti( S, -1, 3 );
         float midZ;
         popFloat( S, midZ );
-        log_info( "    <Position: ( %.1f, %.1f, %.1f )>", midX, midY, midZ );
+        log_info( "<Position: ( %.1f, %.1f, %.1f )>", midX, midY, midZ );
 
         lua_pop( S, 2 );
 
@@ -101,7 +103,7 @@ void loadScene(Engine *renderer) {
         popInt( S, texCount );
 
         Material *mat = newMaterial();
-        log_info( "    <Material: %d >", texCount );
+        log_info( "<Material: %d >", texCount );
 
         switch (texCount) {
         case 1:
@@ -118,8 +120,8 @@ void loadScene(Engine *renderer) {
                 lua_geti( S, -1, i+1 );
                 char *tex;
                 popString( S, tex );
-                log_info( "      < %s >", tex );
-                mat->textures[i] = newTex2D( tex );
+                log_info( "< %s >", tex );
+                mat->textures[i] = newTexture( tex, GL_TEXTURE_2D, TRUE );
             }
         }
         break;
@@ -130,37 +132,37 @@ void loadScene(Engine *renderer) {
             lua_geti( S, -1, 1 );
             char *str1;
             popString( S, str1 );
-            log_info( "      < %s >", str1 );
+            log_info( "< %s >", str1 );
             faces[0] = str1;
 
             lua_geti( S, -1, 2 );
             char *str2;
             popString( S, str2 );
-            log_info( "      < %s >", str2 );
+            log_info( "< %s >", str2 );
             faces[1] = str2;
 
             lua_geti( S, -1, 3 );
             char *str3;
             popString( S, str3 );
-            log_info( "      < %s >", str3 );
+            log_info( "< %s >", str3 );
             faces[2] = str3;
 
             lua_geti( S, -1, 4 );
             char *str4;
             popString( S, str4 );
-            log_info( "      < %s >", str4 );
+            log_info( "< %s >", str4 );
             faces[3] = str4;
 
             lua_geti( S, -1, 5 );
             char *str5;
             popString( S, str5 );
-            log_info( "      < %s >", str5 );
+            log_info( "< %s >", str5 );
             faces[4] = str5;
 
             lua_geti( S, -1, 6 );
             char *str6;
             popString( S, str6 );
-            log_info( "      < %s >", str6 );
+            log_info( "< %s >", str6 );
             faces[5] = str6;
 
             mat->texCount = 1;
@@ -173,66 +175,57 @@ void loadScene(Engine *renderer) {
         }
         lua_pop( S, 1 );
 
+        /*
+         * build shader */
+        Shader *shader = newShader();
+
+        /* push shaders subtable */
+        lua_getfield( S, -1, "shaders" );
+
+        /* shader stages */
+        int i = 0;
+        lua_pushnil( S );
+        log_info( "<Shader ( prog: %d )>", shader->program );
+        while( lua_next( S, -2 ) != 0 ) {
+
+            /* value = shader stage */
+            char *stage;
+            popString( S, stage );
+            log_info( "<%s: %s>", ShaderName[i], stage );
+            addShader( stage, ShaderType[i++], shader->program, renderer->shaderCache );
+
+            /* ignore key */
+        }
+        lua_pop( S, 1 );
+
         /* push uniform map */
         lua_getfield( S, -1, "uniformsMap" );
 
-        /* count uniformsMap entries */
-        uint8 uniformCount = 0;
-        lua_pushnil( S );
-        while( lua_next( S, -2 ) != 0 ) {
-            uniformCount++;
-            lua_pop( S, 1 );
-        }
-        log_info( "    <Uniforms: %d>", uniformCount );
-
-        Shader *shader = newShader();
-        shader->uniformCount = uniformCount;
-        shader->uniforms = alloc( char*, uniformCount );
-        shader->setters = alloc( UniformSetter*, uniformCount );
-
         /* read uniforms map */
-        int i = 0;
         lua_pushnil( S );
         while( lua_next( S, -2 ) != 0 ) {
 
             /* uniform setter */
             int type = -1;
             popInt( S, type );
-            shader->setters[i] = UniVarFuncs[type];
             
             /* pop value, leave key */
 
             /* uniform name */
             char *univar;
-            getStringAlloc( S, univar );
-            shader->uniforms[i] = univar;
+            getString( S, univar );
 
-            log_info( "      <%s: %d>", univar, type );
-            i++;
-        }
-        lua_pop( S, 1 );
+            /* uniforms[ location(univar) ] = type */
+            lua_pushinteger( shader->uniforms, type );
+            GLint loc = glGetUniformLocation( shader->program, ( const char* ) univar );
+            if (loc < 0) {
+                log_warn("No uniform '%s' in shader prog %i", univar, shader->program );
+                lua_pop( shader->uniforms, 1 );
+            } else { 
+                lua_seti( shader->uniforms, -2, loc );
+            }
 
-        /* push shaders subtable */
-        lua_getfield( S, -1, "shaders" );
-
-        /* 
-         * shader stages */
-        lua_len( S, -1 );
-        uint8 stageCount = 0;
-        popInt( S, stageCount );
-        shader->stageCount = stageCount;
-        log_info( "    <Shader: %d>", stageCount );
-        shader->stages = alloc( char*, stageCount);
-
-        /* read table values */
-        for( uint8 i = 0; i < stageCount; i++ ) {
-
-            /* i-th shader stage */
-            lua_geti( S, -1, i+1 );
-            char *stage;
-            popStringAlloc( S, stage );
-            log_info( "      <%s: %s>", ShaderName[i], stage );
-            shader->stages[i] = stage;
+            log_info( "<%s ( loc = %d ): %d>", univar, loc, type );
         }
         lua_pop( S, 1 );
 
@@ -265,7 +258,7 @@ void reloadScene(Engine *renderer) {
     //lua_close(renderer->uniformCache);
 
     loadScene(renderer);
-    preloadObjects(renderer);
+    //preloadObjects(renderer);
     log_info("%s", "- - - - - Done Reloading - - - - -");
 }
 

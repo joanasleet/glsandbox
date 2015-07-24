@@ -4,22 +4,18 @@
 #include "common.h"
 
 #define ANISOTROPIC_LVL 16.0f
-#define newTex2D(file) createTexture(file, GL_TEXTURE_2D, TRUE)
-
-int32 maxTexSlots;
 
 typedef struct {
+
     GLuint id;
     GLenum target;
 
     int32 width;
     int32 height;
 
-    uint8 *data;
-
 } Texture;
 
-Texture *createTexture(const char *file, GLenum target, uint8 genMipMaps);
+Texture *newTexture(const char *file, GLenum target, uint8 genMipMaps);
 uint8 *getData(const char *file, int *width, int *height);
 void freeTexture(Texture *);
 
@@ -37,5 +33,4 @@ Material *newMaterial();
 void freeMaterial(Material *);
 
 #endif
-
 

@@ -52,7 +52,6 @@ Context *newContext(uint32 xRes, uint32 yRes, const char *title) {
 
     GLint texSlots = 0;
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &texSlots);
-    maxTexSlots = texSlots;
     log_info("Max texture slots: %d", texSlots);
 
     return context;

@@ -30,9 +30,7 @@ void freeMaterial(Material *mat) {
     free(mat);
 }
 
-// NOTE: mipmaps might be wrong for height maps ?!
-
-Texture *createTexture(const char *file, GLenum target, uint8 genMipMaps) {
+Texture *newTexture(const char *file, GLenum target, uint8 genMipMaps) {
 
     Texture *texture = alloc( Texture, 1 );
     return_guard(texture, NULL);
@@ -54,15 +52,13 @@ Texture *createTexture(const char *file, GLenum target, uint8 genMipMaps) {
         lua_setfield( renderer->textureCache, -2, file );
     }
 
-    texture->data = data;
-
     glBindTexture(target, texture->id);
 
     uint32 width = texture->width;
     uint32 height = texture->height;
 
     glTexImage2D(target, 0, GL_SRGB_ALPHA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, texture->data);
+                 GL_UNSIGNED_BYTE, data);
 
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -110,7 +106,6 @@ void freeTexture(Texture *tex) {
     if (!tex) return;
 
     glDeleteTextures(1, &(tex->id));
-    free(tex->data);
     free(tex);
 }
 
@@ -123,7 +118,6 @@ Texture *nullTexture() {
 
     glGenTextures(1, &nullTex->id);
     nullTex->target = GL_TEXTURE_2D;
-    nullTex->data = NULL;
     nullTex->width = 0;
     nullTex->height = 0;
 
@@ -138,7 +132,6 @@ Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
     glGenTextures(1, &texture->id);
     texture->target = GL_TEXTURE_CUBE_MAP;
     glBindTexture(texture->target, texture->id);
-    texture->data = NULL;
 
     for (int face = 0; face < 6; face++) {
 

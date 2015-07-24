@@ -5,7 +5,14 @@
 Shader *newShader() {
 
     Shader *shader = alloc( Shader, 1 );
+
     shader->program = glCreateProgram();
+    
+    /* lua table as uniforms cache */
+    shader->uniforms = luaL_newstate();
+    err_guard( shader->uniforms );
+    lua_newtable( shader->uniforms );
+
     return shader;
 }
 
@@ -13,16 +20,7 @@ void freeShader(Shader *shader) {
 
     glDeleteProgram(shader->program);
 
-    for( int i=0; i<shader->stageCount; ++i )
-        free( ( char* ) shader->stages[i] );
-
-    free(shader->stages);
-
-    for( int i=0; i<shader->uniformCount; ++i )
-        free( ( char* ) shader->uniforms[i] );
-
-    free(shader->uniforms);
-    free(shader->setters);
+    lua_close( shader->uniforms );
 
     free(shader);
 }
@@ -44,7 +42,6 @@ void addShader(const char *srcFile, GLenum type, GLuint prog, Cache *shaderCache
 
     /* add shader to gpu program */
     GLsizei logSize = 0;
-    log_info("<Adding shader %s (id: %d)> to <program (id: %d)>", srcFile, shaderId, prog);
     glAttachShader(prog, shaderId);
     glLinkProgram(prog);
 
@@ -58,8 +55,6 @@ void addShader(const char *srcFile, GLenum type, GLuint prog, Cache *shaderCache
 GLuint compileShader(const char *srcFile, GLuint shaderId) {
 
     char *shaderSrc = bufferFile(srcFile);
-
-    log_info("<Compiling shader %s>", srcFile);
 
     glShaderSource(shaderId, 1, (const char **) &shaderSrc, NULL);
     glCompileShader(shaderId);

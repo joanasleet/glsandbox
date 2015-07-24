@@ -13,12 +13,7 @@ typedef struct {
 
     GLuint program;
 
-    uint8 stageCount;
-    const char **stages;
-
-    uint8 uniformCount;
-    UniformSetter *setters;
-    const char **uniforms;
+    Cache *uniforms;
 
 } Shader;
 

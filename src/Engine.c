@@ -8,10 +8,6 @@
 #include <math.h>
 #include <string.h>
 
-#define MAX_KEY_LENGTH 15
-
-static float renderAlpha = 0.0f;
-
 Engine *init() {
 
     Engine *renderer = alloc( Engine, 1 );
@@ -23,11 +19,6 @@ Engine *init() {
     renderer->shaderCache = luaL_newstate();
     err_guard( renderer->shaderCache );
     lua_newtable( renderer->shaderCache );
-
-    /* lua table as uniform cache */
-    renderer->uniformCache = luaL_newstate();
-    err_guard( renderer->uniformCache );
-    lua_newtable( renderer->uniformCache );
 
     /* lua table as texture cache */
     renderer->textureCache = luaL_newstate();
@@ -130,38 +121,7 @@ void config( Engine *renderer ) {
     lua_close( S );
 }
 
-void preload(Object *obj, Engine *renderer) {
-
-    Shader *shader = obj->shader;
-    GLint prog = shader->program;
-    const char *shaderStage;
-
-    /* cache shaders */
-    for (int i = 0; i < shader->stageCount; ++i) {
-        shaderStage = shader->stages[i];
-        addShader(shaderStage, ShaderType[i], prog, renderer->shaderCache);
-    }
-
-    /* cache uniform locations */
-    for (int i = 0; i < shader->uniformCount; ++i) {
-        const char *uniform = shader->uniforms[i];
-
-        /* get uniform location */
-        GLint loc = glGetUniformLocation( prog, uniform );
-        if (loc < 0) {
-            log_warn("No uniform '%s' in shader prog %i (loc: %i)", uniform, prog, loc);
-        } else {
-            log_info( "<Uniform: %s ( loc: %d )>", uniform, loc );
-        }
-        /* cache Cache[key] = prog */
-        char key[MAX_KEY_LENGTH];
-        sprintf( key, "%d_%s", prog, uniform );
-        lua_pushinteger( renderer->uniformCache, loc );
-        lua_setfield( renderer->uniformCache, -2, ( const char * ) key );
-    }
-}
-
-void render(Object *obj, Engine *renderer) {
+void render(Object *obj, Engine *renderer, float alpha ) {
 
     /*
      * interpolate camera */
@@ -175,12 +135,12 @@ void render(Object *obj, Engine *renderer) {
 
     /* setup position */
     float position[3];
-    calcPosition( position, state, renderAlpha );
+    calcPosition( position, state, alpha );
     cpyBuf( interpolatedState.position, position, 3 );
 
     /* setup orientation */
     float orientation[4];
-    calcOrientation( orientation, state, renderAlpha);
+    calcOrientation( orientation, state, alpha);
     cpyBuf( interpolatedState.orientation, orientation, 4 );
 
     /* set interpolated state */
@@ -194,21 +154,24 @@ void render(Object *obj, Engine *renderer) {
 
     double globalTime = getGlobalTime();
 
-    for (int i = 0; i < shader->uniformCount; ++i) {
+    //log_info( "%s", luaL_typename( shader->uniforms, -1 ) );
 
-        /* get uniform key */
-        char key[MAX_KEY_LENGTH];
-        sprintf( key, "%d_%s", program, shader->uniforms[i] );
+    lua_pushnil( shader->uniforms );
+    while( lua_next( shader->uniforms, -2 ) != 0 ) {
 
-        /* get uniform location */
+        /* value = type */
+        int type = -1;
+        popInt( shader->uniforms, type );
+        
+        /* key = uniform location */
         GLint loc = -1;
-        lua_getfield( renderer->uniformCache, -1, key );
-        popInt( renderer->uniformCache, loc );
+        getInt( shader->uniforms, loc );
 
         // TODO: interpolate object state
 
-        (*shader->setters[i])(loc, cam, obj->state, globalTime);
+        UniVarFuncs[type](loc, cam, obj->state, globalTime);
     }
+    //log_info( "> %s", luaL_typename( shader->uniforms, -1 ) );
 
     /*
      * reset old state */
@@ -220,11 +183,6 @@ void render(Object *obj, Engine *renderer) {
 
     Texture *tex;
     for (uint32 i = 0; i < mat->texCount; ++i) {
-
-        if (i > maxTexSlots - 1) {
-            log_warn("Texture bind limit (%d) reached.", maxTexSlots);
-            break;
-        }
 
         tex = mat->textures[i];
         glActiveTexture(GL_TEXTURE0 + i);
@@ -238,31 +196,15 @@ void render(Object *obj, Engine *renderer) {
     mesh->draw(mesh->mode, &mesh->first, mesh->count);
 }
 
-void preloadObjects(Engine *renderer) {
-    log_info("%s", "- - - - - Preloading objects - - - - -");
-    for (unsigned int i = 0; i < renderer->objectCount; ++i) {
-        preload(renderer->objects[i], renderer);
-    }
-}
-
-void renderObjects(Engine *renderer) {
-
-    for (unsigned int i = 0; i < renderer->objectCount; ++i) {
-        render(renderer->objects[i], renderer);
-    }
-}
-
 void enterLoop(Engine *renderer) {
 
     exit_guard(renderer);
-    exit_guard(renderer->objects[0]);
-
-    preloadObjects(renderer);
 
     Camera *cam = renderer->mainCam;
     GLFWwindow *window = renderer->context->win;
 
     double dt, lag = 0.0;
+    double updateInterval = 1.0/60.0;
 
     startTimer();
 
@@ -274,16 +216,19 @@ void enterLoop(Engine *renderer) {
 
         fps(dt);
 
-        while ( lag >= 0.016) {
+        while ( lag >= updateInterval ) {
 
             updateCam(cam);
-            lag -= 0.016;
+            lag -= updateInterval;
         }
 
-        renderAlpha = (float) (lag / 0.016);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderObjects(renderer);
+
+        /* render objects */
+        float renderAlpha = (float) (lag / updateInterval);
+        for (unsigned int i = 0; i < renderer->objectCount; ++i) {
+            render( renderer->objects[i], renderer, renderAlpha );
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -293,7 +238,6 @@ void enterLoop(Engine *renderer) {
 void terminate(Engine *renderer) {
 
     lua_close( renderer->shaderCache );
-    lua_close( renderer->uniformCache );
     lua_close( renderer->textureCache );
 
     freeObjects(renderer);

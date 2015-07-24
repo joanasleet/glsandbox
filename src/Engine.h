@@ -19,8 +19,6 @@ typedef struct {
     Context *context;
 
     Cache *shaderCache;
-    Cache *uniformCache;
-
     Cache *textureCache;
 } Engine;
 
@@ -34,9 +32,7 @@ void freeObjects( Engine *renderer );
 /* engine intern */
 void config( Engine *renderer );
 void renderObjects(Engine *renderer);
-void preloadObjects(Engine *renderer);
-void render(Object *obj, Engine *renderer);
-void preload(Object *obj, Engine *renderer);
+void render(Object *obj, Engine *renderer, float alpha );
 void renderLerp(State *prevState, State *currState);
 
 #endif
