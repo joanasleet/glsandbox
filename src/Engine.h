@@ -6,33 +6,41 @@
 #include "Camera.h"
 #include "Context.h"
 #include "LuaScript.h"
+#include "Newton/include/Newton.h"
 
-#define DEPS_SCRIPT "scripts/deps.lua"
 #define CONFIG_SCRIPT "scripts/config.lua"
 
 typedef struct {
 
-    Object **objects;
-    uint32 objectCount;
+    uint32 objCount;
+    uint32 texCount;
 
     Camera *mainCam;
     Context *context;
 
+    Object **objects;
+    Object **textures;
+
     Cache *shaderCache;
+
     Cache *textureCache;
+    Cache *texDataCache;
+
+    NewtonWorld *nworld;
+
 } Engine;
 
 /*
  *  primary API */
 Engine *init();
-void enterLoop( Engine *renderer );
-void terminate( Engine *renderer );
-void freeObjects( Engine *renderer );
+void genTextures( Engine* );
+void enterLoop( Engine* );
+void terminate( Engine* );
+void freeTextures( Engine* );
+void freeObjects( Engine* );
 
 /* engine intern */
 void config( Engine *renderer );
-void renderObjects(Engine *renderer);
 void render(Object *obj, Engine *renderer, float alpha );
-void renderLerp(State *prevState, State *currState);
 
 #endif

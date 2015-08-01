@@ -70,28 +70,6 @@ scene = {
                 "shaders/cubemap.vert",
                 "shaders/cubemap.frag"
             }
-        },
-        {
-            name = "terrain",
-            mesh = {
-                type = MeshType.Terrain,
-                size = 100,
-                texres = 10,
-                position = {0, -100, 0}
-            },
-            material = {
-                "textures/desert/desertHM.png",
-                "textures/desert/sandHD.jpg"
-            },
-            uniformsMap = {
-                MVP = Uniform.MVP
-            },
-            shaders = {
-                "shaders/pass.vert",
-                "shaders/terrain.frag",
-                "shaders/quad.tcs",
-                "shaders/terrain.tes"
-            }
         }
     }
 }

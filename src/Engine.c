@@ -12,6 +12,8 @@ Engine *init() {
 
     Engine *renderer = alloc( Engine, 1 );
 
+    renderer->nworld = NewtonCreate();
+
     /* read config from script */
     config( renderer );
 
@@ -24,6 +26,17 @@ Engine *init() {
     renderer->textureCache = luaL_newstate();
     err_guard( renderer->textureCache );
     lua_newtable( renderer->textureCache );
+
+    /* lua table as texture data cache */
+    renderer->texDataCache = luaL_newstate();
+    err_guard( renderer->texDataCache );
+    lua_newtable( renderer->texDataCache );
+
+    /* set object count */
+    renderer->objects = NULL;
+    renderer->textures = NULL;
+    renderer->objCount = 0;
+    renderer->texCount = 0;
 
     /* set window callbacks */
     GLFWwindow *window = renderer->context->win;
@@ -40,7 +53,7 @@ Engine *init() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_FRAMEBUFFER_SRGB);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glClearColor(0.2, 0.2, 0.2, 1.0);
+    glClearColor( 0.2f, 0.2f, 0.2f, 1.0f );
 
     return renderer;
 }
@@ -66,7 +79,7 @@ void config( Engine *renderer ) {
     lua_getfield( S, -1, "windowTitle" );
     popString( S, title );
     
-    renderer->context = newContext( xRes, yRes, (const char*) title );
+    renderer->context = newContext( ( uint32 ) xRes, ( uint32 ) yRes, (const char*) title );
 
     /* camera */
     float posX;
@@ -121,27 +134,39 @@ void config( Engine *renderer ) {
     lua_close( S );
 }
 
+void genTextures( Engine *renderer ) {
+
+    updateCam( renderer->mainCam );
+
+    Object **textures = renderer->textures;
+    for( uint32 i=0; i<renderer->texCount; ++i ) {
+
+        Object *tex = textures[i];
+        glBindFramebuffer( GL_FRAMEBUFFER, tex->mesh->fboId );
+
+        render( tex, renderer, 1.0f );
+    }
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+}
+
 void render(Object *obj, Engine *renderer, float alpha ) {
 
-    /*
-     * interpolate camera */
     Camera *cam = renderer->mainCam;
 
-    /* save old state */
+    /* old state */
     State *state = cam->state;
 
-    /* setup interpolated state */
+    /* interpolated state */
     State interpolatedState;
 
-    /* setup position */
-    float position[3];
-    calcPosition( position, state, alpha );
-    cpyBuf( interpolatedState.position, position, 3 );
+    /* position */
+    calcPosition( interpolatedState.position, state, alpha );
 
-    /* setup orientation */
-    float orientation[4];
-    calcOrientation( orientation, state, alpha);
-    cpyBuf( interpolatedState.orientation, orientation, 4 );
+    /* orientation */
+    float nextOriState[4];
+    quatSlerp( state->orientation, state->targetOrien, nextOriState, cam->smoothing );
+    quatSlerp( state->orientation, nextOriState, interpolatedState.orientation, alpha );
+    quatNorm( interpolatedState.orientation );
 
     /* set interpolated state */
     cam->state = &interpolatedState;
@@ -149,12 +174,10 @@ void render(Object *obj, Engine *renderer, float alpha ) {
     /*
      * update uniforms */
     Shader *shader = obj->shader;
-    GLint program = shader->program;
+    GLuint program = shader->program;
     glUseProgram(program);
 
     double globalTime = getGlobalTime();
-
-    //log_info( "%s", luaL_typename( shader->uniforms, -1 ) );
 
     lua_pushnil( shader->uniforms );
     while( lua_next( shader->uniforms, -2 ) != 0 ) {
@@ -168,29 +191,24 @@ void render(Object *obj, Engine *renderer, float alpha ) {
         getInt( shader->uniforms, loc );
 
         // TODO: interpolate object state
+        
 
         UniVarFuncs[type](loc, cam, obj->state, globalTime);
     }
-    //log_info( "> %s", luaL_typename( shader->uniforms, -1 ) );
 
-    /*
-     * reset old state */
+    /* restore old state */
     cam->state = state;
 
-    /*
-     * bind materials */
+    /* bind materials */
     Material *mat = obj->mats;
-
-    Texture *tex;
     for (uint32 i = 0; i < mat->texCount; ++i) {
 
-        tex = mat->textures[i];
+        Texture *tex = mat->textures[i];
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(tex->target, tex->id);
     }
 
-    /*
-     * draw object */
+    /* draw object */
     Mesh *mesh = obj->mesh;
     glBindVertexArray(mesh->vaoId);
     mesh->draw(mesh->mode, &mesh->first, mesh->count);
@@ -203,30 +221,31 @@ void enterLoop(Engine *renderer) {
     Camera *cam = renderer->mainCam;
     GLFWwindow *window = renderer->context->win;
 
-    double dt, lag = 0.0;
-    double updateInterval = 1.0/60.0;
+    float dt, lag = 0.0f;
+    float timestep = 1.0f/60.0f;
 
     startTimer();
 
     log_info("%s", "- - - - - - - Rendering - - - - - - -");
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 
-        dt = elapsedTime();
+        dt = ( float ) elapsedTime();
         lag += dt;
 
         fps(dt);
 
-        while ( lag >= updateInterval ) {
+        while ( lag >= timestep ) {
 
             updateCam(cam);
-            lag -= updateInterval;
+            NewtonUpdate( renderer->nworld, timestep );
+            lag -= timestep;
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         /* render objects */
-        float renderAlpha = (float) (lag / updateInterval);
-        for (unsigned int i = 0; i < renderer->objectCount; ++i) {
+        float renderAlpha = ( lag / timestep );
+        for (unsigned int i = 0; i < renderer->objCount; ++i) {
             render( renderer->objects[i], renderer, renderAlpha );
         }
 
@@ -239,26 +258,37 @@ void terminate(Engine *renderer) {
 
     lua_close( renderer->shaderCache );
     lua_close( renderer->textureCache );
+    lua_close( renderer->texDataCache );
 
-    freeObjects(renderer);
+    freeTextures( renderer );
+    freeObjects( renderer );
 
-    free(renderer->context);
+    freeCamera( renderer->mainCam );
 
-    freeCamera(renderer->mainCam);
+    free( renderer->context );
 
     free(renderer);
 
     glfwTerminate();
 }
 
-void freeObjects(Engine *renderer) {
+void freeTextures( Engine *renderer ) {
 
     Object *freeMe;
-    for (uint32 i = 0; i < renderer->objectCount; ++i) {
+    for (uint32 i = 0; i < renderer->texCount; ++i) {
+        freeMe = renderer->textures[i];
+        freeObject(freeMe);
+    }
+    free( renderer->textures );
+}
+
+void freeObjects( Engine *renderer ) {
+
+    Object *freeMe;
+    for (uint32 i = 0; i < renderer->objCount; ++i) {
         freeMe = renderer->objects[i];
         freeObject(freeMe);
-        renderer->objects[i] = NULL;
     }
-    free(renderer->objects);
-    renderer->objects = NULL;
+    free( renderer->objects );
 }
+

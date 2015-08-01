@@ -1,17 +1,17 @@
 engineConfig = {
 
     -- context 
-    resolutionX = 1920,
-    resolutionY = 1080,
+    resolutionX = 1280,
+    resolutionY = 720,
     windowTitle = "IsoEngine",
 
     -- camera
     posX = 0,
-    posY = 0,
-    posZ = 25,
+    posY = 8,
+    posZ = 84,
     fieldOfView  = 75,
     acceleration = 0.01,
-    sensitivity  = 0.01,
+    sensitivity  = 0.05,
     nearClip     = 0.01,
     farClip      = 100000,
     aspectRatio  = 16/9,
@@ -21,6 +21,6 @@ engineConfig = {
     anisotropicLvl = 16,
 
     -- scene
-    sceneScript = "scripts/planet.lua",
+    sceneScript = "scripts/physics.lua",
 
 }

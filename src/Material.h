@@ -10,22 +10,25 @@ typedef struct {
     GLuint id;
     GLenum target;
 
-    int32 width;
-    int32 height;
+    uint32 width;
+    uint32 height;
 
 } Texture;
 
-Texture *newTexture(const char *file, GLenum target, uint8 genMipMaps);
-uint8 *getData(const char *file, int *width, int *height);
-void freeTexture(Texture *);
+uint8 *texData( const char *file, int *width, int *height, int *compr );
 
+Texture *emptyTexture( int width, int height, GLenum target, uint8 genMipMaps);
+Texture *fileTexture(const char *file, GLenum target, uint8 genMipMaps);
 Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps);
-Texture *nullTexture();
+
+void freeTexture(Texture *);
 
 typedef struct {
 
-    uint32 texCount;
     Texture **textures;
+    uint32 texCount;
+
+    uint8 _pad[4];
 
 } Material;
 

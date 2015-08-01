@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "common.h"
 #include "Shader.h"
+#include "Newton/include/Newton.h"
 
 /* debug */
 extern const char *ERR_TYPE[];
@@ -23,6 +24,12 @@ extern VaoFunc VaoFuncs[];
 /* draw call */
 extern GLuint DrawMode[];
 extern DrawFunc DrawFuncs[];
+
+/* 
+ * physics lookup */
+
+typedef NewtonBody* (*PhysicsBodyCF)(const NewtonWorld* const, const NewtonCollision* const, const dFloat* const);
+extern PhysicsBodyCF PhysicsBodyFuncs[];
 
 #endif
 

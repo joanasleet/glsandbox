@@ -4,6 +4,7 @@
 Object *newObject() {
 
     Object *obj = alloc( Object, 1 );
+
     return obj;
 }
 

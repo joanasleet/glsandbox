@@ -12,11 +12,10 @@ void cursorCB(GLFWwindow *win, double xpos, double ypos) {
     uint32 xres = renderer->context->xRes;
     uint32 yres = renderer->context->yRes;
 
-    const double sens = 0.1;
+    State *state = renderer->mainCam->state;
 
-    Camera *cam = renderer->mainCam;
-    cam->state->targetAngles[0] += ((xres / 2.0) - xpos) * sens;
-    cam->state->targetAngles[1] += ((yres / 2.0) - ypos) * sens;
+    state->torque[0] += ((xres / 2.0) - xpos) * renderer->mainCam->sensitivity;
+    state->torque[1] += ((yres / 2.0) - ypos) * renderer->mainCam->sensitivity;
 
     glfwSetCursorPos(win, (xres / 2.0f), (yres / 2.0f));
 }
@@ -30,16 +29,14 @@ void cursorEnterCB(GLFWwindow *win, int enter) {
 void scrollCB(GLFWwindow *win, double xoffset, double yoffset) {
 
     State *camState = renderer->mainCam->state;
-    camState->accel *= pow( 1.15f, yoffset );
+    camState->accel *= pow( 1.25f, yoffset );
 }
 
+extern float force[3], torque[3];
 void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
 
     Camera *cam = renderer->mainCam;
     State *camState = cam->state;
-
-    static float tessIn = 64;
-    static float tessOut = 64;
 
     switch (key) {
 
@@ -106,42 +103,30 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     // move some object
     case GLFW_KEY_UP:
         if (action == GLFW_PRESS) {
-            tessIn += 1.0f;
-            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
-            glUseProgram(1);
-            glUniform1f(glGetUniformLocation(1, "tessLevelInner"), tessIn);
+            torque[1] = 200.0f;
         } else if (action == GLFW_RELEASE) {
-
+            torque[1] = 0.0f;
         }
         break;
     case GLFW_KEY_DOWN:
         if (action == GLFW_PRESS) {
-            tessIn -= 1.0f;
-            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
-            glUseProgram(1);
-            glUniform1f(glGetUniformLocation(1, "tessLevelInner"), tessIn);
+            torque[1] = -200.0f;
         } else if (action == GLFW_RELEASE) {
-
+            torque[1] = 0.0f;
         }
         break;
     case GLFW_KEY_LEFT:
         if (action == GLFW_PRESS) {
-            tessOut -= 1.0f;
-            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
-            glUseProgram(1);
-            glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), tessOut);
+            force[0] = -200.0f;
         } else if (action == GLFW_RELEASE) {
-
+            force[0] = 0.0f;
         }
         break;
     case GLFW_KEY_RIGHT:
         if (action == GLFW_PRESS) {
-            tessOut += 1.0f;
-            watch("TessLvl: (%.1f, %.1f)\n", tessIn, tessOut);
-            glUseProgram(1);
-            glUniform1f(glGetUniformLocation(1, "tessLevelOuter"), tessOut);
+            force[1] = 200.0f;
         } else if (action == GLFW_RELEASE) {
-
+            force[1] = 0.0f;
         }
         break;
 
@@ -149,22 +134,22 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     case GLFW_KEY_E:
 
         if (action == GLFW_PRESS) {
-            cam->state->targetAngles[2] += 2.0f;
+            cam->state->torque[2] += 2.0f;
         } else if (action == GLFW_RELEASE) {
             /* nothing */
         } else {
-            cam->state->targetAngles[2] += 2.0f;
+            cam->state->torque[2] += 2.0f;
         }
         break;
 
     case GLFW_KEY_Q:
 
         if (action == GLFW_PRESS) {
-            cam->state->targetAngles[2] -= 2.0f;
+            cam->state->torque[2] -= 2.0f;
         } else if (action == GLFW_RELEASE) {
             /* nothing */
         } else {
-            cam->state->targetAngles[2] -= 2.0f;
+            cam->state->torque[2] -= 2.0f;
         }
         break;
 
@@ -206,6 +191,14 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
 
         if (action == GLFW_PRESS) {
             reloadScene(renderer);
+        }
+        break;
+
+    // reload scene
+    case GLFW_KEY_T:
+
+        if (action == GLFW_PRESS) {
+            pauseGlobalTime();
         }
         break;
 

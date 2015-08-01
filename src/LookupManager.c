@@ -91,3 +91,14 @@ GLuint DrawMode[] = {
     GL_QUADS,     /* Overlay */
     GL_PATCHES    /* Terrain */
 };
+
+
+/*
+ * physics lookups */
+
+PhysicsBodyCF PhysicsBodyFuncs[] = {
+    NewtonCreateDynamicBody,
+    NewtonCreateKinematicBody,
+    NewtonCreateDeformableBody
+};
+

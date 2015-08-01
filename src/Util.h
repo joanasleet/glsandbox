@@ -9,9 +9,9 @@
 #include <errno.h>
 #include <string.h>
 
-#define WATCH_LOG_NAME "watch.log"
-#define ERR_LOG_NAME "err.log"
-#define INFO_LOG_NAME "info.log"
+#define WATCH_LOG_NAME "logs/watch.log"
+#define ERR_LOG_NAME "logs/err.log"
+#define INFO_LOG_NAME "logs/info.log"
 
 extern FILE *errlog;
 extern FILE *infolog;
@@ -136,7 +136,7 @@ extern FILE *watchlog;
 /* * * * * * * * * * * * *
  * allocation utilities  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#define alloc(type, n) (malloc( sizeof(type) * (size_t)n ))
+#define alloc(type, n) ((type*)malloc( sizeof(type) * (size_t)n ))
 #define ralloc(ptr, type, n) (realloc(ptr, sizeof(type) * (size_t)n)
 
 /* * * * * * * * * * * * * * *

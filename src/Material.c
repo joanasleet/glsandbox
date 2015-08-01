@@ -6,8 +6,6 @@
 
 extern Engine *renderer;
 
-Texture *nullTex = NULL;
-
 Material *newMaterial() {
 
     Material *material = alloc( Material, 1 );
@@ -22,7 +20,12 @@ Material *newMaterial() {
 void freeMaterial(Material *mat) {
 
     for (uint32 i = 0; i < mat->texCount; ++i) {
-        freeTexture(mat->textures[i]);
+
+        /* freeing textures disables reloads
+         * as reloads need to free objects and
+         * objects contain textures */
+        //freeTexture(mat->textures[i]);
+        
         mat->textures[i] = NULL;
     }
 
@@ -30,7 +33,28 @@ void freeMaterial(Material *mat) {
     free(mat);
 }
 
-Texture *newTexture(const char *file, GLenum target, uint8 genMipMaps) {
+uint8 *texData(const char *file, int *width, int *height, int *compr ) {
+
+    /* check if tex data is cached */
+    //lua_getfield( renderer->texDataCache, -1, file );
+    //uint8 *data = lua_touserdata( renderer->texDataCache, -1 );
+    //lua_pop( renderer->texDataCache, 1 );
+
+    //if( data ) return data; 
+
+    uint8 *data = stbi_load(file, width, height, compr, 4);
+    log_info("<Texture %s>: %i x %i (%i) ", file, *width, *height, *compr);
+
+    return_guard(data, NULL);
+
+    /* texDataCache[file] = data */
+    lua_pushlightuserdata( renderer->texDataCache, ( void* ) data );
+    lua_setfield( renderer->texDataCache, -2, file );
+
+    return data;
+}
+
+Texture *emptyTexture( int width, int height, GLenum target, uint8 genMipMaps ) {
 
     Texture *texture = alloc( Texture, 1 );
     return_guard(texture, NULL);
@@ -38,33 +62,13 @@ Texture *newTexture(const char *file, GLenum target, uint8 genMipMaps) {
     glGenTextures(1, &texture->id);
     texture->target = target;
 
-    /* check if tex data is cached */
-    lua_getfield( renderer->textureCache, -1, file );
-    uint8 *data = lua_touserdata( renderer->textureCache, -1 );
-    lua_pop( renderer->textureCache, 1 );
-
-    if( !data ) {
-
-        data = getData(file, &(texture->width), &(texture->height));
-
-        /* textureCache[file] = data */
-        lua_pushlightuserdata( renderer->textureCache, ( void* ) data );
-        lua_setfield( renderer->textureCache, -2, file );
-    }
-
     glBindTexture(target, texture->id);
 
-    uint32 width = texture->width;
-    uint32 height = texture->height;
-
-    glTexImage2D(target, 0, GL_SRGB_ALPHA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, data);
+    /* allocate memory */
+    glTexImage2D(target, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
 
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     if (genMipMaps) {
         glGenerateMipmap(target);
@@ -76,88 +80,89 @@ Texture *newTexture(const char *file, GLenum target, uint8 genMipMaps) {
     return texture;
 }
 
-uint8 *getData(const char *file, int *width, int *height) {
+Texture *fileTexture(const char *file, GLenum target, uint8 genMipMaps) {
 
-    uint8 *data;
-    int texCompr;
+    /* check if cached */
+    lua_getfield( renderer->textureCache, -1, file );
+    Texture *texture = lua_touserdata( renderer->textureCache, -1 );
+    lua_pop( renderer->textureCache, 1 );
 
-    if (width && height) {
-        data = stbi_load(file, width, height, &texCompr, 4);
-        log_warn("<Texture %s>: %i x %i (%i) ", file, *width, *height, texCompr);
-    } else if (width && !height) {
-        int h;
-        data = stbi_load(file, width, &h, &texCompr, 4);
-        log_warn("<Texture %s>: %i x %i (%i) ", file, *width, h, texCompr);
-    } else if (!width && height) {
-        int w;
-        data = stbi_load(file, &w, height, &texCompr, 4);
-        log_warn("<Texture %s>: %i x %i (%i) ", file, w, *height, texCompr);
-    } else {
-        int w, h;
-        data = stbi_load(file, &w, &h, &texCompr, 4);
-        log_warn("<Texture %s>: %i x %i (%i) ", file, w, h, texCompr);
+    if( texture ) return texture;
+
+    texture = alloc( Texture, 1 );
+    return_guard(texture, NULL);
+
+    glGenTextures(1, &texture->id);
+    texture->target = target;
+
+    /* textureCache[file] = texture */
+    lua_pushlightuserdata( renderer->textureCache, ( void* ) texture );
+    lua_setfield( renderer->textureCache, -2, file );
+
+    glBindTexture(target, texture->id);
+
+    /* allocate and send tex data */
+    int width, height, compr;
+    uint8 *data = texData( file, &width, &height, &compr );
+    glTexImage2D(target, 0, GL_SRGB_ALPHA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    /* min/mag filter */
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    /* wrapping behaviour */
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    if (genMipMaps) {
+        glGenerateMipmap(target);
+        glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     }
 
-    return_guard(data, NULL);
-    return data;
-}
+    /* anisotropic filter level */
+    glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPIC_LVL);
 
-void freeTexture(Texture *tex) {
-    if (!tex) return;
-
-    glDeleteTextures(1, &(tex->id));
-    free(tex);
-}
-
-Texture *nullTexture() {
-
-    if (nullTex) return nullTex;
-
-    nullTex = alloc( Texture, 1 );
-    return_guard(nullTex, NULL);
-
-    glGenTextures(1, &nullTex->id);
-    nullTex->target = GL_TEXTURE_2D;
-    nullTex->width = 0;
-    nullTex->height = 0;
-
-    return nullTex;
+    return texture;
 }
 
 Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
+
+    /* check if cached */
+    //lua_getfield( renderer->textureCache, -1, file );
+    //Texture *texture = lua_touserdata( renderer->textureCache, -1 );
+    //lua_pop( renderer->textureCache, 1 );
+
+    //if( texture ) return texture;
 
     Texture *texture = alloc( Texture, 1 );
     return_guard(texture, NULL);
 
     glGenTextures(1, &texture->id);
     texture->target = GL_TEXTURE_CUBE_MAP;
+
+    /* texIdCache[file] = texture->id */
+    //lua_pushlightuserdata( renderer->textureCache, ( void* ) texture );
+    //lua_setfield( renderer->textureCache, -2, file );
+
     glBindTexture(texture->target, texture->id);
 
     for (int face = 0; face < 6; face++) {
 
-        int w, h;
+        int w, h, c;
         const char *file = cubeFaces[face];
 
-        /* check if tex data is cached */
-        lua_getfield( renderer->textureCache, -1, file );
-        uint8 *faceData = lua_touserdata( renderer->textureCache, -1 );
-        lua_pop( renderer->textureCache, 1 );
+        uint8 *faceData = texData( file, &w, &h, &c );
 
-        if( !faceData ) {
-
-            faceData = getData( file, &w, &h );
-
-            /* textureCache[file] = data */
-            lua_pushlightuserdata( renderer->textureCache, ( void* ) faceData );
-            lua_setfield( renderer->textureCache, -2, file );
-        }
-
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB_ALPHA, w, h, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, faceData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
+                    0, GL_SRGB_ALPHA, w, h, 0,
+                    GL_RGBA, GL_UNSIGNED_BYTE, faceData);
     }
 
+    /* min/mag filter */
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    /* wrapping behaviour */
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -169,3 +174,11 @@ Texture *cubeTexture(const char **cubeFaces, uint8 allSame, uint8 genMipMaps) {
 
     return texture;
 }
+
+void freeTexture(Texture *tex) {
+    if (!tex) return;
+
+    glDeleteTextures(1, &(tex->id));
+    free(tex);
+}
+

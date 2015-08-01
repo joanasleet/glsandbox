@@ -1,11 +1,14 @@
 TARGET	=	main
 
 SRC 	=	src
-CC		=	gcc
-STD 	=	c99
-CFLAGS	=	-Wall -Werror -pedantic -std=$(STD) -g -I$(SRC) -pg -fsanitize=undefined
+CC		=	clang
+STD 	=	c11
 LIBS	=	-lm -lGLEW -lGL -lglfw -llua
 LIBD	=	libs
+TPLS	=	Newton
+NOWARN	=	-Wno-gnu-empty-struct -Wno-disabled-macro-expansion -Wno-c++-compat -Wno-unused-parameter
+CHECK	=	-fsanitize=undefined
+CFLAGS	=	-Weverything -pedantic $(NOWARN) -std=$(STD) -g -pg -I$(LIBD) -I$(SRC) $(CHECK)
 
 BIN		=	bin
 PCBIN	=	staticbin
@@ -20,22 +23,16 @@ $(BIN):
 	@echo "[Create Folders]"
 	[ ! -e $@ ] && mkdir $@ && mkdir $(PCBIN)
 	
-$(BIN)/%.o: $(SRC)/%.c
+$(BIN)/%.o: $(SRC)/%.c $(SRC)/%.h
 	@echo " "
 	@echo "["$^"]"
 	$(CC) $(CFLAGS) -c $< -o $@
 	@if [ $$? != 0 ]; then rm $@; fi
 	
-$(BIN)/%.o: $(SRC)/%.h
-	@echo " "
-	@echo "["$^"]"
-	$(CC) $(CFLAGS) -c $? -o $@
-	@if [ $$? != 0 ]; then rm $@; fi
-
 $(TARGET): $(OBJECTS)
 	@echo " "
 	@echo "[Linking]"
-	$(CC) $(CFLAGS) -L$(LIBD) $(LIBS) -o $@ $^ $(PCBIN)/*.o
+	$(CC) $(CFLAGS) -L$(LIBD)/$(TPLS) -l$(TPLS) $(LIBS) -o $@ $^ $(PCBIN)/*.o
 
 clean:
 	-rm $(BIN)/*

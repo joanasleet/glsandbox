@@ -37,14 +37,18 @@ void vec3scale( float s, vec3 target );
 void vec3add( vec3 a, vec3 b, vec3 target );
 void vec3sub( vec3 a, vec3 b, vec3 target );
 void vec3cross( vec3 a, vec3 b, vec3 target );
+void vec3rota( vec3 v, quat q, vec3 target );
 
 /* [ matrix ] */
+extern const float mat4id[];
+
 void mat4add(mat4 A, mat4 B, mat4 target);
 void mat4sub(mat4 A, mat4 B, mat4 target);
 void mat4mult(mat4 A, mat4 B, mat4 target);
 void mat4multVec4(mat4 A, vec4 v, vec4 target);
 void mat4multVec3(mat4 A, vec3 v, vec3 target);
 
+void mat4transp( mat4 target );
 void mat4scale(mat4 target, float x, float y, float z);
 void mat4trans(mat4 target, float x, float y, float z);
 void mat4rotate(mat4 target, float angle, float x, float y, float z);
@@ -59,10 +63,14 @@ void quatNorm(quat q);
 void quatToMat(mat4 target, quat q);
 void quatMult(quat q, quat r, quat target);
 void quatSet(quat q, float angle, float x, float y, float z);
+void quatSlerp( quat q1, quat q2, quat target, float t );
+float quatDot( quat q1, quat q2 );
 
 /* [ interpolation ] */
 float lerpStepf(float from, float to, float alpha);
 double lerpStep(double from, double to, double alpha);
 
-#endif
+void _printBuffer( float* buff, const char* name, int n, int rows, int cols );
+
+#endif 
 

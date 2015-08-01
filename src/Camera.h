@@ -13,13 +13,6 @@ typedef struct {
     float smoothing;
     float sensitivity;
 
-    /* control flags */
-    uint8 wireframe;
-    uint8 mouseGrab;
-
-    /* translation & orientation */
-    State *state;
-
     /* perspective params */
     float fov[2];
     float aspectRatio;
@@ -30,6 +23,15 @@ typedef struct {
 
     /* perspective storage */
     float perspective[16];
+
+    /* control flags */
+    uint8 wireframe;
+    uint8 mouseGrab;
+
+    uint8 _pad[2];
+
+    /* translation & orientation */
+    State *state;
 
 } Camera;
 

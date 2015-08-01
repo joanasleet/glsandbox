@@ -28,16 +28,16 @@ typedef lua_State script;
 
 #define getInt( script, target ) \
     warn_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
-    target = lua_tointeger( script, -1 ); \
+    target = ( int ) lua_tointeger( script, -1 ); \
 
 #define popInt( script, target ) \
     warn_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
-    target = lua_tointeger( script, -1 ); \
+    target = ( int ) lua_tointeger( script, -1 ); \
     lua_pop( script, 1 ); \
 
 #define popFloat( script, target ) \
     warn_guard( !lua_isnil( script, -1 ) && lua_isnumber( script, -1 ) ); \
-    target = lua_tonumber( script, -1 ); \
+    target = ( float ) lua_tonumber( script, -1 ); \
     lua_pop( script, 1 ); \
 
 #define popString( script, target ) \
@@ -80,6 +80,10 @@ typedef lua_State script;
 // lua state with a table at the stacks top
 typedef lua_State table;
 typedef lua_State Cache;
+
+#define clearTable( table ) \
+    lua_pop( table, -1 ); \
+    lua_newtable( table ); \
 
 // expects table at index -2
 #define putKeyInt( table, key, num ) \

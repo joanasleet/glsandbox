@@ -159,16 +159,10 @@ void MVPnoTrans(GLint loc, Camera *cam, State *objState, double globalTime) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, MVP);
 }
 
-// buggy stuff here
-
 void objMV(GLint loc, Camera *cam, State *objState, double globalTime) {
 
-    float rotaQ[4];
-    rotate3D(rotaQ, cam->state->angles);
-    quatInv(rotaQ);
-
     GLfloat orientation[16];
-    quatToMat(orientation, rotaQ);
+    quatToMat(orientation, objState->orientation );
 
     float translation[16];
     vec3 pos = objState->position;
@@ -208,7 +202,7 @@ char *bufferFile(const char *path) {
     FILE *file = fopen(path, "rb");
     exit_guard(file);
     exit_guard(fseek(file, 0L, SEEK_END) == 0);
-    long int size = ftell(file);
+    size_t size = ftell(file);
     fclose(file);
 
     file = fopen(path, "r");

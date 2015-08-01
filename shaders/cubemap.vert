@@ -1,13 +1,19 @@
 #version 440
 
-layout(location = 0) in vec4 coords;
+layout(location = 0) in vec4 pos;
 
-out vec3 vs_tex_coords;
+out vec3 texcoords;
 
 uniform mat4 MVP;
+uniform mat4 mv = mat4(
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1 );
 
 void main() {
       
-    vs_tex_coords = coords.xyz;
-    gl_Position = MVP * coords;
+    texcoords = pos.xyz;
+
+    gl_Position = MVP * mv * pos;
 }

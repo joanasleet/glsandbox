@@ -37,47 +37,29 @@ Camera *newCamera(float x, float y, float z) {
     cam->state->forward[1] = 0.0f;
     cam->state->forward[2] = -1.0f;
 
-    cam->state->orientation[0] = 1.0f;
-    cam->state->orientation[1] = 0.0f;
-    cam->state->orientation[2] = 0.0f;
-    cam->state->orientation[3] = 0.0f;
-
     cam->mouseGrab = 0;
     cam->wireframe = 0;
 
     return cam;
 }
 
-void updateCam(Camera *cam) {
+void updateCam( Camera *cam ) {
 
     State *state = cam->state;
 
-    /* calc & update angle velocity */
-    float newAngleVel[] = {
-        lerpStep(state->angles[0], state->targetAngles[0], cam->smoothing ),
-        lerpStep(state->angles[1], state->targetAngles[1], cam->smoothing ),
-        lerpStep(state->angles[2], state->targetAngles[2], cam->smoothing )
-    };
-    cpyBuf( state->angleVelocity, newAngleVel, 3 );
-    calcAngles( state->angles, state, 1.0f );
-    calcOrientation( state->orientation, state, 1.0f );
+    /* update target orientation */
+    applyTorque( state );
+    quatSlerp( state->orientation, state->targetOrien, state->orientation, cam->smoothing );
+    quatNorm( state->orientation );
 
-    // calc rotation
+    /* rotation matrix */
     GLfloat rotaMatrix[16];
     quatToMat(rotaMatrix, state->orientation);
 
-    // update orientation vectors
-    float up[3];
-    mat4multVec3(rotaMatrix, baseUpVec, up );
-    cpyBuf( state->up, up, 3 );
-
-    float right[3];
-    mat4multVec3(rotaMatrix, baseRightVec, right );
-    cpyBuf( state->right, right, 3 );
-
-    float forward[3];
-    mat4multVec3(rotaMatrix, baseForwardVec, forward );
-    cpyBuf( state->forward, forward, 3 );
+    /* update orientation vectors */
+    mat4multVec3(rotaMatrix, baseUpVec, state->up );
+    mat4multVec3(rotaMatrix, baseRightVec, state->right );
+    mat4multVec3(rotaMatrix, baseForwardVec, state->forward );
 
     // calc & update velocity
     float newVel[] = {
@@ -87,10 +69,11 @@ void updateCam(Camera *cam) {
     };
     cpyBuf( state->velocity, newVel, 3 );
     calcPosition( state->position, state, 1.0f);
+    watch( "Camera Position ( %.1f, %.1f, %.1f )\n", state->position[0], state->position[1], state->position[2] );
 
     // calc & store perspective
     cam->fov[0] += lerpStep( cam->fov[0], cam->fov[1], cam->smoothing );
-    mat4perspinf(cam->perspective, cam->nearClip, cam->fov[0], cam->aspectRatio);
+    mat4perspinf( cam->perspective, cam->nearClip, cam->fov[0], cam->aspectRatio );
 }
 
 void freeCamera(Camera *cam) {
@@ -101,12 +84,12 @@ void freeCamera(Camera *cam) {
 
 void screenshot() {
 
-    unsigned int x = renderer->context->xRes;
-    unsigned int y = renderer->context->yRes;
+    uint32 x = renderer->context->xRes;
+    uint32 y = renderer->context->yRes;
 
-    unsigned char *buffer = malloc(sizeof (unsigned char) * x * y * 3);
+    uint8 *buffer = malloc(sizeof (uint8) * x * y * 3);
     err_guard( buffer );
-    glReadPixels(0, 0, x, y, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+    glReadPixels(0, 0, ( GLsizei )x, ( GLsizei)y, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 
     char name[25];
     long int t = time(NULL);
@@ -115,10 +98,10 @@ void screenshot() {
     FILE *outputPNG = fopen(name, "wb");
     err_guard( outputPNG );
 
-    int start_of_row;
-    int bytes_in_row = x * 3;
-    int bytes_left = x * y * 3;
-    while (bytes_left > 0) {
+    uint32 start_of_row;
+    uint32 bytes_in_row = x * 3;
+    uint32 bytes_left = x * y * 3;
+    while( bytes_left > 0 ) {
         start_of_row = bytes_left - bytes_in_row;
         fwrite(&buffer[start_of_row], 1, bytes_in_row, outputPNG );
         bytes_left -= bytes_in_row;

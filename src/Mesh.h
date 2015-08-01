@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include "Newton/include/Newton.h"
+
 #define BUFFER_OFFSET(offset) ((void *) (offset))
 
 #define VAO(name) \
@@ -20,15 +22,20 @@ typedef void (*DrawFunc)(GLenum, GLint *, GLsizei);
 
 typedef struct {
 
+    NewtonBody *nbody;
+    NewtonCollision *ncol;
+    DrawFunc draw;
+
     GLuint vaoId;
     GLuint vboId;
     GLuint eabId;
+    GLuint fboId;
 
     GLenum mode;
     GLint first;
     GLsizei count;
-    DrawFunc draw;
 
+    uint8 _pad[4];
 } Mesh;
 
 /* vao generator function prototype */

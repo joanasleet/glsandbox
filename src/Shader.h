@@ -11,9 +11,10 @@ typedef void (*UniformSetter)(GLint, Camera *, State *, double);
 
 typedef struct {
 
+    Cache *uniforms;
     GLuint program;
 
-    Cache *uniforms;
+    uint8 _pad[4];
 
 } Shader;
 
