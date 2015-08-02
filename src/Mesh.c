@@ -4,11 +4,6 @@
 #include "Engine.h"
 #include "MatrixMath.h"
 
-#define IARATIO 0.5625f
-#define ASCII_OFFSET 32
-#define FONTMAP_SIZE 16
-#define FONTMAP_SIZE_F 16.0f
-
 extern Engine* renderer;
 
 Mesh *newMesh() {
@@ -28,6 +23,7 @@ void freeMesh(Mesh *mesh) {
 
 /*
  * draw functions */
+
 void drawArrays(GLenum mode, GLint *first, GLsizei count) {
     glDrawArrays(mode, *first, count);
 }
@@ -38,7 +34,8 @@ void drawElements(GLenum mode, GLint *first, GLsizei count) {
 
 /*
  * vao generators */
-void planeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+
+void planeVAO( GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     /*
      * gen gl objects */
@@ -56,10 +53,10 @@ void planeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat
     GLfloat vboData[] = {
 
         // vertices
-        midx - l, midy, midz + l, 1.0f,
-        midx + l, midy, midz + l, 1.0f,
-        midx + l, midy, midz - l, 1.0f,
-        midx - l, midy, midz - l, 1.0f,
+        -l, 0.0f, +l,
+        +l, 0.0f, +l,
+        +l, 0.0f, -l,
+        -l, 0.0f, -l,
 
         // texture coords
         0.0f, 0.0f,
@@ -75,21 +72,21 @@ void planeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat
     };
     glBufferData(GL_ARRAY_BUFFER, sizeof (vboData), vboData, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * 16));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * 12));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * (16 + 8)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * (12 + 8)));
     glEnableVertexAttribArray(2);
 
     /* physics attr */
     float faces[4][3] = {
-        { midx-l, midy, midz+l },
-        { midx+l, midy, midz+l },
-        { midx+l, midy, midz-l },
-        { midx-l, midy, midz-l }
+        { -l, 0.0f, +l },
+        { +l, 0.0f, +l },
+        { +l, 0.0f, -l },
+        { -l, 0.0f, -l }
     };
     NewtonCollision *ncol = ( mesh->ncol = NewtonCreateTreeCollision( renderer->nworld, 0 ) );
     NewtonTreeCollisionBeginBuild( ncol );
@@ -97,7 +94,7 @@ void planeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat
     NewtonTreeCollisionEndBuild( ncol, 0 );
 }
 
-void cubeInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+void cubeInVAO( GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -111,51 +108,51 @@ void cubeInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloa
     GLfloat vboData[] = {
         
         // bot
-        midx - l, midy - l, midz + l, 1.0f,
-        midx + l, midy - l, midz + l, 1.0f,
-        midx + l, midy - l, midz - l, 1.0f,
-        midx - l, midy - l, midz - l, 1.0f,
+        -l, -l, +l,
+        +l, -l, +l,
+        +l, -l, -l,
+        -l, -l, -l,
 
         // top
-        midx - l, midy + l, midz + l, 1.0f,
-        midx - l, midy + l, midz - l, 1.0f,
-        midx + l, midy + l, midz - l, 1.0f,
-        midx + l, midy + l, midz + l, 1.0f,
+        -l, +l, +l,
+        -l, +l, -l,
+        +l, +l, -l,
+        +l, +l, +l,
 
         // front
-        midx - l, midy + l, midz + l, 1.0f,
-        midx + l, midy + l, midz + l, 1.0f,
-        midx + l, midy - l, midz + l, 1.0f,
-        midx - l, midy - l, midz + l, 1.0f,
+        -l, +l, +l,
+        +l, +l, +l,
+        +l, -l, +l,
+        -l, -l, +l,
 
         // back
-        midx - l, midy - l, midz - l, 1.0f,
-        midx + l, midy - l, midz - l, 1.0f,
-        midx + l, midy + l, midz - l, 1.0f,
-        midx - l, midy + l, midz - l, 1.0f,
+        -l, -l, -l,
+        +l, -l, -l,
+        +l, +l, -l,
+        -l, +l, -l,
 
         // left
-        midx - l, midy - l, midz + l, 1.0f,
-        midx - l, midy - l, midz - l, 1.0f,
-        midx - l, midy + l, midz - l, 1.0f,
-        midx - l, midy + l, midz + l, 1.0f,
+        -l, -l, +l,
+        -l, -l, -l,
+        -l, +l, -l,
+        -l, +l, +l,
 
         // right
-        midx + l, midy + l, midz + l, 1.0f,
-        midx + l, midy + l, midz - l, 1.0f,
-        midx + l, midy - l, midz - l, 1.0f,
-        midx + l, midy - l, midz + l, 1.0f,
+        +l, +l, +l,
+        +l, +l, -l,
+        +l, -l, -l,
+        +l, -l, +l
     };
     glBufferData(GL_ARRAY_BUFFER, sizeof (vboData), vboData, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
     /* physics attr */
     mesh->ncol = NewtonCreateBox( renderer->nworld, size, size, size, 0, NULL );
 }
 
-void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+void cubeOutVAO( GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -167,42 +164,42 @@ void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
     float l = size / 2.0f;
 
     GLfloat vboData[] = {
-        // vertices
+       
         // bot
-        midx - l, midy - l, midz - l, 1.0f,
-        midx + l, midy - l, midz - l, 1.0f,
-        midx + l, midy - l, midz + l, 1.0f,
-        midx - l, midy - l, midz + l, 1.0f,
+         -l, -l, -l,
+         +l, -l, -l,
+         +l, -l, +l,
+         -l, -l, +l,
 
-        // top
-        midx + l, midy + l, midz + l, 1.0f,
-        midx + l, midy + l, midz - l, 1.0f,
-        midx - l, midy + l, midz - l, 1.0f,
-        midx - l, midy + l, midz + l, 1.0f,
+         // top
+         +l, +l, +l,
+         +l, +l, -l,
+         -l, +l, -l,
+         -l, +l, +l,
 
-        // front
-        midx - l, midy - l, midz + l, 1.0f,
-        midx + l, midy - l, midz + l, 1.0f,
-        midx + l, midy + l, midz + l, 1.0f,
-        midx - l, midy + l, midz + l, 1.0f,
+         // front
+         -l, -l, +l,
+         +l, -l, +l,
+         +l, +l, +l,
+         -l, +l, +l,
 
-        // back
-        midx - l, midy + l, midz - l, 1.0f,
-        midx + l, midy + l, midz - l, 1.0f,
-        midx + l, midy - l, midz - l, 1.0f,
-        midx - l, midy - l, midz - l, 1.0f,
+         // back
+         -l, +l, -l,
+         +l, +l, -l,
+         +l, -l, -l,
+         -l, -l, -l,
 
-        // left
-        midx - l, midy + l, midz + l, 1.0f,
-        midx - l, midy + l, midz - l, 1.0f,
-        midx - l, midy - l, midz - l, 1.0f,
-        midx - l, midy - l, midz + l, 1.0f,
+         // left
+         -l, +l, +l,
+         -l, +l, -l,
+         -l, -l, -l,
+         -l, -l, +l,
 
-        // right
-        midx + l, midy - l, midz + l, 1.0f,
-        midx + l, midy - l, midz - l, 1.0f,
-        midx + l, midy + l, midz - l, 1.0f,
-        midx + l, midy + l, midz + l, 1.0f,
+         // right
+         +l, -l, +l,
+         +l, -l, -l,
+         +l, +l, -l,
+         +l, +l, +l,
 
         // texture coords
         0.0f, texres,
@@ -268,13 +265,13 @@ void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
     };
     glBufferData(GL_ARRAY_BUFFER, sizeof (vboData), vboData, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * 96));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * 72));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * (96 + 48)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * (72 + 48)));
     glEnableVertexAttribArray(2);
 
     /* physics attr */
@@ -282,24 +279,18 @@ void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
 }
 
 #define WRITE_TRIANGLE( A, B, C, target, indx ) \
-    target[indx+0]  = A[0]; \
-    target[indx+1]  = A[1]; \
-    target[indx+2]  = A[2]; \
-    target[indx+3]  = 1.0f; \
-    target[indx+4]  = B[0]; \
-    target[indx+5]  = B[1]; \
-    target[indx+6]  = B[2]; \
-    target[indx+7]  = 1.0f; \
-    target[indx+8]  = C[0]; \
-    target[indx+9]  = C[1]; \
-    target[indx+10] = C[2]; \
-    target[indx+11] = 1.0f; \
+    target[indx+0] = A[0]; \
+    target[indx+1] = A[1]; \
+    target[indx+2] = A[2]; \
+    target[indx+3] = B[0]; \
+    target[indx+4] = B[1]; \
+    target[indx+5] = B[2]; \
+    target[indx+6] = C[0]; \
+    target[indx+7] = C[1]; \
+    target[indx+8] = C[2]; \
 
-GLfloat* isosphereIn( GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, int, size_t*, int* ); 
-GLfloat* isosphereIn( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, int res, size_t *size, int* vertCount ) {
-
-    /* mid vertex */
-    GLfloat midV[] = { midx, midy, midz };
+GLfloat* isosphereIn( GLfloat, GLfloat, int, size_t*, int* ); 
+GLfloat* isosphereIn( GLfloat radius, GLfloat texres, int res, size_t *size, int* vertCount ) {
 
     /* three conjoined, orthogonal golden rectangles = icosahedron
      *
@@ -316,20 +307,21 @@ GLfloat* isosphereIn( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat midy
 
     /* base icosahedron data */
     const float baseData[] = {
-         midx-x, midy+y, midz, 1.0f,
-         midx+x, midy+y, midz, 1.0f,
-         midx-x, midy-y, midz, 1.0f,
-         midx+x, midy-y, midz, 1.0f,
 
-         midx, midy-x, midz+y, 1.0f,
-         midx, midy+x, midz+y, 1.0f,
-         midx, midy-x, midz-y, 1.0f,
-         midx, midy+x, midz-y, 1.0f,
+         -x, +y, 0.0f,
+         +x, +y, 0.0f,
+         -x, -y, 0.0f,
+         +x, -y, 0.0f,
 
-         midx+y, midy, midz-x, 1.0f,
-         midx+y, midy, midz+x, 1.0f,
-         midx-y, midy, midz-x, 1.0f,
-         midx-y, midy, midz+x, 1.0f
+         0.0f, -x, +y,
+         0.0f, +x, +y,
+         0.0f, -x, -y,
+         0.0f, +x, -y,
+
+         +y, 0.0f, -x,
+         +y, 0.0f, +x,
+         -y, 0.0f, -x,
+         -y, 0.0f, +x
     };
 
     /* base icosahedron 
@@ -367,7 +359,7 @@ GLfloat* isosphereIn( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat midy
     const int vpt = 3;
 
     /* base vertex component count */
-    const int vcomps = 4;
+    const int vcomps = 3;
 
     /* new triangles per triangle */
     const int rtria = 4;
@@ -425,9 +417,9 @@ GLfloat* isosphereIn( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat midy
              */
             
             int tindx = tgap*vcomps*vpt*t;
-            GLfloat A[] = { finalData[tindx+0], finalData[tindx+1], finalData[tindx+2]  /* omit +3 */ };
-            GLfloat B[] = { finalData[tindx+4], finalData[tindx+5], finalData[tindx+6]  /* omit +7 */ };
-            GLfloat C[] = { finalData[tindx+8], finalData[tindx+9], finalData[tindx+10] /* omit +11 */};
+            GLfloat A[] = { finalData[tindx+0], finalData[tindx+1], finalData[tindx+2] };
+            GLfloat B[] = { finalData[tindx+3], finalData[tindx+4], finalData[tindx+5] };
+            GLfloat C[] = { finalData[tindx+6], finalData[tindx+7], finalData[tindx+8] };
 
             /* new triangle vertices = midpoint of two original vertices */
             GLfloat a[3];
@@ -443,19 +435,21 @@ GLfloat* isosphereIn( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat midy
             vec3scale( 0.5f, c );
 
             /* spherical displacement: OutputVec = midV + radius*normalize( InputVec - midV ) */
-            sphereMap( A, midV, radius );
-            sphereMap( B, midV, radius );
-            sphereMap( C, midV, radius );
-            sphereMap( a, midV, radius );
-            sphereMap( b, midV, radius );
-            sphereMap( c, midV, radius );
+            GLfloat origin[] = { 0.0f, 0.0f, 0.0f };
+            sphereMap( A, origin, radius );
+            sphereMap( B, origin, radius );
+            sphereMap( C, origin, radius );
+            sphereMap( a, origin, radius );
+            sphereMap( b, origin, radius );
+            sphereMap( c, origin, radius );
             
             /* write into buffer */
             int wtgap = tgap / rtria;
-            WRITE_TRIANGLE( A, a, c, finalData, tindx );
-            WRITE_TRIANGLE( a, B, b, finalData, tindx+wtgap*vcomps*vpt*1 );
-            WRITE_TRIANGLE( c, b, C, finalData, tindx+wtgap*vcomps*vpt*2 );
-            WRITE_TRIANGLE( a, b, c, finalData, tindx+wtgap*vcomps*vpt*3 );
+            int triaOffset = wtgap*vcomps*vpt;
+            WRITE_TRIANGLE( A, a, c, finalData, tindx+triaOffset*0 );
+            WRITE_TRIANGLE( a, B, b, finalData, tindx+triaOffset*1 );
+            WRITE_TRIANGLE( c, b, C, finalData, tindx+triaOffset*2 );
+            WRITE_TRIANGLE( a, b, c, finalData, tindx+triaOffset*3 );
         }
         isize = bsize * powf( rtria, r+1 );
         tgap /= rtria;
@@ -464,7 +458,7 @@ GLfloat* isosphereIn( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat midy
     return finalData;
 }
 
-void sphereInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+void sphereInVAO( GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     VAO( vao );
     VBO( vbo, GL_ARRAY_BUFFER );
@@ -475,7 +469,7 @@ void sphereInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfl
     /* gen sphere buffer */
     size_t dsize;
     int vertices;
-    GLfloat* data = isosphereIn( size, texres, midx, midy, midz, 7, &dsize, &vertices );
+    GLfloat* data = isosphereIn( size, texres, 7, &dsize, &vertices );
 
     /* gen texture coords */
 
@@ -490,7 +484,7 @@ void sphereInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfl
      * set data format */
 
     /* position */
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
     /* texcoords */
@@ -507,11 +501,9 @@ void sphereInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfl
     mesh->ncol = NewtonCreateSphere( renderer->nworld, size, 0, NULL );
 }
 
-GLfloat* isosphereOut( GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, int, size_t*, int* ); 
-GLfloat* isosphereOut( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, int res, size_t *size, int* vertCount ) {
+GLfloat* isosphereOut( GLfloat, GLfloat, int, size_t*, int* ); 
+GLfloat* isosphereOut( GLfloat radius, GLfloat texres, int res, size_t *size, int* vertCount ) {
 
-    /* mid vertex */
-    GLfloat midV[] = { midx, midy, midz };
 
     /* three conjoined, orthogonal golden rectangles = icosahedron
      *
@@ -528,20 +520,20 @@ GLfloat* isosphereOut( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat mid
 
     /* base icosahedron data */
     const float baseData[] = {
-         midx-x, midy+y, midz, 1.0f,
-         midx+x, midy+y, midz, 1.0f,
-         midx-x, midy-y, midz, 1.0f,
-         midx+x, midy-y, midz, 1.0f,
+         -x, +y, 0.0f,
+         +x, +y, 0.0f,
+         -x, -y, 0.0f,
+         +x, -y, 0.0f,
 
-         midx, midy-x, midz+y, 1.0f,
-         midx, midy+x, midz+y, 1.0f,
-         midx, midy-x, midz-y, 1.0f,
-         midx, midy+x, midz-y, 1.0f,
+         0.0f, -x, +y,
+         0.0f, +x, +y,
+         0.0f, -x, -y,
+         0.0f, +x, -y,
 
-         midx+y, midy, midz-x, 1.0f,
-         midx+y, midy, midz+x, 1.0f,
-         midx-y, midy, midz-x, 1.0f,
-         midx-y, midy, midz+x, 1.0f
+         +y, 0.0f, -x,
+         +y, 0.0f, +x,
+         -y, 0.0f, -x,
+         -y, 0.0f, +x
     };
 
     /* base icosahedron
@@ -579,7 +571,7 @@ GLfloat* isosphereOut( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat mid
     const int vpt = 3;
 
     /* base vertex component count */
-    const int vcomps = 4;
+    const int vcomps = 3;
 
     /* new triangles per triangle */
     const int rtria = 4;
@@ -639,9 +631,9 @@ GLfloat* isosphereOut( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat mid
             int tindx = tgap*vcomps*vpt*t;
 
             /* original triangle vertices */
-            GLfloat A[] = { finalData[tindx+0], finalData[tindx+1], finalData[tindx+2]  /*omit+3*/ };
-            GLfloat B[] = { finalData[tindx+4], finalData[tindx+5], finalData[tindx+6]  /*omit+7*/ };
-            GLfloat C[] = { finalData[tindx+8], finalData[tindx+9], finalData[tindx+10] /*omit+11*/};
+            GLfloat A[] = { finalData[tindx+0], finalData[tindx+1], finalData[tindx+2] };
+            GLfloat B[] = { finalData[tindx+3], finalData[tindx+4], finalData[tindx+5] };
+            GLfloat C[] = { finalData[tindx+6], finalData[tindx+7], finalData[tindx+8] };
 
             /* new triangle vertices = midpoint of two original vertices */
             GLfloat a[3];
@@ -657,19 +649,21 @@ GLfloat* isosphereOut( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat mid
             vec3scale( 0.5f, c );
 
             /* spherical displacement: OutputVec = midV + radius*normalize( InputVec - midV ) */
-            sphereMap( A, midV, radius );
-            sphereMap( B, midV, radius );
-            sphereMap( C, midV, radius );
-            sphereMap( a, midV, radius );
-            sphereMap( b, midV, radius );
-            sphereMap( c, midV, radius );
+            GLfloat origin[] = { 0.0f, 0.0f, 0.0f };
+            sphereMap( A, origin, radius );
+            sphereMap( B, origin, radius );
+            sphereMap( C, origin, radius );
+            sphereMap( a, origin, radius );
+            sphereMap( b, origin, radius );
+            sphereMap( c, origin, radius );
             
             /* write into buffer */
             int wtgap = tgap / rtria;
-            WRITE_TRIANGLE( A, a, c, finalData, tindx );
-            WRITE_TRIANGLE( a, B, b, finalData, tindx+wtgap*vcomps*vpt*1 );
-            WRITE_TRIANGLE( c, b, C, finalData, tindx+wtgap*vcomps*vpt*2 );
-            WRITE_TRIANGLE( a, b, c, finalData, tindx+wtgap*vcomps*vpt*3 );
+            int triaOffset = wtgap*vcomps*vpt;
+            WRITE_TRIANGLE( A, a, c, finalData, tindx+triaOffset*0 );
+            WRITE_TRIANGLE( a, B, b, finalData, tindx+triaOffset*1 );
+            WRITE_TRIANGLE( c, b, C, finalData, tindx+triaOffset*2 );
+            WRITE_TRIANGLE( a, b, c, finalData, tindx+triaOffset*3 );
         }
         isize = (int) ( bsize * powf( rtria, r+1 ) );
         tgap /= rtria;
@@ -678,7 +672,7 @@ GLfloat* isosphereOut( GLfloat radius, GLfloat texres, GLfloat midx, GLfloat mid
     return finalData;
 }
 
-void sphereOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+void sphereOutVAO( GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     VAO( vao );
     VBO( vbo, GL_ARRAY_BUFFER );
@@ -689,7 +683,7 @@ void sphereOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLf
     /* gen sphere buffer */
     size_t dsize;
     int vertices;
-    GLfloat* data = isosphereOut( size, texres, midx, midy, midz, 7, &dsize, &vertices );
+    GLfloat* data = isosphereOut( size, texres, 7, &dsize, &vertices );
 
     /* gen texture coords */
 
@@ -704,7 +698,7 @@ void sphereOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLf
      * set data format */
 
     /* position */
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
     /* texcoords */
@@ -721,57 +715,56 @@ void sphereOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLf
     mesh->ncol = NewtonCreateSphere( renderer->nworld, size, 0, NULL );
 }
 
-void terrainVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
-
-    const int patch_dim = 10;
-    const int patch_verts = 4;
-
-    const float plen = size / (float) patch_dim;
-    const float hlen = size / 2.0f;
+void terrainVAO( GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
+
+    int vcomps = 3;
+    int patch_dim = 10;
+    int patch_verts = 4;
+
+    int tria = patch_verts * vcomps;
+
+    float plen = size / (float) patch_dim;
+    float hlen = size / 2.0f;
 
     mesh->vaoId = vao;
     mesh->vboId = vbo;
     mesh->count = patch_dim * patch_dim * patch_verts;
 
-    GLfloat data[(mesh->count) * 4];
+    GLfloat data[(mesh->count) * vcomps];
 
     for (int i = 0; i < patch_dim; ++i) {
 
         for (int j = 0; j < patch_dim; ++j) {
 
-            data[16 * (patch_dim * i + j) + 0] = midx - hlen + j * (plen);
-            data[16 * (patch_dim * i + j) + 1] = midy;
-            data[16 * (patch_dim * i + j) + 2] = midz - hlen + i * (plen);
-            data[16 * (patch_dim * i + j) + 3] = 1.0f;
+            data[ (patch_dim * i + j)*tria + 0] = -hlen + j * (plen);
+            data[ (patch_dim * i + j)*tria + 1] = 0.0f;
+            data[ (patch_dim * i + j)*tria + 2] = -hlen + i * (plen);
+ 
+            data[ (patch_dim * i + j)*tria + 3] = -hlen + j * (plen) + plen;
+            data[ (patch_dim * i + j)*tria + 4] = 0.0f;
+            data[ (patch_dim * i + j)*tria + 5] = -hlen + i * (plen);
 
-            data[16 * (patch_dim * i + j) + 4] = midx - hlen + j * (plen) + plen;
-            data[16 * (patch_dim * i + j) + 5] = midy;
-            data[16 * (patch_dim * i + j) + 6] = midz - hlen + i * (plen);
-            data[16 * (patch_dim * i + j) + 7] = 1.0f;
+            data[ (patch_dim * i + j)*tria + 6] = -hlen + j * (plen) + plen;
+            data[ (patch_dim * i + j)*tria + 7] = 0.0f;
+            data[ (patch_dim * i + j)*tria + 8] = -hlen + i * (plen) + plen;
 
-            data[16 * (patch_dim * i + j) + 8] = midx - hlen + j * (plen) + plen;
-            data[16 * (patch_dim * i + j) + 9] = midy;
-            data[16 * (patch_dim * i + j) + 10] = midz - hlen + i * (plen) + plen;
-            data[16 * (patch_dim * i + j) + 11] = 1.0f;
-
-            data[16 * (patch_dim * i + j) + 12] = midx - hlen + j * (plen);
-            data[16 * (patch_dim * i + j) + 13] = midy;
-            data[16 * (patch_dim * i + j) + 14] = midz - hlen + i * (plen) + plen;
-            data[16 * (patch_dim * i + j) + 15] = 1.0f;
+            data[ (patch_dim * i + j)*tria + 9] = -hlen + j * (plen);
+            data[ (patch_dim * i + j)*tria + 10] = 0.0f;
+            data[ (patch_dim * i + j)*tria + 11] = -hlen + i * (plen) + plen;
         }
     }
-    glBufferData(GL_ARRAY_BUFFER, sizeof (data), data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
     glPatchParameteri(GL_PATCH_VERTICES, patch_verts);
 }
 
-void overlayVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+void overlayVAO( GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -780,30 +773,36 @@ void overlayVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLflo
     mesh->vboId = vbo;
     mesh->count = 4;
 
-    float l = size;
+    float l = size / 2.0f;
 
     const GLfloat data[] = {
 
-        midx-l, midy-l, midz, 1.0f,
-        midx+l, midy-l, midz, 1.0f,
-        midx+l, midy+l, midz, 1.0f,
-        midx-l, midy+l, midz, 1.0f,
+        -l, -l, 0.0f,
+        +l, -l, 0.0f,
+        +l, +l, 0.0f,
+        -l, +l, 0.0f,
 
-        0.0f,   0.0f,
+        0.0f, 0.0f,
         texres, 0.0f,
         texres, texres,
-        0.0f,   texres
+        0.0f, texres
     };
     glBufferData(GL_ARRAY_BUFFER, sizeof (data), data, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * 16));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof (GLfloat) * 12));
     glEnableVertexAttribArray(1);
 }
 
-void staticTextVAO( const char* text, GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh ) {
+#define IARATIO 0.5625f
+#define ASCII_OFFSET 32
+#define FONTMAP_SIZE 16
+#define FONTMAP_SIZE_F 16.0f
+
+// TODO: redo this shit
+void staticTextVAO( const char* text, GLfloat size, GLfloat texres, Mesh *mesh ) {
 
     VAO(vao);
     VBO(vbo, GL_ARRAY_BUFFER);
@@ -834,21 +833,21 @@ void staticTextVAO( const char* text, GLfloat size, GLfloat texres, GLfloat midx
     info("Generating %lu quads for text '%s'", strl, text);
     for ( uint64 i = 0; i < strl; ++i) {
 
-        xleft = midx + i * xstep;
-        xright = midx + (i + 1) * xstep;
+        xleft = i * xstep;
+        xright = (i + 1) * xstep;
 
         /* ytop = y */
-        ybot = midy - size;
+        ybot = -size;
 
         // top left
         data[16 * i] = xleft;
-        data[16 * i + 1] = midy;
+        data[16 * i + 1] = 0.0f;
         data[16 * i + 2] = 0.0f;
         data[16 * i + 3] = 1.0f;
 
         // top right
         data[16 * i + 4] = xright;
-        data[16 * i + 5] = midy;
+        data[16 * i + 5] = 0.0f;
         data[16 * i + 6] = 0.0f;
         data[16 * i + 7] = 1.0f;
 
@@ -891,7 +890,7 @@ void staticTextVAO( const char* text, GLfloat size, GLfloat texres, GLfloat midx
         data[16 * strl + 8 * i + 6] = textopleftX;
         data[16 * strl + 8 * i + 7] = textopleftY - 0.0625f;
 
-        printf("- - -\n");
+        printf( "- - -\n" );
     }
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices, data, GL_STATIC_DRAW);
 

@@ -1,0 +1,261 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+NEWTON_API	Newton.h	31;"	d
+NEWTON_API	Newton.h	35;"	d
+NEWTON_API	Newton.h	37;"	d
+NEWTON_API	Newton.h	41;"	d
+NEWTON_API	Newton.h	43;"	d
+NEWTON_BROADPHASE_DEFAULT	Newton.h	80;"	d
+NEWTON_BROADPHASE_PERSINTENT	Newton.h	81;"	d
+NEWTON_DEFORMABLE_BODY	Newton.h	85;"	d
+NEWTON_DEPRECATED_API	Newton.h	50;"	d
+NEWTON_DEPRECATED_API	Newton.h	52;"	d
+NEWTON_DEPRECATED_API	Newton.h	55;"	d
+NEWTON_DYNAMIC_BODY	Newton.h	83;"	d
+NEWTON_KINEMATIC_BODY	Newton.h	84;"	d
+NEWTON_MAJOR_VERSION	Newton.h	26;"	d
+NEWTON_MINOR_VERSION	Newton.h	27;"	d
+NewtonAllocMemory	Newton.h	/^	typedef void* (*NewtonAllocMemory) (int sizeInBytes);$/;"	t
+NewtonApplyForceAndTorque	Newton.h	/^	typedef void (*NewtonApplyForceAndTorque) (const NewtonBody* const body, dFloat timestep, int threadIndex);$/;"	t
+NewtonBallCallback	Newton.h	/^	typedef void (*NewtonBallCallback) (const NewtonJoint* const ball, dFloat timestep);$/;"	t
+NewtonBody	Newton.h	/^	typedef struct NewtonBody{} NewtonBody;$/;"	s
+NewtonBody	Newton.h	/^	typedef struct NewtonBody{} NewtonBody;$/;"	t	typeref:struct:NewtonBody
+NewtonBodyDestructor	Newton.h	/^	typedef void (*NewtonBodyDestructor) (const NewtonBody* const body);$/;"	t
+NewtonBodyIterator	Newton.h	/^	typedef int (*NewtonBodyIterator) (const NewtonBody* const body, void* const userData);$/;"	t
+NewtonBoxParam	Newton.h	/^	typedef struct NewtonBoxParam$/;"	s
+NewtonBoxParam	Newton.h	/^	} NewtonBoxParam;$/;"	t	typeref:struct:NewtonBoxParam
+NewtonCapsuleParam	Newton.h	/^	typedef struct NewtonCapsuleParam$/;"	s
+NewtonCapsuleParam	Newton.h	/^	} NewtonCapsuleParam;$/;"	t	typeref:struct:NewtonCapsuleParam
+NewtonChamferCylinderParam	Newton.h	/^	typedef struct NewtonChamferCylinderParam$/;"	s
+NewtonChamferCylinderParam	Newton.h	/^	} NewtonChamferCylinderParam;$/;"	t	typeref:struct:NewtonChamferCylinderParam
+NewtonClothPatchMaterial	Newton.h	/^	typedef struct NewtonClothPatchMaterial$/;"	s
+NewtonClothPatchMaterial	Newton.h	/^	} NewtonClothPatchMaterial;$/;"	t	typeref:struct:NewtonClothPatchMaterial
+NewtonCollision	Newton.h	/^	typedef struct NewtonCollision{} NewtonCollision;$/;"	s
+NewtonCollision	Newton.h	/^	typedef struct NewtonCollision{} NewtonCollision;$/;"	t	typeref:struct:NewtonCollision
+NewtonCollisionCopyConstructionCallback	Newton.h	/^	typedef void (*NewtonCollisionCopyConstructionCallback) (const NewtonWorld* const newtonWorld, NewtonCollision* const collision, const NewtonCollision* const sourceCollision);$/;"	t
+NewtonCollisionDestructorCallback	Newton.h	/^	typedef void (*NewtonCollisionDestructorCallback) (const NewtonWorld* const newtonWorld, const NewtonCollision* const collision);$/;"	t
+NewtonCollisionInfoRecord	Newton.h	/^	typedef struct NewtonCollisionInfoRecord$/;"	s
+NewtonCollisionInfoRecord	Newton.h	/^	} NewtonCollisionInfoRecord;$/;"	t	typeref:struct:NewtonCollisionInfoRecord
+NewtonCollisionIterator	Newton.h	/^	typedef void (*NewtonCollisionIterator) (void* const userData, int vertexCount, const dFloat* const faceArray, int faceId);$/;"	t
+NewtonCollisionTreeParam	Newton.h	/^	typedef struct NewtonCollisionTreeParam$/;"	s
+NewtonCollisionTreeParam	Newton.h	/^	} NewtonCollisionTreeParam;$/;"	t	typeref:struct:NewtonCollisionTreeParam
+NewtonCollisionTreeRayCastCallback	Newton.h	/^	typedef dFloat (*NewtonCollisionTreeRayCastCallback) (const NewtonBody* const body, const NewtonCollision* const treeCollision, dFloat intersection, dFloat* const normal, int faceId, void* const usedData);$/;"	t
+NewtonCompoundCollisionParam	Newton.h	/^	typedef struct NewtonCompoundCollisionParam$/;"	s
+NewtonCompoundCollisionParam	Newton.h	/^	} NewtonCompoundCollisionParam;$/;"	t	typeref:struct:NewtonCompoundCollisionParam
+NewtonConeParam	Newton.h	/^	typedef struct NewtonConeParam$/;"	s
+NewtonConeParam	Newton.h	/^	} NewtonConeParam;$/;"	t	typeref:struct:NewtonConeParam
+NewtonConstraintDestructor	Newton.h	/^	typedef void (*NewtonConstraintDestructor) (const NewtonJoint* const me);$/;"	t
+NewtonContactsProcess	Newton.h	/^	typedef void (*NewtonContactsProcess) (const NewtonJoint* const contact, dFloat timestep, int threadIndex);$/;"	t
+NewtonConvexHullGetVetexData	Newton.h	/^	NEWTON_DEPRECATED_API inline int NewtonConvexHullGetVetexData (const NewtonCollision* const convexHullCollision, dFloat** const vertexData, int* strideInBytes)$/;"	f
+NewtonConvexHullParam	Newton.h	/^	typedef struct NewtonConvexHullParam$/;"	s
+NewtonConvexHullParam	Newton.h	/^	} NewtonConvexHullParam;$/;"	t	typeref:struct:NewtonConvexHullParam
+NewtonCorkscrewCallback	Newton.h	/^	typedef unsigned (*NewtonCorkscrewCallback) (const NewtonJoint* const corkscrew, NewtonHingeSliderUpdateDesc* const desc);$/;"	t
+NewtonCylinderParam	Newton.h	/^	typedef struct NewtonCylinderParam$/;"	s
+NewtonCylinderParam	Newton.h	/^	} NewtonCylinderParam;$/;"	t	typeref:struct:NewtonCylinderParam
+NewtonDeformableMeshParam	Newton.h	/^	typedef struct NewtonDeformableMeshParam$/;"	s
+NewtonDeformableMeshParam	Newton.h	/^	} NewtonDeformableMeshParam;$/;"	t	typeref:struct:NewtonDeformableMeshParam
+NewtonDeformableMeshSegment	Newton.h	/^	typedef struct NewtonDeformableMeshSegment{} NewtonDeformableMeshSegment;$/;"	s
+NewtonDeformableMeshSegment	Newton.h	/^	typedef struct NewtonDeformableMeshSegment{} NewtonDeformableMeshSegment;$/;"	t	typeref:struct:NewtonDeformableMeshSegment
+NewtonDeserializeCallback	Newton.h	/^	typedef void (*NewtonDeserializeCallback) (void* const serializeHandle, void* const buffer, int size);$/;"	t
+NewtonFractureCompoundCollisionOnEmitChunk	Newton.h	/^	typedef void (*NewtonFractureCompoundCollisionOnEmitChunk) (NewtonBody* const chunkBody, NewtonFracturedCompoundMeshPart* const fracturexChunkMesh, const NewtonCollision* const fracturedCompountCollision);$/;"	t
+NewtonFractureCompoundCollisionOnEmitCompoundFractured	Newton.h	/^	typedef void (*NewtonFractureCompoundCollisionOnEmitCompoundFractured) (NewtonBody* const fracturedBody);$/;"	t
+NewtonFractureCompoundCollisionReconstructMainMeshCallBack	Newton.h	/^	typedef void (*NewtonFractureCompoundCollisionReconstructMainMeshCallBack) (NewtonBody* const body, NewtonFracturedCompoundMeshPart* const mainMesh, const NewtonCollision* const fracturedCompountCollision);$/;"	t
+NewtonFracturedCompoundMeshPart	Newton.h	/^	typedef struct NewtonFracturedCompoundMeshPart{} NewtonFracturedCompoundMeshPart;$/;"	s
+NewtonFracturedCompoundMeshPart	Newton.h	/^	typedef struct NewtonFracturedCompoundMeshPart{} NewtonFracturedCompoundMeshPart;$/;"	t	typeref:struct:NewtonFracturedCompoundMeshPart
+NewtonFreeMemory	Newton.h	/^	typedef void (*NewtonFreeMemory) (void* const ptr, int sizeInBytes);$/;"	t
+NewtonGetTicksCountCallback	Newton.h	/^	typedef unsigned (*NewtonGetTicksCountCallback) ();$/;"	t
+NewtonHeightFieldCollisionParam	Newton.h	/^	typedef struct NewtonHeightFieldCollisionParam$/;"	s
+NewtonHeightFieldCollisionParam	Newton.h	/^	} NewtonHeightFieldCollisionParam;$/;"	t	typeref:struct:NewtonHeightFieldCollisionParam
+NewtonHeightFieldRayCastCallback	Newton.h	/^	typedef dFloat (*NewtonHeightFieldRayCastCallback) (const NewtonBody* const body, const NewtonCollision* const heightFieldCollision, dFloat intersection, int row, int col, dFloat* const normal, int faceId, void* const usedData);$/;"	t
+NewtonHingeCallback	Newton.h	/^	typedef unsigned (*NewtonHingeCallback) (const NewtonJoint* const hinge, NewtonHingeSliderUpdateDesc* const desc);$/;"	t
+NewtonHingeSliderUpdateDesc	Newton.h	/^	typedef struct NewtonHingeSliderUpdateDesc$/;"	s
+NewtonHingeSliderUpdateDesc	Newton.h	/^	} NewtonHingeSliderUpdateDesc;$/;"	t	typeref:struct:NewtonHingeSliderUpdateDesc
+NewtonIslandUpdate	Newton.h	/^	typedef int (*NewtonIslandUpdate) (const NewtonWorld* const newtonWorld, const void* islandHandle, int bodyCount);$/;"	t
+NewtonJobTask	Newton.h	/^	typedef void (*NewtonJobTask) (NewtonWorld* const world, void* const userData, int threadIndex);$/;"	t
+NewtonJoint	Newton.h	/^	typedef struct NewtonJoint{} NewtonJoint;$/;"	s
+NewtonJoint	Newton.h	/^	typedef struct NewtonJoint{} NewtonJoint;$/;"	t	typeref:struct:NewtonJoint
+NewtonJointIterator	Newton.h	/^	typedef void (*NewtonJointIterator) (const NewtonJoint* const joint, void* const userData);$/;"	t
+NewtonJointRecord	Newton.h	/^	typedef struct NewtonJointRecord$/;"	s
+NewtonJointRecord	Newton.h	/^	} NewtonJointRecord;$/;"	t	typeref:struct:NewtonJointRecord
+NewtonMaterial	Newton.h	/^	typedef struct NewtonMaterial{} NewtonMaterial;$/;"	s
+NewtonMaterial	Newton.h	/^	typedef struct NewtonMaterial{} NewtonMaterial;$/;"	t	typeref:struct:NewtonMaterial
+NewtonMesh	Newton.h	/^	typedef struct NewtonMesh{} NewtonMesh;$/;"	s
+NewtonMesh	Newton.h	/^	typedef struct NewtonMesh{} NewtonMesh;$/;"	t	typeref:struct:NewtonMesh
+NewtonOnAABBOverlap	Newton.h	/^	typedef int  (*NewtonOnAABBOverlap) (const NewtonMaterial* const material, const NewtonBody* const body0, const NewtonBody* const body1, int threadIndex);$/;"	t
+NewtonOnBodyDeserializationCallback	Newton.h	/^	typedef void (*NewtonOnBodyDeserializationCallback) (NewtonBody* const body, void* const userData, NewtonDeserializeCallback function, void* const serializeHandle);$/;"	t
+NewtonOnBodySerializationCallback	Newton.h	/^	typedef void (*NewtonOnBodySerializationCallback) (NewtonBody* const body, void* const userData, NewtonSerializeCallback function, void* const serializeHandle);$/;"	t
+NewtonOnCompoundSubCollisionAABBOverlap	Newton.h	/^	typedef int  (*NewtonOnCompoundSubCollisionAABBOverlap) (const NewtonMaterial* const material, const NewtonBody* const body0, const void* const collsionNode0, const NewtonBody* const body1, const void* const collsionNode1, int threadIndex);$/;"	t
+NewtonOnJointDeserializationCallback	Newton.h	/^	typedef void (*NewtonOnJointDeserializationCallback) (NewtonBody* const body0, NewtonBody* const body1, NewtonDeserializeCallback function, void* const serializeHandle);$/;"	t
+NewtonOnJointSerializationCallback	Newton.h	/^	typedef void (*NewtonOnJointSerializationCallback) (const NewtonJoint* const joint, NewtonSerializeCallback function, void* const serializeHandle);$/;"	t
+NewtonOnUserCollisionSerializationCallback	Newton.h	/^	typedef void (*NewtonOnUserCollisionSerializationCallback) (void* const userData, NewtonSerializeCallback function, void* const serializeHandle);$/;"	t
+NewtonReportProgress	Newton.h	/^	typedef bool (*NewtonReportProgress) (dFloat normalizedProgressPercent, void* const userData);$/;"	t
+NewtonSceneCollisionParam	Newton.h	/^	typedef struct NewtonSceneCollisionParam$/;"	s
+NewtonSceneCollisionParam	Newton.h	/^	} NewtonSceneCollisionParam;$/;"	t	typeref:struct:NewtonSceneCollisionParam
+NewtonSerializeCallback	Newton.h	/^	typedef void (*NewtonSerializeCallback) (void* const serializeHandle, const void* const buffer, int size);$/;"	t
+NewtonSetTransform	Newton.h	/^	typedef void (*NewtonSetTransform) (const NewtonBody* const body, const dFloat* const matrix, int threadIndex);$/;"	t
+NewtonSkeletonContainer	Newton.h	/^	typedef struct NewtonSkeletonContainer{} NewtonSkeletonContainer;$/;"	s
+NewtonSkeletonContainer	Newton.h	/^	typedef struct NewtonSkeletonContainer{} NewtonSkeletonContainer;$/;"	t	typeref:struct:NewtonSkeletonContainer
+NewtonSkeletontDestructor	Newton.h	/^	typedef void (*NewtonSkeletontDestructor) (const NewtonSkeletonContainer* const me);$/;"	t
+NewtonSliderCallback	Newton.h	/^	typedef unsigned (*NewtonSliderCallback) (const NewtonJoint* const slider, NewtonHingeSliderUpdateDesc* const desc);$/;"	t
+NewtonSphereParam	Newton.h	/^	typedef struct NewtonSphereParam$/;"	s
+NewtonSphereParam	Newton.h	/^	} NewtonSphereParam;$/;"	t	typeref:struct:NewtonSphereParam
+NewtonTaperedCapsuleParam	Newton.h	/^	typedef struct NewtonTaperedCapsuleParam$/;"	s
+NewtonTaperedCapsuleParam	Newton.h	/^	} NewtonTaperedCapsuleParam;$/;"	t	typeref:struct:NewtonTaperedCapsuleParam
+NewtonTaperedCylinderParam	Newton.h	/^	typedef struct NewtonTaperedCylinderParam$/;"	s
+NewtonTaperedCylinderParam	Newton.h	/^	} NewtonTaperedCylinderParam;$/;"	t	typeref:struct:NewtonTaperedCylinderParam
+NewtonTreeCollisionCallback	Newton.h	/^	typedef void (*NewtonTreeCollisionCallback) (const NewtonBody* const bodyWithTreeCollision, const NewtonBody* const body, int faceID, $/;"	t
+NewtonTreeCollisionFaceCallback	Newton.h	/^	typedef int (*NewtonTreeCollisionFaceCallback) (void* const context, const dFloat* const polygon, int strideInBytes, const int* const indexArray, int indexCount);$/;"	t
+NewtonTreeCollisionGetFaceAtribute	Newton.h	/^	NEWTON_DEPRECATED_API inline int NewtonTreeCollisionGetFaceAtribute (const NewtonCollision* const treeCollision, const int* const faceIndexArray, int indexCount)$/;"	f
+NewtonTreeCollisionSetFaceAtribute	Newton.h	/^	NEWTON_DEPRECATED_API inline void NewtonTreeCollisionSetFaceAtribute (const NewtonCollision* const treeCollision, const int* const faceIndexArray, int indexCount, int attribute)$/;"	f
+NewtonUniversalCallback	Newton.h	/^	typedef unsigned (*NewtonUniversalCallback) (const NewtonJoint* const universal, NewtonHingeSliderUpdateDesc* const desc);$/;"	t
+NewtonUserBilateralCallback	Newton.h	/^	typedef void (*NewtonUserBilateralCallback) (const NewtonJoint* const userJoint, dFloat timestep, int threadIndex);$/;"	t
+NewtonUserBilateralGetInfoCallback	Newton.h	/^	typedef void (*NewtonUserBilateralGetInfoCallback) (const NewtonJoint* const userJoint, NewtonJointRecord* const info);$/;"	t
+NewtonUserMeshCollisionAABBTest	Newton.h	/^	typedef int (*NewtonUserMeshCollisionAABBTest) (void* const userData, const dFloat* const boxP0, const dFloat* const boxP1);$/;"	t
+NewtonUserMeshCollisionCollideCallback	Newton.h	/^	typedef void (*NewtonUserMeshCollisionCollideCallback) (NewtonUserMeshCollisionCollideDesc* const collideDescData, const void* const continueCollisionHandle);$/;"	t
+NewtonUserMeshCollisionCollideDesc	Newton.h	/^	typedef struct NewtonUserMeshCollisionCollideDesc$/;"	s
+NewtonUserMeshCollisionCollideDesc	Newton.h	/^	} NewtonUserMeshCollisionCollideDesc;$/;"	t	typeref:struct:NewtonUserMeshCollisionCollideDesc
+NewtonUserMeshCollisionContinueOveralapTest	Newton.h	/^	NEWTON_DEPRECATED_API inline int NewtonUserMeshCollisionContinueOveralapTest (const NewtonUserMeshCollisionCollideDesc* const collideDescData, const void* const continueCollisionHandle, const dFloat* const minAabb, const dFloat* const maxAabb)$/;"	f
+NewtonUserMeshCollisionDestroyCallback	Newton.h	/^	typedef void (*NewtonUserMeshCollisionDestroyCallback) (void* const userData);$/;"	t
+NewtonUserMeshCollisionGetCollisionInfo	Newton.h	/^	typedef void (*NewtonUserMeshCollisionGetCollisionInfo) (void* const userData, NewtonCollisionInfoRecord* const infoRecord);$/;"	t
+NewtonUserMeshCollisionGetFacesInAABB	Newton.h	/^	typedef int (*NewtonUserMeshCollisionGetFacesInAABB) (void* const userData, const dFloat* const p0, const dFloat* const p1,$/;"	t
+NewtonUserMeshCollisionRayHitCallback	Newton.h	/^	typedef dFloat (*NewtonUserMeshCollisionRayHitCallback) (NewtonUserMeshCollisionRayHitDesc* const lineDescData);$/;"	t
+NewtonUserMeshCollisionRayHitDesc	Newton.h	/^	typedef struct NewtonUserMeshCollisionRayHitDesc$/;"	s
+NewtonUserMeshCollisionRayHitDesc	Newton.h	/^	} NewtonUserMeshCollisionRayHitDesc;$/;"	t	typeref:struct:NewtonUserMeshCollisionRayHitDesc
+NewtonWorld	Newton.h	/^	typedef struct NewtonWorld{} NewtonWorld;$/;"	s
+NewtonWorld	Newton.h	/^	typedef struct NewtonWorld{} NewtonWorld;$/;"	t	typeref:struct:NewtonWorld
+NewtonWorldConvexCastReturnInfo	Newton.h	/^	typedef struct NewtonWorldConvexCastReturnInfo$/;"	s
+NewtonWorldConvexCastReturnInfo	Newton.h	/^	} NewtonWorldConvexCastReturnInfo;$/;"	t	typeref:struct:NewtonWorldConvexCastReturnInfo
+NewtonWorldDestroyListenerCallback	Newton.h	/^	typedef void (*NewtonWorldDestroyListenerCallback) (const NewtonWorld* const world, void* const listenerUserData);$/;"	t
+NewtonWorldDestructorCallback	Newton.h	/^	typedef void (*NewtonWorldDestructorCallback) (const NewtonWorld* const world);$/;"	t
+NewtonWorldListenerBodyDestroyCallback	Newton.h	/^	typedef void (*NewtonWorldListenerBodyDestroyCallback) (const NewtonWorld* const world, void* const listenerUserData, NewtonBody* const body);$/;"	t
+NewtonWorldRayFilterCallback	Newton.h	/^	typedef dFloat (*NewtonWorldRayFilterCallback)(const NewtonBody* const body, const NewtonCollision* const shapeHit, const dFloat* const hitContact, const dFloat* const hitNormal, dLong collisionID, void* const userData, dFloat intersectParam);$/;"	t
+NewtonWorldRayPrefilterCallback	Newton.h	/^	typedef unsigned (*NewtonWorldRayPrefilterCallback)(const NewtonBody* const body, const NewtonCollision* const collision, void* const userData);$/;"	t
+NewtonWorldSetCollisionConstructorDestuctorCallback	Newton.h	/^	NEWTON_DEPRECATED_API inline void NewtonWorldSetCollisionConstructorDestuctorCallback (const NewtonWorld* const newtonWorld, NewtonCollisionCopyConstructionCallback constructor, NewtonCollisionDestructorCallback destructor)$/;"	f
+NewtonWorldUpdateListenerCallback	Newton.h	/^	typedef void (*NewtonWorldUpdateListenerCallback) (const NewtonWorld* const world, void* const listenerUserData, dFloat timestep);$/;"	t
+SERIALIZE_ID_BOX	Newton.h	93;"	d
+SERIALIZE_ID_CAPSULE	Newton.h	88;"	d
+SERIALIZE_ID_CHAMFERCYLINDER	Newton.h	89;"	d
+SERIALIZE_ID_CLOTH_PATCH	Newton.h	100;"	d
+SERIALIZE_ID_COMPOUND	Newton.h	97;"	d
+SERIALIZE_ID_CONE	Newton.h	94;"	d
+SERIALIZE_ID_CONVEXHULL	Newton.h	95;"	d
+SERIALIZE_ID_CYLINDER	Newton.h	91;"	d
+SERIALIZE_ID_DEFORMABLE_SOLID	Newton.h	101;"	d
+SERIALIZE_ID_FRACTURED_COMPOUND	Newton.h	104;"	d
+SERIALIZE_ID_HEIGHTFIELD	Newton.h	99;"	d
+SERIALIZE_ID_NULL	Newton.h	96;"	d
+SERIALIZE_ID_SCENE	Newton.h	103;"	d
+SERIALIZE_ID_SPHERE	Newton.h	87;"	d
+SERIALIZE_ID_TAPEREDCAPSULE	Newton.h	90;"	d
+SERIALIZE_ID_TAPEREDCYLINDER	Newton.h	92;"	d
+SERIALIZE_ID_TREE	Newton.h	98;"	d
+SERIALIZE_ID_USERMESH	Newton.h	102;"	d
+__NEWTON_H__	Newton.h	23;"	d
+bool	Newton.h	/^    typedef _Bool bool;$/;"	t
+dFloat	Newton.h	65;"	d
+dFloat	Newton.h	67;"	d
+dFloat64	Newton.h	72;"	d
+dLong	Newton.h	60;"	d
+m_accel	Newton.h	/^		dFloat m_accel;$/;"	m	struct:NewtonHingeSliderUpdateDesc
+m_atributes	Newton.h	/^		char* m_atributes;$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_attachBody_0	Newton.h	/^		const NewtonBody* m_attachBody_0;$/;"	m	struct:NewtonJointRecord
+m_attachBody_1	Newton.h	/^		const NewtonBody* m_attachBody_1;$/;"	m	struct:NewtonJointRecord
+m_attachmenMatrix_0	Newton.h	/^		dFloat m_attachmenMatrix_0[4][4];$/;"	m	struct:NewtonJointRecord
+m_attachmenMatrix_1	Newton.h	/^		dFloat m_attachmenMatrix_1[4][4];$/;"	m	struct:NewtonJointRecord
+m_bodiesCollisionOn	Newton.h	/^		int	m_bodiesCollisionOn;$/;"	m	struct:NewtonJointRecord
+m_box	Newton.h	/^			NewtonBoxParam m_box;									$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_boxDistanceTravel	Newton.h	/^		dFloat m_boxDistanceTravel[4];				\/\/ max distance that box bpxP0 and boxP1 can travel on this timestep, used this for continue collision mode.$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_boxP0	Newton.h	/^		dFloat m_boxP0[4];							\/\/ lower bounding box of intersection query in local space$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_boxP1	Newton.h	/^		dFloat m_boxP1[4];							\/\/ upper bounding box of intersection query in local space$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_capsule	Newton.h	/^			NewtonCapsuleParam m_capsule;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_chamferCylinder	Newton.h	/^			NewtonChamferCylinderParam m_chamferCylinder;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_chidrenCount	Newton.h	/^		int m_chidrenCount;$/;"	m	struct:NewtonCompoundCollisionParam
+m_childrenProxyCount	Newton.h	/^		int m_childrenProxyCount;$/;"	m	struct:NewtonSceneCollisionParam
+m_collisionTree	Newton.h	/^			NewtonCollisionTreeParam m_collisionTree;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_collisionType	Newton.h	/^		int m_collisionType;				\/\/ tag id to identify the collision primitive$/;"	m	struct:NewtonCollisionInfoRecord
+m_collisionUserID	Newton.h	/^		int m_collisionUserID;				$/;"	m	struct:NewtonCollisionInfoRecord
+m_compoundCollision	Newton.h	/^			NewtonCompoundCollisionParam m_compoundCollision;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_cone	Newton.h	/^			NewtonConeParam m_cone;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_contactID	Newton.h	/^		dLong m_contactID;						\/\/ collision ID at contact point$/;"	m	struct:NewtonWorldConvexCastReturnInfo
+m_convexHull	Newton.h	/^			NewtonConvexHullParam m_convexHull;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_cylinder	Newton.h	/^			NewtonCylinderParam m_cylinder;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_damper	Newton.h	/^		dFloat m_damper;$/;"	m	struct:NewtonClothPatchMaterial
+m_deformableMesh	Newton.h	/^			NewtonDeformableMeshParam m_deformableMesh;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_descriptionType	Newton.h	/^		char m_descriptionType[128];$/;"	m	struct:NewtonJointRecord
+m_elevation	Newton.h	/^		void* m_elevation;$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_elevationDataType	Newton.h	/^		int m_elevationDataType;	\/\/ 0 = 32 bit floats, 1 = unsigned 16 bit integers$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_extraParameters	Newton.h	/^		dFloat m_extraParameters[64];$/;"	m	struct:NewtonJointRecord
+m_faceCount	Newton.h	/^		int	m_faceCount;                        	\/\/ the application should set here how many polygons intersect the query box$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_faceCount	Newton.h	/^		int m_faceCount;$/;"	m	struct:NewtonConvexHullParam
+m_faceIndexCount	Newton.h	/^		int* m_faceIndexCount;                  	\/\/ the application should set here the pointer to the vertex count of each face.$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_faceVertexIndex	Newton.h	/^		int* m_faceVertexIndex;                 	\/\/ the application should set here the pointer index array for each vertex on a face.$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_gridsDiagonals	Newton.h	/^		int m_gridsDiagonals;$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_height	Newton.h	/^		dFloat m_height;$/;"	m	struct:NewtonCapsuleParam
+m_height	Newton.h	/^		dFloat m_height;$/;"	m	struct:NewtonChamferCylinderParam
+m_height	Newton.h	/^		dFloat m_height;$/;"	m	struct:NewtonConeParam
+m_height	Newton.h	/^		dFloat m_height;$/;"	m	struct:NewtonCylinderParam
+m_height	Newton.h	/^		dFloat m_height;$/;"	m	struct:NewtonTaperedCapsuleParam
+m_height	Newton.h	/^		dFloat m_height;$/;"	m	struct:NewtonTaperedCylinderParam
+m_height	Newton.h	/^		int m_height;$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_heightField	Newton.h	/^			NewtonHeightFieldCollisionParam m_heightField;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_hitBody	Newton.h	/^		const NewtonBody* m_hitBody;			\/\/ body hit at contact point$/;"	m	struct:NewtonWorldConvexCastReturnInfo
+m_horizonalScale	Newton.h	/^		dFloat m_horizonalScale;$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_indexCount	Newton.h	/^		int m_indexCount;$/;"	m	struct:NewtonCollisionTreeParam
+m_indexList	Newton.h	/^		unsigned short *m_indexList;$/;"	m	struct:NewtonDeformableMeshParam
+m_maxAngularDof	Newton.h	/^		dFloat m_maxAngularDof[3];$/;"	m	struct:NewtonJointRecord
+m_maxFriction	Newton.h	/^		dFloat m_maxFriction;$/;"	m	struct:NewtonHingeSliderUpdateDesc
+m_maxLinearDof	Newton.h	/^		dFloat m_maxLinearDof[3];$/;"	m	struct:NewtonJointRecord
+m_minAngularDof	Newton.h	/^		dFloat m_minAngularDof[3];$/;"	m	struct:NewtonJointRecord
+m_minFriction	Newton.h	/^		dFloat m_minFriction;$/;"	m	struct:NewtonHingeSliderUpdateDesc
+m_minLinearDof	Newton.h	/^		dFloat m_minLinearDof[3];$/;"	m	struct:NewtonJointRecord
+m_normal	Newton.h	/^		dFloat m_normal[4];						\/\/ surface normal at collision point in global space$/;"	m	struct:NewtonWorldConvexCastReturnInfo
+m_normalOut	Newton.h	/^		dFloat m_normalOut[4];					\/\/ copy here the normal at the ray intersection$/;"	m	struct:NewtonUserMeshCollisionRayHitDesc
+m_objBody	Newton.h	/^		NewtonBody* m_objBody;                  	\/\/ pointer to the colliding body$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_objCollision	Newton.h	/^		NewtonCollision* m_objCollision;			\/\/ collision shape of the colliding body, (no necessarily the collision of m_objBody)$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_offsetMatrix	Newton.h	/^		dFloat m_offsetMatrix[4][4];$/;"	m	struct:NewtonCollisionInfoRecord
+m_p0	Newton.h	/^		dFloat m_p0[4];							\/\/ ray origin in collision local space$/;"	m	struct:NewtonUserMeshCollisionRayHitDesc
+m_p1	Newton.h	/^		dFloat m_p1[4];                         \/\/ ray destination in collision local space   $/;"	m	struct:NewtonUserMeshCollisionRayHitDesc
+m_paramArray	Newton.h	/^			dFloat m_paramArray[64];		    \/\/ user define collision can use this to store information$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_penetration	Newton.h	/^		dFloat m_penetration;                   \/\/ contact penetration at collision point$/;"	m	struct:NewtonWorldConvexCastReturnInfo
+m_point	Newton.h	/^		dFloat m_point[4];						\/\/ collision point in global space$/;"	m	struct:NewtonWorldConvexCastReturnInfo
+m_polySoupBody	Newton.h	/^		NewtonBody* m_polySoupBody;             	\/\/ pointer to the rigid body owner of this collision tree $/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_polySoupCollision	Newton.h	/^		NewtonCollision* m_polySoupCollision;		\/\/ collision shape of the collision tree, (no necessarily the collision of m_polySoupBody)$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_radio	Newton.h	/^		dFloat m_radio;$/;"	m	struct:NewtonCapsuleParam
+m_radio	Newton.h	/^		dFloat m_radio;$/;"	m	struct:NewtonChamferCylinderParam
+m_radio	Newton.h	/^		dFloat m_radio;$/;"	m	struct:NewtonConeParam
+m_radio	Newton.h	/^		dFloat m_radio;$/;"	m	struct:NewtonCylinderParam
+m_radio	Newton.h	/^		dFloat m_radio;$/;"	m	struct:NewtonSphereParam
+m_radio0	Newton.h	/^		dFloat m_radio0;$/;"	m	struct:NewtonTaperedCapsuleParam
+m_radio0	Newton.h	/^		dFloat m_radio0;$/;"	m	struct:NewtonTaperedCylinderParam
+m_radio1	Newton.h	/^		dFloat m_radio1;$/;"	m	struct:NewtonTaperedCapsuleParam
+m_radio1	Newton.h	/^		dFloat m_radio1;$/;"	m	struct:NewtonTaperedCylinderParam
+m_sceneCollision	Newton.h	/^			NewtonSceneCollisionParam m_sceneCollision;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_skinThickness	Newton.h	/^		dFloat m_skinThickness;                     \/\/ this is the minimum skin separation specified by the material between these two colliding shapes$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_sphere	Newton.h	/^			NewtonSphereParam m_sphere;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_stiffness	Newton.h	/^		dFloat m_stiffness;$/;"	m	struct:NewtonClothPatchMaterial
+m_taperedCapsule	Newton.h	/^			NewtonTaperedCapsuleParam m_taperedCapsule;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_taperedCylinder	Newton.h	/^			NewtonTaperedCylinderParam m_taperedCylinder;$/;"	m	union:NewtonCollisionInfoRecord::__anon1
+m_threadNumber	Newton.h	/^		int m_threadNumber;							\/\/ current thread executing this query$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_timestep	Newton.h	/^		dFloat m_timestep;$/;"	m	struct:NewtonHingeSliderUpdateDesc
+m_triangleCount	Newton.h	/^		int m_triangleCount;$/;"	m	struct:NewtonDeformableMeshParam
+m_userData	Newton.h	/^		void* m_userData;                       	\/\/ user data passed to the collision geometry at creation time$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_userData	Newton.h	/^		void* m_userData;                       \/\/ user data passed to the collision geometry at creation time$/;"	m	struct:NewtonUserMeshCollisionRayHitDesc
+m_userIdOut	Newton.h	/^		dLong m_userIdOut;						\/\/ copy here a user defined id for further feedback  $/;"	m	struct:NewtonUserMeshCollisionRayHitDesc
+m_vertex	Newton.h	/^		dFloat* m_vertex;                       	\/\/ the application should set here the pointer to the global vertex of the mesh. $/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_vertex	Newton.h	/^		dFloat* m_vertex;$/;"	m	struct:NewtonConvexHullParam
+m_vertexCount	Newton.h	/^		int m_vertexCount;$/;"	m	struct:NewtonCollisionTreeParam
+m_vertexCount	Newton.h	/^		int m_vertexCount;$/;"	m	struct:NewtonConvexHullParam
+m_vertexCount	Newton.h	/^		int m_vertexCount;$/;"	m	struct:NewtonDeformableMeshParam
+m_vertexList	Newton.h	/^		dFloat *m_vertexList;$/;"	m	struct:NewtonDeformableMeshParam
+m_vertexStrideInBytes	Newton.h	/^		int m_vertexStrideInBytes;              	\/\/ the application should set here the size of each vertex$/;"	m	struct:NewtonUserMeshCollisionCollideDesc
+m_vertexStrideInBytes	Newton.h	/^		int m_vertexStrideInBytes;$/;"	m	struct:NewtonConvexHullParam
+m_verticalScale	Newton.h	/^		dFloat m_verticalScale;$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_vrtexStrideInBytes	Newton.h	/^		int m_vrtexStrideInBytes;$/;"	m	struct:NewtonDeformableMeshParam
+m_width	Newton.h	/^		int m_width;$/;"	m	struct:NewtonHeightFieldCollisionParam
+m_x	Newton.h	/^		dFloat m_x;$/;"	m	struct:NewtonBoxParam
+m_y	Newton.h	/^		dFloat m_y;$/;"	m	struct:NewtonBoxParam
+m_z	Newton.h	/^		dFloat m_z;$/;"	m	struct:NewtonBoxParam

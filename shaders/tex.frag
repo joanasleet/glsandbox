@@ -1,14 +1,12 @@
-#version 440
+#version 330
 
-in vec2 texcoord;
+in vec2 vTex;
 
 out vec4 finalColor;
 
-layout ( binding = 0 ) uniform sampler2D s1;
-layout ( binding = 1 ) uniform sampler2D s2;
-layout ( binding = 2 ) uniform sampler2D s3;
+uniform sampler2D s1;
 
 void main() {
 
-    finalColor = texture( s1, texcoord );
+    finalColor = texture( s1, vTex );
 }

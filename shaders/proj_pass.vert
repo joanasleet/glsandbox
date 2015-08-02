@@ -1,22 +1,18 @@
-#version 440
+#version 330
 
-layout(location = 0) in vec4 pos;
-layout(location = 1) in vec2 tex_coord;
+layout(location = 0) in vec3 pos;
+layout(location = 1) in vec2 tex;
 
+uniform mat4 mv; 
 uniform mat4 MVP;
-uniform mat4 mv = mat4(
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1 );
 
-out vec2 texcoord;
-out vec4 vPos;
+out vec3 vPos;
+out vec2 vTex;
 
 void main() {
 
-    texcoord = tex_coord;
     vPos = pos;
+    vTex = tex;
 
-    gl_Position = MVP * mv * pos;
+    gl_Position = MVP * mv * vec4( pos, 1.0f );
 }

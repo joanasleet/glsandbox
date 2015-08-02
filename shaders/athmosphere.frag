@@ -1,4 +1,4 @@
-#version 440
+#version 330
 
 in vec4 vsColor;
 in vec4 vsSecColor;

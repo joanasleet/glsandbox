@@ -32,7 +32,7 @@ void loadObjects( Engine* renderer, script *S ) {
     for( int j = 0; j < objectCount; ++j ) {
 
         Object *object = ( objects[j] = newObject() );
-
+        object->state = newState();
         Mesh *mesh = ( object->mesh = newMesh() );
 
         /* push object[j] */
@@ -59,11 +59,6 @@ void loadObjects( Engine* renderer, script *S ) {
         popFloat( S, size );
         log_info( "<Size: %.1f>", size );
 
-        /*
-         * create state */
-
-        object->state = newState();
-        
         /*
          * create da physics */
 
@@ -93,16 +88,20 @@ void loadObjects( Engine* renderer, script *S ) {
         lua_geti( S, -1, 3 );
         float midZ;
         popFloat( S, midZ );
+
+        object->state->position[0] = midX;
+        object->state->position[1] = midY;
+        object->state->position[2] = midZ;
+
         log_info( "<Position: ( %.1f, %.1f, %.1f )>", midX, midY, midZ );
 
         lua_pop( S, 2 );
 
-        VaoFuncs[vaoType]( size, texres, midX, midY, midZ, mesh );
+        VaoFuncs[vaoType]( size, texres, mesh );
 
         /* physics properties */
         float transform[16];
-        mat4trans( transform, midX, midY, midZ );
-        //mat4transp( transform );
+        mat4trans( transform, object->state->position );
         mesh->nbody = PhysicsBodyFuncs[physics]( renderer->nworld, mesh->ncol, transform );
         NewtonBodySetMassMatrix( mesh->nbody, size, size, size, size );
         //NewtonBodySetMassProperties( mesh->nbody, size, mesh->ncol );
@@ -348,7 +347,7 @@ void loadTextures( Engine* renderer, script *S ) {
 
         lua_pop( S, 2 );
 
-        VaoFuncs[vaoType]( size, texres, midX, midY, midZ, mesh );
+        VaoFuncs[vaoType]( size, texres, mesh );
 
         /* push material */
         lua_getfield( S, -1, "material" );

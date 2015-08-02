@@ -1,39 +1,51 @@
-TARGET	=	main
+# executable
+MAIN	:=	main
 
-SRC 	=	src
-CC		=	clang
-STD 	=	c11
-LIBS	=	-lm -lGLEW -lGL -lglfw -llua
-LIBD	=	libs
-TPLS	=	Newton
-NOWARN	=	-Wno-gnu-empty-struct -Wno-disabled-macro-expansion -Wno-c++-compat -Wno-unused-parameter
-CHECK	=	-fsanitize=undefined
-CFLAGS	=	-Weverything -pedantic $(NOWARN) -std=$(STD) -g -pg -I$(LIBD) -I$(SRC) $(CHECK)
+# folders
+SRC 	:=	src
+BIN		:=	bin
 
-BIN		=	bin
-PCBIN	=	staticbin
+# compiler
+CC		:=	gcc
+STD 	:=	-std=gnu11
+DEBUG	:=	-g -pg
+LIBS	:=	-lm -lGLEW -lGL -lglfw -llua
+LIBD	:=	libs
+TPLS	:=	Newton
+#NOWARN	:=	-Wno-gnu-empty-struct -Wno-disabled-macro-expansion -Wno-c++-compat -Wno-unused-parameter
+CHECK	:=	-fsanitize=undefined
+#PENDAN	:=	-pedantic
+WALL 	:= 	-Wall
+CFLAGS	:=	$(WALL) $(PENDAN) $(NOWARN) $(STD) $(DEBUG) -I$(LIBD) -I$(SRC) $(CHECK)
 
-SOURCES	=	$(notdir $(wildcard $(SRC)/**/*.c $(SRC)/*.c))
-OBJECTS =	$(patsubst %.c, $(BIN)/%.o, $(SOURCES))
+# files
+SOURCES	:=	$(notdir $(wildcard $(SRC)/**/*.c $(SRC)/*.c))
+OBJS	:=	$(patsubst %.c, $(BIN)/%.o, $(SOURCES))
+DEPS	:=	$(sort $(patsubst $(notdir %), %.deps, $(OBJS)))
 
-all: $(BIN) $(OBJECTS) $(TARGET)
+all: $(BIN) $(OBJS) $(MAIN)
+
+$(MAIN): $(OBJS)
+	@echo " "
+	@echo "[Linking]"
+	$(CC) $(CFLAGS) -L$(LIBD)/$(TPLS) -l$(TPLS) $(LIBS) -o $@ $^
 
 $(BIN):
 	@echo " "
 	@echo "[Create Folders]"
-	[ ! -e $@ ] && mkdir $@ && mkdir $(PCBIN)
-	
-$(BIN)/%.o: $(SRC)/%.c $(SRC)/%.h
-	@echo " "
-	@echo "["$^"]"
-	$(CC) $(CFLAGS) -c $< -o $@
-	@if [ $$? != 0 ]; then rm $@; fi
-	
-$(TARGET): $(OBJECTS)
-	@echo " "
-	@echo "[Linking]"
-	$(CC) $(CFLAGS) -L$(LIBD)/$(TPLS) -l$(TPLS) $(LIBS) -o $@ $^ $(PCBIN)/*.o
+	[ ! -e $@ ] && mkdir $@
+
+-include $(DEPS)
+
+$(DEPS):
+	@true
 
 clean:
-	-rm $(BIN)/*
-	-rm $(TARGET)
+	@echo "[Clean]"
+	rm -f $(BIN)/*
+
+$(BIN)/%.o: $(SRC)/%.c
+	@echo " "
+	@echo "["$@"]"
+	$(CC) $(CFLAGS) -c -o $@ $< -MMD -MF $@.deps
+

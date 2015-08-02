@@ -144,13 +144,13 @@ void mat4scale(mat4 target, float x, float y, float z) {
     cpyBuf( target, data, 16 );
 }
 
-void mat4trans(mat4 target, float x, float y, float z) {
+void mat4trans(mat4 target, vec3 pos ) {
 
     float data[] = {
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        x, y, z, 1
+        1,          0,     0,      0,
+        0,          1,     0,      0,
+        0,          0,     1,      0,
+        pos[0], pos[1], pos[2],    1
     };
 
     cpyBuf( target, data, 16 );
@@ -339,7 +339,7 @@ float quatDot( quat q1, quat q2 ) {
 }
 
 /* private helper */
-void _printBuffer( float* buff, const char* name, int n, int rows, int cols ) {
+void _printBuffer( const float* buff, const char* name, int n, int rows, int cols ) {
 
     printf( "%s =%c", name, ( rows <= 1 ) ? ' ' : '\n' );
 

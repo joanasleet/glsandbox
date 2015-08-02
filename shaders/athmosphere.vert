@@ -1,6 +1,6 @@
-#version 440
+#version 330
 
-layout( location = 0 ) in vec4 pos;
+layout( location = 0 ) in vec3 pos;
 
 uniform mat4 MVP;
 uniform vec3 camPos;
@@ -98,5 +98,5 @@ void main() {
     gl_Position = MVP * pos;
 
     /* calc sky color */
-    athmosScatter(pos.xyz);
+    athmosScatter(pos);
 }

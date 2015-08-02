@@ -35,25 +35,8 @@ void applyForceAndTorque( const NewtonBody* body, float ts, int tid ) {
 
     float mass, ixx, iyy, izz;
     NewtonBodyGetMassMatrix( body, &mass, &ixx, &iyy, &izz );
-    
-    float rota[4];
-    NewtonBodyGetRotation( body, rota );
-    quatInv( rota );
-    quatNorm( rota );
-    float rotaMat[16];
-    quatToMat( rotaMat, rota );
 
-    float pos[3];
-    NewtonBodyGetPosition( body, pos );
-    float transMat[16];
-    mat4trans( transMat, -pos[0], -pos[1], -pos[2] );
-
-    float transform[16];
-    mat4mult( rotaMat, transMat, transform );
-    printBuf( transform, 16, 4, 4 );
-    float F[3] = { force[0], force[1] + ( -4.9f * mass ), force[2] };
-    mat4multVec3( transform, F, F );
-    printBuf( F, 3, 1, 3 );
+    float F[3] = { force[0], force[1] + ( -9.8f * mass ), force[2] };
 
     NewtonBodyAddTorque( body, torque );
     NewtonBodyAddForce( body, F );

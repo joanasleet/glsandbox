@@ -1,4 +1,4 @@
-#version 440
+#version 330
 
 in vec4 tePos;
 in float height;
@@ -6,11 +6,9 @@ in float maxHeight;
 
 out vec4 color;
 
-layout (binding = 0) uniform sampler2D skymap;
-
 uniform float gTime;
-
 uniform float timeScale = 0.01;
+uniform sampler2D skymap;
 
 void main() {
 
@@ -24,7 +22,6 @@ void main() {
     float u = step(1.0, z) * (z / (2.0 * maxHeight));
     float v = 1.0 - height / (1.01 * maxHeight);
     color = texture(skymap, vec2(u, (v)));
-    //color = mix(color, texture(skymap1, vec2(u, v)), 0.5);
 
     float sunVertDist = distance(sunPos, tePos.xyz);
 

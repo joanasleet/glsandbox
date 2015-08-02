@@ -24,6 +24,7 @@ typedef struct {
 
     NewtonBody *nbody;
     NewtonCollision *ncol;
+
     DrawFunc draw;
 
     GLuint vaoId;
@@ -39,7 +40,7 @@ typedef struct {
 } Mesh;
 
 /* vao generator function prototype */
-typedef void ( *VaoFunc )( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
+typedef void ( *VaoFunc )( GLfloat size, GLfloat texres, Mesh *mesh );
 
 /* creation stuff */
 Mesh *newMesh();
@@ -50,16 +51,16 @@ void drawArrays(GLenum mode, GLint *first, GLsizei count);
 void drawElements(GLenum mode, GLint *first, GLsizei count);
 
 /* vao generators */
-void planeVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
-void cubeInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
-void cubeOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
-void sphereInVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
-void sphereOutVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
-void terrainVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
-void overlayVAO( GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
+void planeVAO( GLfloat size, GLfloat texres, Mesh *mesh );
+void cubeInVAO( GLfloat size, GLfloat texres, Mesh *mesh );
+void cubeOutVAO( GLfloat size, GLfloat texres, Mesh *mesh );
+void sphereInVAO( GLfloat size, GLfloat texres, Mesh *mesh );
+void sphereOutVAO( GLfloat size, GLfloat texres, Mesh *mesh );
+void terrainVAO( GLfloat size, GLfloat texres, Mesh *mesh );
+void overlayVAO( GLfloat size, GLfloat texres, Mesh *mesh );
 
 /* outlier - needs integration */
-void staticTextVAO( const char* text, GLfloat size, GLfloat texres, GLfloat midx, GLfloat midy, GLfloat midz, Mesh *mesh );
+void staticTextVAO( const char* text, GLfloat size, GLfloat texres, Mesh *mesh );
 
 #endif
 

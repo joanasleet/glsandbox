@@ -1,5 +1,6 @@
 #include "Util.h"
 #include "Engine.h"
+#include "Timestep.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 
@@ -103,14 +104,14 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
     // move some object
     case GLFW_KEY_UP:
         if (action == GLFW_PRESS) {
-            torque[1] = 200.0f;
+            force[1] = 200.0f;
         } else if (action == GLFW_RELEASE) {
-            torque[1] = 0.0f;
+            force[1] = 0.0f;
         }
         break;
     case GLFW_KEY_DOWN:
         if (action == GLFW_PRESS) {
-            torque[1] = -200.0f;
+            torque[1] = 500.0f;
         } else if (action == GLFW_RELEASE) {
             torque[1] = 0.0f;
         }
@@ -124,9 +125,9 @@ void keyCB(GLFWwindow *win, int key, int scancode, int action, int mods) {
         break;
     case GLFW_KEY_RIGHT:
         if (action == GLFW_PRESS) {
-            force[1] = 200.0f;
+            force[0] = 200.0f;
         } else if (action == GLFW_RELEASE) {
-            force[1] = 0.0f;
+            force[0] = 0.0f;
         }
         break;
 

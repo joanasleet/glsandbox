@@ -87,7 +87,8 @@ void MV(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     // translation
     GLfloat translation[16];
-    mat4trans(translation, -state->position[0], -state->position[1], -state->position[2]);
+    float invPos[] = { -state->position[0], -state->position[1], -state->position[2] };
+    mat4trans(translation, invPos );
 
     // ModelView
     GLfloat MVmat[16];
@@ -126,7 +127,8 @@ void MVP(GLint loc, Camera *cam, State *objState, double globalTime) {
 
     // translation
     GLfloat translation[16];
-    mat4trans(translation, -state->position[0], -state->position[1], -state->position[2]);
+    float invPos[] = { -state->position[0], -state->position[1], -state->position[2] };
+    mat4trans(translation, invPos );
 
     GLfloat temp[16];
     mat4mult(cam->perspective, orientation, temp);
@@ -165,11 +167,10 @@ void objMV(GLint loc, Camera *cam, State *objState, double globalTime) {
     quatToMat(orientation, objState->orientation );
 
     float translation[16];
-    vec3 pos = objState->position;
-    mat4trans(translation, pos[0], pos[1], pos[2]);
+    mat4trans(translation, objState->position );
 
     float MV[16];
-    mat4mult(orientation, translation, MV);
+    mat4mult( translation, orientation, MV);
 
     glUniformMatrix4fv(loc, 1, GL_FALSE, MV);
 }

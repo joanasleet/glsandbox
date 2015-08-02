@@ -49,11 +49,11 @@ void mat4multVec4(mat4 A, vec4 v, vec4 target);
 void mat4multVec3(mat4 A, vec3 v, vec3 target);
 
 void mat4transp( mat4 target );
-void mat4scale(mat4 target, float x, float y, float z);
-void mat4trans(mat4 target, float x, float y, float z);
-void mat4rotate(mat4 target, float angle, float x, float y, float z);
-void mat4persp(mat4 target, float near, float far, float fovx, float ratio);
-void mat4perspinf(mat4 target, float near, float fov, float ratio);
+void mat4scale( mat4 target, float x, float y, float z);
+void mat4trans( mat4 target, vec3 pos );
+void mat4rotate( mat4 target, float angle, float x, float y, float z);
+void mat4persp( mat4 target, float near, float far, float fovx, float ratio);
+void mat4perspinf( mat4 target, float near, float fov, float ratio);
 
 void rotate3D(quat target, vec3 angles);
 
@@ -70,7 +70,7 @@ float quatDot( quat q1, quat q2 );
 float lerpStepf(float from, float to, float alpha);
 double lerpStep(double from, double to, double alpha);
 
-void _printBuffer( float* buff, const char* name, int n, int rows, int cols );
+void _printBuffer( const float* buff, const char* name, int n, int rows, int cols );
 
 #endif 
 
